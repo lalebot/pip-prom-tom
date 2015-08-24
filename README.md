@@ -9,6 +9,7 @@
 
 ## Todo:
 
++ Parametrización por django
 + Git
 + Ampliar la busqueda a varias bases de datos
 + Python

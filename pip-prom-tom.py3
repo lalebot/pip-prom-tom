@@ -8,8 +8,6 @@ import sqlite3 as lite
 import time
 import os
 import threading
-import sys
-# from Bio import motifs
 
 
 '''
@@ -20,14 +18,14 @@ import sys
 |  |  |  | |  |____ |  |\   | |  `--'  | 
 |__|  |__| |_______||__| \__|  \______/  '''
 def menu():
-	print("Bienvenido a " + sys.argv[0].split('.')[0])
+	print("Bienvenido al Pipeline")
 	print("Menu:")
 	print(" 1 - Inicializar la Base de datos y todos los archivos")
 	print(" 2 - Cargar la Bdd desde -SolGenomics- y armarse de paciencia")
 	print(" 3 - Crear archivos FASTA por Familia")
 	print(" 4 - Análisis MEME")
 	print(" 5 - Análisis TOMTOM")
-	print(" 6 - Análisis PlantCare")
+	# print(" 6 - Análisis PlantCare")
 	print(" 7 - PIPELINE")
 	print(" 0 - Salir")
 
@@ -37,8 +35,13 @@ def parametros():
 		file_param = open('param.txt', 'r')
 	except: 
 		print("Error al abrir el archivo de configuración")
+		exit()
 	for linea in file_param.readlines():
-		if 'meme-path' in linea:
+		# Averiguo si el script debe ejecutarse en modo pipeline o mostrar menú
+		if 'pip =' in linea:
+			pip_pip = linea.split('= ')[1]
+			print (pip_pip)
+		if 'meme-path =' in linea:
 			print(linea)
 			memepath = linea.split('= ')[1]
 			print(memepath)
@@ -61,8 +64,8 @@ def inicializar():
 		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 		conn.execute("DROP TABLE IF EXISTS Prom") # Elimnar la Bdd
 		conn.execute("CREATE TABLE Prom(nom TEXT UNIQUE NOT NULL, fam TEXT, mf TEXT, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd
-		conn.execute("DROP TABLE IF EXISTS Prom30") # Elimnar la Bdd de 30
-		conn.execute("CREATE TABLE Prom30(nom TEXT UNIQUE NOT NULL, fam TEXT, mf TEXT, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd de los 30. Exp vale 1 si se expresan más que el tomate verde y 0 sino lo hace
+		# conn.execute("DROP TABLE IF EXISTS Prom30") # Elimnar la Bdd de 30
+		# conn.execute("CREATE TABLE Prom30(nom TEXT UNIQUE NOT NULL, fam TEXT, mf TEXT, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd de los 30. Exp vale 1 si se expresan más que el tomate verde y 0 sino lo hace
 		con.commit()
 	except lite.Error as e:
 		print("Error borrar y crear Bdd: ", e.args[0])
@@ -288,119 +291,6 @@ def up1_bdd():
 
 
 '''
- __    __  .______    __     .______    _______   _______      ____     ___   
-|  |  |  | |   _  \  /_ |    |   _  \  |       \ |       \    |___ \   / _ \  
-|  |  |  | |  |_)  |  | |    |  |_)  | |  .--.  ||  .--.  |     __) | | | | | 
-|  |  |  | |   ___/   | |    |   _  <  |  |  |  ||  |  |  |    |__ <  | | | | 
-|  `--'  | |  |       | |    |  |_)  | |  '--'  ||  '--'  |    ___) | | |_| | 
- \______/  | _|       |_|    |______/  |_______/ |_______/    |____/   \___/  
-                                                                              
-'''
-def up1_bdd30():
-	# Consultar la bdd y traer sólo los datos que tengan el adn vacio y luego armar una lista y grabar
-	numeros = "1234567890" # Para buscar el codigo dentro del html
-	caracteres = "1234567890." # Para buscar los caracteres dentro del 1000 up
-	while True:
-		try: 
-			con = lite.connect('prom.db')
-			conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
-			conn.execute("SELECT nom FROM Prom30 WHERE adn is null ORDER BY random() LIMIT 10")
-			i=conn.fetchone()
-			conn.close()
-			con.close()
-			break
-		except Exception as e:
-			print("Error al traer la lista de nom desde la Bdd")
-			if con:
-				conn.close()
-				con.close()
-			time.sleep(0.5) # Esperar para volver a intentar acceder a la bdd
-	# Para cada una de las consultas que tengan ADN vacio
-	while i != None:
-		# Inicializacion dentro del For
-		opener = ""
-		url = ""
-		f= ""
-		content = ""
-		contents = "" #  cab_fasta y fasta
-		op = "" # cod_sg_up
-		cod = "" # cod_sg_bus8
-		opener = urllib.request.FancyURLopener({})
-		fasta=[]
-		# PRIMERA ETAPA buscar el cod
-		try:
-			url = "http://solgenomics.net/search/quick?term="+i[0]+"&x=51&y=8"
-			f = opener.open(url)
-			# response = urllib.request.urlopen(url, timeout=10).read().decode('utf-8')
-			content = f.read()
-			contents = content.decode(encoding='UTF-8')
-			if contents.find("Genomic detail") >= 0:
-				contents= contents.split('/details">')[0]
-				contents= contents.split('Genomic detail')[1]
-				if len(contents) != 0:
-					for ele in contents:
-						if ele in numeros:
-							cod+=ele
-			else:
-				cod = "NoGenDet";
-		except Exception as problema:
-			print ("1- Se ha producido un problema al acceder a la web:" + url)
-			print (problema)
-		# Segunda etapa 1000 upstream
-		try:
-			if cod != "NoGenDet":
-				url = "http://solgenomics.net/feature/" + cod + "/details"
-				f = opener.open(url)
-				content = f.read()
-				contents= content.decode(encoding='UTF-8')
-				contents= contents.split(">1000 bp upstream</option>")[0]
-				contents= contents.split("3000 bp upstream</option>")[1]
-			else:
-				contents= contents.split(">1000 bp upstream</option>")[0]
-				contents= contents.split("3000 bp upstream</option>")[1]
-		except Exception as problema:
-			print ("2 - Se ha producido un problema al acceder a la web:" + url)
-			print (problema)
-		if len(contents) != 0:
-			for ele in contents:
-				if ele in caracteres:
-					op+=ele
-				else:
-					if ele == ":":
-						op+="%3A"
-		# Tercera etapa bajo el FASTA y doy forma
-		try:
-			url = "http://solgenomics.net/api/v1/sequence/download/multi?format=fasta&s=" + op
-			f = opener.open(url)
-			content = f.read()
-			contents = content.decode(encoding='UTF-8')
-			fasta = contents.split('\n',1)
-		except Exception as problema:
-			print ("3 - Se ha producido un problema al acceder a la web:" + url)
-			print (problema)
-		# Grabar en la Bdd
-		if cod != '' and op !='' and len(fasta)!=0:
-			while True:
-				try:
-					con = lite.connect('prom.db')
-					conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
-					conn.execute("UPDATE Prom30 SET cab_adn=?,adn=?,cod_sg_bus=?,cod_sg_up=? WHERE nom = ? ",(fasta[0],fasta[1],cod,op,i[0])) # Guardo los datos extraids en la bdd
-					con.commit()
-					conn.execute("SELECT nom FROM Prom30 WHERE adn is null ORDER BY random() LIMIT 30")
-					i=conn.fetchone()
-					conn.close()
-					con.close()
-					break
-				except Exception as e:
-					print ("%s %s" % (e.args[0],threading.currentThread().getName()))
-					if con:
-						conn.close()
-						con.close()
-					# time.sleep(1)
-		else:
-			print("Cod, o op o fasta estan vacios")
-
-'''
   ______     ___      .______        _______      ___      .______          _______    ___      .___  ___. 
  /      |   /   \     |   _  \      /  _____|    /   \     |   _  \        |   ____|  /   \     |   \/   | 
 |  ,----'  /  ^  \    |  |_)  |    |  |  __     /  ^  \    |  |_)  |       |  |__    /  ^  \    |  \  /  | 
@@ -481,45 +371,6 @@ def meme():
 		conn.close()
 		con.close()
 
-'''
-.___  ___.  _______ .___  ___.  _______     ____     ___   
-|   \/   | |   ____||   \/   | |   ____|   |___ \   / _ \  
-|  \  /  | |  |__   |  \  /  | |  |__        __) | | | | | 
-|  |\/|  | |   __|  |  |\/|  | |   __|      |__ <  | | | | 
-|  |  |  | |  |____ |  |  |  | |  |____     ___) | | |_| | 
-|__|  |__| |_______||__|  |__| |_______|   |____/   \___/  '''
-
-def meme30():
-	path_meme = os.getcwd()+'/meme_out30/'
-	if not os.path.exists(path_meme):
-		os.makedirs(path_meme)
-	try: 
-		con = lite.connect('prom.db')
-		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
-		conn.execute("SELECT * FROM Prom30")
-	except:
-		print("Error: SELECT * FROM Prom30")
-	file30 = open(os.getcwd()+'prom30.fasta', 'w')
-	for i in conn:
-		# nom TEXT UNIQUE NOT NULL, fam TEXT, mf TEXT, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT
-		file30.write(i[3]+"\t"+i[0]+"\n"+i[4]+"\n")
-	file30.close()
-	path = os.getcwd()+'prom30.fasta'
-	bashCom = 'meme-meme ' + path + " -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc "+ path_meme + "/"
-	os.system(bashCom)
-
-	#TOMTOM
-	path_db = os.getcwd() + "/motif_databases/JASPAR_CORE_2014_plants.meme"
-	path_tomtom = os.getcwd()+'/tomtom_out30/'
-	if not os.path.exists(path_tomtom):
-		os.makedirs(path_tomtom)
-	path = os.getcwd()+'/meme_out30/meme.txt'
-	bashCom = 'meme-tomtom ' + " -oc " + path_tomtom + "/ -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc " + path + " " + path_db
-	os.system(bashCom)
-
-	if con:
-		conn.close()
-		con.close()
 
 '''
 .___________.  ______   .___  ___. .___________.  ______   .___  ___. 
@@ -574,6 +425,7 @@ def tomtom():
 def plant():
    print("PlantCare")
 
+
 '''
 .______    __  .______    _______  __       __  .__   __.  _______ 
 |   _  \  |  | |   _  \  |   ____||  |     |  | |  \ |  | |   ____|
@@ -591,7 +443,6 @@ def pipe():
 	cargar_fam()
 	print("Meme")
 	meme()
-	meme30()
 	print("Tomtom")
 	tomtom()
 	print("¡Pipeline completo!")
@@ -605,11 +456,10 @@ def pipe():
 |__|  |__| /__/     \__\ |__| |__| \__| 
                                         '''
 def main():
-	if len(sys.argv) >=2 and sys.argv[1] == "pipe":	#Recibo como argumento la palabra pip para hacer directamente el pipeline
-		pipe()
-	else:
-		print("No se estableció argumento o argumento inválido.")
 	parametros()
+	if pip_pip == "true":
+		pipe()
+
 	while True:
 		menu()
 		opcionMenu = input("Ingrese una opción: ")
@@ -622,8 +472,7 @@ def main():
 		elif opcionMenu == "3":
 			cargar_fam()
 		elif opcionMenu == "4":
-			#meme()
-			meme30()
+			meme()
 		elif opcionMenu == "5":
 			tomtom()
 		elif opcionMenu == "6":
