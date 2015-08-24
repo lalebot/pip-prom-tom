@@ -27,7 +27,7 @@ def menu():
 	print(" 3 - Crear archivos FASTA por Familia")
 	print(" 4 - Análisis MEME")
 	print(" 5 - Análisis TOMTOM")
-	#print(" 6 - Análisis PlantCare")
+	print(" 6 - Análisis PlantCare")
 	print(" 10 - PIPELINE")
 	print(" 0 - Salir")
 
