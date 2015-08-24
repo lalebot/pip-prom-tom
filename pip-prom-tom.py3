@@ -17,6 +17,7 @@ import threading
 |  |\/|  | |   __|  |  . `  | |  |  |  | 
 |  |  |  | |  |____ |  |\   | |  `--'  | 
 |__|  |__| |_______||__| \__|  \______/  '''
+
 def menu():
 	print("Bienvenido al Pipeline")
 	print("Menu:")
@@ -38,13 +39,11 @@ def parametros():
 		exit()
 	for linea in file_param.readlines():
 		# Averiguo si el script debe ejecutarse en modo pipeline o mostrar menú
-		if 'pip =' in linea:
+		if 'pipeline =' in linea:
 			pip_pip = linea.split('= ')[1]
-			print (pip_pip)
 		if 'meme-path =' in linea:
-			print(linea)
 			memepath = linea.split('= ')[1]
-			print(memepath)
+
 	file_param.close()
 
 
@@ -64,8 +63,6 @@ def inicializar():
 		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 		conn.execute("DROP TABLE IF EXISTS Prom") # Elimnar la Bdd
 		conn.execute("CREATE TABLE Prom(nom TEXT UNIQUE NOT NULL, fam TEXT, mf TEXT, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd
-		# conn.execute("DROP TABLE IF EXISTS Prom30") # Elimnar la Bdd de 30
-		# conn.execute("CREATE TABLE Prom30(nom TEXT UNIQUE NOT NULL, fam TEXT, mf TEXT, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd de los 30. Exp vale 1 si se expresan más que el tomate verde y 0 sino lo hace
 		con.commit()
 	except lite.Error as e:
 		print("Error borrar y crear Bdd: ", e.args[0])
@@ -456,10 +453,10 @@ def pipe():
 |__|  |__| /__/     \__\ |__| |__| \__| 
                                         '''
 def main():
+	pip_pip = "false"
 	parametros()
 	if pip_pip == "true":
 		pipe()
-
 	while True:
 		menu()
 		opcionMenu = input("Ingrese una opción: ")

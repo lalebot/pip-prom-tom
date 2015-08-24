@@ -1,7 +1,7 @@
 # Parametros a configurar
 
 # pipeline false o true, muestra o no menu
-pip = false
+pipeline = false
 
 # Ubicación del Meme y Tomtom
 meme-path = /usr/bin/meme-meme
