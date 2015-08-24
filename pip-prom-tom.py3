@@ -35,11 +35,14 @@ def menu():
 def parametros():
 	try:
 		file_param = open('param.txt', 'r')
-		param_conf = file_param.read()
-		file_param.close()
 	except: 
 		print("Error al abrir el archivo de configuración")
-	print(param_conf)
+	for linea in file_param.readlines():
+		if 'meme-path' in linea:
+			print(linea)
+			memepath = linea.split('= ')[1]
+			print(memepath)
+	file_param.close()
 
 
 '''

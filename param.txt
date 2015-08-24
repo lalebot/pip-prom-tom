@@ -4,6 +4,7 @@
 pip = false
 
 # Ubicación del Meme y Tomtom
+meme-path = /usr/bin/meme-meme
 
 # Meme
 
