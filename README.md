@@ -3,6 +3,7 @@
 ## Todo:
 
 + Git
++ Ampliar la busqueda a varias bases de datos
 + Python
 + Solgenomics generic
 + Bdd dinámica
