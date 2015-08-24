@@ -25,6 +25,9 @@
 + Meme & Tomtom
 + 
 
+## Materiales
+Hacerlo con threads que esperen http://www.genbetadev.com/python/multiprocesamiento-en-python-threads-a-fondo-introduccion
+
 ## Bitácora
 Datos de inicio Excel a txt, utilizacion de sqlite como bdd,
 Inicializar y crear la Bdd a partir del archivo
