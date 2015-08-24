@@ -1,0 +1,18 @@
+# Datos de inicio Excel a txt, utilizacion de sqlite como bdd,
+# Inicializar y crear la Bdd a partir del archivo
+# Abrir el sqlite y luego crear la bdd
+# $ sqlite3 test.db
+# $ .tables
+# $ .exit
+
+# Multiplies instancias, random, manejo de conexiones argupadas, sleep para esperar - mejora de 15 segundos a 2.5-3 segundos por archivo descargado
+# O sea de 10,5 horas a 2 horas promedio para a descarga de los 2500 cabeceras
+# Ejecucion local de MEME
+# Análisis TomTom
+# Agrega argumentos
+# se declaran las funciones
+# se va transformando en un pipeline
+# threading
+# Agregar la carga de la configuracion en un archivo plano .conf con variables editables y que ese archivo se valide al inicio.
+# Agregar otra base de datos con los 30 promotores, con cod de analisis diferencial 2497 y 30
+# Agregar el análisis PlantCare

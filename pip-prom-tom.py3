@@ -1,27 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Datos de inicio Excel a txt, utilizacion de sqlite como bdd,
-# Inicializar y crear la Bdd a partir del archivo
-# Abrir el sqlite y luego crear la bdd
-# $ sqlite3 test.db
-# $ .tables
-# $ .exit
-
-# Multiplies instancias, random, manejo de conexiones argupadas, sleep para esperar - mejora de 15 segundos a 2.5-3 segundos por archivo descargado
-# O sea de 10,5 horas a 2 horas promedio para a descarga de los 2500 cabeceras
-# Ejecucion local de MEME
-# Análisis TomTom
-# Agrega argumentos
-# se declaran las funciones
-# se va transformando en un pipeline
-# threading
-# Agregar la carga de la configuracion en un archivo plano .conf con variables editables y que ese archivo se valide al inicio.
-# Agregar otra base de datos con los 30 promotores, con cod de analisis diferencial 2497 y 30
-# Agregar el análisis PlantCare
-# 
-
-
 # Importo las librerias que necesito
 import urllib.request
 import urllib.parse
@@ -46,11 +25,21 @@ def menu():
 	print(" 1 - Inicializar la Base de datos y todos los archivos")
 	print(" 2 - Cargar la Bdd desde -SolGenomics- y armarse de paciencia")
 	print(" 3 - Crear archivos FASTA por Familia")
-	print(" 4 - Análisis MEME y MEME30")
+	print(" 4 - Análisis MEME")
 	print(" 5 - Análisis TOMTOM")
 	print(" 6 - Análisis PlantCare")
 	print(" 7 - PIPELINE")
 	print(" 0 - Salir")
+
+
+def parametros():
+	try:
+		file_param = open('param.txt', 'r')
+		param_conf = file_param.read()
+		file_param.close()
+	except: 
+		print("Error al abrir el archivo de configuración")
+	print(param_conf)
 
 
 '''
@@ -617,6 +606,7 @@ def main():
 		pipe()
 	else:
 		print("No se estableció argumento o argumento inválido.")
+	parametros()
 	while True:
 		menu()
 		opcionMenu = input("Ingrese una opción: ")
