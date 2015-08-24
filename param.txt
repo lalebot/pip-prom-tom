@@ -6,7 +6,7 @@ pipeline = false
 # Número de threads de descarga
 threads = 40
 
-# Ubicación del Meme y Tomtom
+# Ubicación del Meme
 meme-path = /usr/bin/meme-meme
 
 # Meme

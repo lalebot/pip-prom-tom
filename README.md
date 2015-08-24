@@ -23,7 +23,6 @@
 
 ## Parametrización
 + Meme & Tomtom
-+ 
 
 ## Materiales
 Hacerlo con threads que esperen http://www.genbetadev.com/python/multiprocesamiento-en-python-threads-a-fondo-introduccion
@@ -45,6 +44,4 @@ se declaran las funciones
 se va transformando en un pipeline
 threading
 Agregar la carga de la configuracion en un archivo plano .conf con variables editables y que ese archivo se valide al inicio.
-Agregar otra base de datos con los 30 promotores, con cod de analisis diferencial 2497 y 30
 Agregar el análisis PlantCare
-
