@@ -3,6 +3,9 @@
 # pipeline false o true, muestra o no menu
 pipeline = false
 
+# Número de threads de descarga
+threads = 40
+
 # Ubicación del Meme y Tomtom
 meme-path = /usr/bin/meme-meme
 

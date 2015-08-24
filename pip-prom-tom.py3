@@ -27,9 +27,8 @@ def menu():
 	print(" 3 - Crear archivos FASTA por Familia")
 	print(" 4 - Análisis MEME")
 	print(" 5 - Análisis TOMTOM")
-	print(" 6 - Análisis PlantCare")
-	print(" 7 - PIPELINE")
-	print(" 7 - PIPELINE")
+	#print(" 6 - Análisis PlantCare")
+	print(" 10 - PIPELINE")
 	print(" 0 - Salir")
 
 
@@ -45,7 +44,8 @@ def parametros():
 			pip_pip = linea.split('= ')[1]
 		if 'meme-path =' in linea:
 			memepath = linea.split('= ')[1]
-
+		if 'threads =' in linea:
+			nro_threads = linea.split('= ')[1]
 	file_param.close()
 
 
@@ -138,19 +138,11 @@ def inicializar():
                                                                 
 '''
 def up_bdd():
-	# Hacerlo con threads que esperen http://www.genbetadev.com/python/multiprocesamiento-en-python-threads-a-fondo-introduccion
-	# hasta que la bdd quede llena y se va ejecutando varios t n veces y se los detiene
-	# Si la bdd no esta llena lanzar 20 thead, pausar, corroborar, luego cortarlos,
-	# imprimir el porcentaje de carga de la bdd
-	# pasar por parámetros la cantidad de hilos segun el rendimiento de la pc y la conexion a internet
-	for i in range(40):
+	for i in range(nro_threads):
 		i = threading.Thread(target=up1_bdd)
 		i.start()
-	for j in range(15):
-		j = threading.Thread(target=up1_bdd30)
-		j.start()
-	c = 1
-	while c > 0:
+	b = 1
+	while b > 0:
 		time.sleep(3)
 		while True:
 			try:
@@ -158,9 +150,6 @@ def up_bdd():
 				conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 				conn.execute("SELECT count(nom) FROM Prom WHERE adn is null")
 				b = conn.fetchone()
-				conn.execute("SELECT count(nom) FROM Prom30 WHERE adn is null")
-				b = b + conn.fetchone()
-				c = b[0] + b[1]
 				conn.close()
 				con.close()
 				break
