@@ -19,14 +19,16 @@ import threading
 |__|  |__| |_______||__| \__|  \______/  '''
 
 def menu():
-	print("Bienvenido al Pipeline")
+	print("Bienvenido al Pip-Prom-Tom")
+	print("Un Simple Pipeline que extrae Promotores de Tomate.")
 	print("Menu:")
 	print(" 1 - Inicializar la Base de datos y todos los archivos")
 	print(" 2 - Cargar la Bdd desde -SolGenomics- y armarse de paciencia")
 	print(" 3 - Crear archivos FASTA por Familia")
 	print(" 4 - Análisis MEME")
 	print(" 5 - Análisis TOMTOM")
-	# print(" 6 - Análisis PlantCare")
+	print(" 6 - Análisis PlantCare")
+	print(" 7 - PIPELINE")
 	print(" 7 - PIPELINE")
 	print(" 0 - Salir")
 
