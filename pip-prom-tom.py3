@@ -34,7 +34,7 @@ def menu():
 
 def parametros():
 	try:
-		file_param = open('param.txt', 'r')
+		file_param = open('init.conf', 'r')
 	except: 
 		print("Error al abrir el archivo de configuración")
 		exit()
