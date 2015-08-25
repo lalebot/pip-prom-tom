@@ -9,7 +9,6 @@ import time
 import os
 import threading
 
-
 '''
 .___  ___.  _______ .__   __.  __    __  
 |   \/   | |   ____||  \ |  | |  |  |  | 
@@ -374,6 +373,7 @@ def tomtom():
 	path_tomtom = os.getcwd()+'/tomtom_out/'
 	if not os.path.exists(path_tomtom):
 		os.makedirs(path_tomtom)
+	# http://meme-suite.org/meme-software/Databases/motifs/motif_databases.12.7.tgz
 	path_db = os.getcwd() + "/motif_databases/JASPAR_CORE_2014_plants.meme"
 	try: 
 		con = lite.connect('prom.db')
