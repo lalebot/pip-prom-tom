@@ -15,13 +15,14 @@ import threading
 |  \  /  | |  |__   |   \|  | |  |  |  | 
 |  |\/|  | |   __|  |  . `  | |  |  |  | 
 |  |  |  | |  |____ |  |\   | |  `--'  | 
-|__|  |__| |_______||__| \__|  \______/  '''
-
+|__|  |__| |_______||__| \__|  \______/  
+'''
 def menu():
 	print("Bienvenido al Pip-Prom-Tom")
-	print("Un Simple Pipeline que extrae Promotores de Tomate.")
+	print("Un Simple Pipeline que extrae Promotores de genes de Tomate.")
+	##############
 	print("Menu:")
-	print(" 1 - Inicializar la Base de datos y todos los archivos")
+	print(" 1 - Inicializar la Base de datos y cargar la lista de promotores")
 	print(" 2 - Cargar la Bdd desde -SolGenomics- y armarse de paciencia")
 	print(" 3 - Crear archivos FASTA por Familia")
 	print(" 4 - Análisis MEME")
@@ -29,6 +30,7 @@ def menu():
 	print(" 6 - Análisis PlantCare")
 	print(" 10 - PIPELINE")
 	print(" 0 - Salir")
+	##############
 
 
 def parametros():
@@ -58,7 +60,7 @@ def parametros():
                                                                                                    
 '''
 def inicializar():
-	print("Inicializacion")
+	print("Inicialización")
 	try:
 		con = lite.connect('prom.db')
 		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
@@ -66,61 +68,32 @@ def inicializar():
 		conn.execute("CREATE TABLE Prom(nom TEXT UNIQUE NOT NULL, fam TEXT, mf TEXT, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd
 		con.commit()
 	except lite.Error as e:
-		print("Error borrar y crear Bdd: ", e.args[0])
-	# Abrir el archivo con los datos de los promotores, familia y funcion molecular de los 2947
+		print("Error borrar la tabla y crear Bdd: ", e.args[0])
+	# Abrir el archivo con los datos de los promotores
 	try:
-		file_tabla_nff = open('Tabla_nombre_fam_FM.txt', 'r')
-		nom_tff_in = file_tabla_nff.read()
-		file_tabla_nff.close()
+		file_list_prom = open('exa_prom.txt', 'r')
+		list_prom = file_list_prom.read()
+		file_list_prom.close()
 	except: 
-		print("Error al abrir el archivo: Tabla_nombre_fam_FM.txt")
-	nom_tff_in = nom_tff_in.split('\n')
+		print("Error al abrir el archivo: exa_prom.txt")
+	list_prom = list_prom.split('\n')
 	try:
-		nom_tff_in.remove('')
+		list_prom.remove('')
 	except:
-		print("nom_tff_in sin vacio")
+		print("list_prom sin vacio")
 	# Cargar la Bdd
-	for i in nom_tff_in:
+	for i in list_prom:
 		i=i.split('\t')
 		try:
 			conn.execute("INSERT INTO Prom (nom,fam,mf) VALUES(?,?,?)",(i[0],i[1],i[2]))
 		except:
 			print("error en Insert 1")
-
 	# Grabar los cambios en la Bdd
 	try: 
 		con.commit()
-		print("Bdd 2497 cargada con Nombre, Familia y MF.")
+		print("Bdd entrada cargada.")
 	except:
-		print("Commit error Bdd2497")
-
-	# Abrir el archivo con los datos de los promotores de los 30 y si se expresan
-	try:
-		file_tabla_30 = open('Tabla30_nombre_fam_exp.txt', 'r')
-		nom_t30_in = file_tabla_30.read()
-		file_tabla_30.close()
-	except: 
-		print("Error al abrir el archivo: Tabla30_nombre_fam_exp.txt")
-	nom_t30_in = nom_t30_in.split('\n')
-	try:
-		nom_t30_in.remove('')
-	except:
-		print("nom_tff_in sin vacio")
-	# Cargar la Bdd30
-	for i in nom_t30_in:
-		i=i.split('\t')
-		try:
-			conn.execute("INSERT INTO Prom30 (nom,exp) VALUES(?,?)",(i[0],i[1]))
-		except lite.Error as e:
-			print("Error en la carga de Bdd30 - Insert: ", e.args[0])
-
-	# Grabar los cambios en la Bdd
-	try: 
-		con.commit()
-		print("Bdd30 cargada con Nombre y expresion")
-	except:
-		print("Commit error Bdd30")
-
+		print("Commit error Bdd entrada")
 	# Cerrar la conexion a la Bdd
 	if con:
 		conn.close()

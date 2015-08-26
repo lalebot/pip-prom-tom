@@ -9,9 +9,14 @@
 
 ## Todo:
 
-+ Parametrización por django
-+ Git
++ Recordar que es un pipeline sencillo
+
++ ~~Elegir bdd~~
++ ~~Elegir archivo que contiene la lista de promotores.~~
++ Quitar la separación por familia
 + Ampliar la busqueda a varias bases de datos
+
++ Git
 + Python
 + Solgenomics generic
 + Bdd dinámica, crearla
@@ -22,7 +27,8 @@
 + TomTom
 
 ## Parametrización
-+ Meme & Tomtom
++ Meme 
++ Tomtom
 
 ## Materiales
 Hacerlo con threads que esperen http://www.genbetadev.com/python/multiprocesamiento-en-python-threads-a-fondo-introduccion
