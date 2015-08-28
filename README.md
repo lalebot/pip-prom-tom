@@ -11,20 +11,20 @@
 
 + Recordar que es un pipeline sencillo
 
-+ ~~Elegir bdd~~
-+ ~~Elegir archivo que contiene la lista de promotores.~~
-+ Quitar la separación por familia
-+ Ampliar la busqueda a varias bases de datos
+- [x] ~~Elegir bdd~~
+- [ ] ~~Elegir archivo que contiene la lista de promotores.~~
+- [ ] Quitar la separación por familia
+- [ ] Ampliar la busqueda a varias bases de datos
 
-+ Git
-+ Python
-+ Solgenomics generic
-+ Bdd dinámica, crearla
-+ Threads
-+ Config
-+ Linux
-+ Meme
-+ TomTom
+- [x] Git
+- [x] Python
+- [ ] Solgenomics generic
+- [ ] Bdd dinámica, crearla
+- [ ] Threads
+- [x] Config
+- [x] Meme  
+- [x] TomTom
+- [ ] Log
 
 ## Parametrización
 + Meme 
@@ -43,6 +43,8 @@ $ sqlite3 test.db
 $ .tables
 $ .exit
 ```
+
+
 + Multiplies instancias, random, manejo de conexiones argupadas, sleep para esperar - mejora de 15 segundos a 2.5-3 segundos por archivo descargado. O sea de 10,5 horas a 2 horas promedio para a descarga de los 2500 cabeceras
 + Ejecucion local de MEME
 + Análisis TomTom
