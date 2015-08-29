@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Importo las librerias que necesito
+'''
+pip-prom-tom
+Author: Alejandro Damián Pistilli <apistillAAAAA@unr.edu.ar> (with the poly- tail removed)
+'''
+
 import urllib.request
 import urllib.parse
 import sqlite3 as lite
