@@ -1,4 +1,4 @@
-# Pipeline Bioinformático
+# Pipeline Especialización en Bioinformática
 
 ## Requisitos:
 

@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 '''
-pip-prom-tom
-Author: Alejandro Damián Pistilli <apistillAAAAA@unr.edu.ar> (with the poly- tail removed)
+Simple Pipeline que extrae Promotores de genes de Tomate - Pip-Prom-Tom
+Author: Alejandro Damián Pistilli <apistillAAA@unr.edu.ar> (Con el triple 'AAA' eliminado)
 '''
 
 import urllib.request
