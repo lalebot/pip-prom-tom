@@ -6,16 +6,19 @@ Para ello se conecta a **www.solgenomics.com** y va iterando cada código de pro
 
 
 ```perl
-#!/usr/local/perl
-
+#!/usr/bin/perl
 use strict;
 use warnings;
+use Cwd;
 
 use LWP::Simple;
 use HTTP::Request;
 
-my $filename = '/home/lale/pip-prom-tom/exa_prom.txt';
-my $fileout = '/home/lale/pip-prom-tom/exa_prom_out.fasta';
+my $filename = getcwd . '/exa_prom.txt';
+my $fileout = getcwd . '/exa_prom_out.fasta';
+
+print $filename;
+print $fileout;
 
 my $content;
 my $content2;
@@ -26,7 +29,7 @@ my @op;
 # Abro el archivo de entrada.
 open(my $fi, '<:encoding(UTF-8)', $filename) or die "Could not open file '$filename' $!";
 # Abro el archivo de salida para.
-open(my $fo, ">$fileout") or die "No se puede abrir '$fileout' $!";
+open(my $fo, ">>$fileout") or die "No se puede abrir '$fileout' $!";
 
 # Recorro la lista de motivos.
 while (my $linea = <$fi>) {
@@ -38,12 +41,13 @@ while (my $linea = <$fi>) {
         if(($linea_html =~ /feature/) && ($linea_html =~ /details/)){
             @cod = $linea_html =~ /[0-9]{8}/g;
         }
+    }
     $content2 = get("http://solgenomics.net/feature/$cod[0]/details");
-    # Selecciono los "1000 pares de bases upstream"
     while (my $linea_html2 = $content2) {
+        # Selecciono los "1000 pares de bases upstream"
         if($linea_html2 =~ /1000 bp upstream/){
             # Obtengo 3 número de 8 cifras que corresponden al lugar en donde está el motivo
-            @op = $linea_html =~ /[0-9]{8}/g;
+            @op = $linea_html2 =~ /[0-9]{8}/g;
         }
     }
     # Obtengo un archivo fasta.
