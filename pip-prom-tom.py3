@@ -24,7 +24,6 @@ import threading
 def menu():
 	print("Bienvenido al Pip-Prom-Tom")
 	print("Un Simple Pipeline que extrae Promotores de genes de Tomate.")
-	##############
 	print("Menu:")
 	print(" 1 - Inicializar la Base de datos y cargar la lista de promotores")
 	print(" 2 - Cargar la Bdd desde -SolGenomics- y armarse de paciencia")
@@ -34,7 +33,6 @@ def menu():
 	print(" 6 - Análisis PlantCare")
 	print(" 10 - PIPELINE")
 	print(" 0 - Salir")
-	##############
 
 
 def parametros():
@@ -411,6 +409,7 @@ def pipe():
 	print("Tomtom")
 	tomtom()
 	print("¡Pipeline completo!")
+	exit();
 
 '''
 .___  ___.      ___       __  .__   __. 
