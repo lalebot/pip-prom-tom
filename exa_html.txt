@@ -1,0 +1,600 @@
+<!DOCTYPE html PUBLICCCCC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    
+
+  <title>Sol Genomics Network</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+  <link rel="stylesheet" href="/css/sgn.css" type="text/css" />
+  <link rel="stylesheet" href="/css/jquery-sgn-theme/jquery-ui-1.10.3.custom.css" type="text/css" />
+  <link rel="stylesheet" href="/css/colorbox/colorbox.css" type="text/css" />
+  <link rel="stylesheet" href="/css/jstree/themes/default/style.min.css" />
+
+  <link rel="search" type="application/opensearchdescription+xml" title="SGN Sol Search" href="/documents/sgn_sol_search.xml" />
+
+  <script language="javascript" type="text/javascript">
+     JSAN = {};
+     JSAN.use = function() {};
+     MochiKit = {__export__: false};
+  </script>
+
+  
+
+  <script src="/js/jquery.js" type="text/javascript"></script>
+<script src="/js/sgn.js" type="text/javascript"></script>
+<script src="/js/jquery/simpletooltip.js" type="text/javascript"></script>
+<script src="/js/MochiKit/Base.js" type="text/javascript"></script>
+<script src="/js/MochiKit/Logging.js" type="text/javascript"></script>
+<script src="/js/CXGN/Effects.js" type="text/javascript"></script>
+<script src="/js/CXGN/Page/FormattingHelpers.js" type="text/javascript"></script>
+<script src="/js/CXGN/Base.js" type="text/javascript"></script>
+<script src="/js/CXGN/Cookie.js" type="text/javascript"></script>
+<script src="/js/CXGN/User.js" type="text/javascript"></script>
+<script src="/js/CXGN/UserPrefs.js" type="text/javascript"></script>
+<script src="/js/CXGN/Page/Toolbar.js" type="text/javascript"></script>
+<script src="/js/CXGN/List.js" type="text/javascript"></script>
+<script src="/js/jquery/cookie.js" type="text/javascript"></script>
+<script src="/js/jqueryui.js" type="text/javascript"></script>
+<script src="/js/CXGN/Login.js" type="text/javascript"></script>
+<script src="/js/jquerymigrate.js" type="text/javascript"></script>
+
+  
+</head>
+
+<body>
+  
+<div id="outercontainer">
+  <a name="top"></a>
+
+  
+  
+  <!-- top links and quick search -->
+<table id="siteheader" cellpadding="0" cellspacing="0">
+<tr>
+  <td rowspan="3" width="10" class="sunlogo">
+    <a href="/"><img src="/documents/img/sgn_logo_icon.png" width="70" height="70" border="0" alt="SGN Home" title="Sol Genomics Network Home" id="sgnlogo" /></a>
+  </td>
+  <td style="vertical-align: bottom">
+
+<!-- Lists dialog -->
+<div id="list_dialog" overflow="auto" >
+</div>
+
+<div id="list_item_dialog" overflow="auto" >
+</div>
+
+<div id="working" style="text-align : center;">
+  <img src="/img/wheel.gif" />
+  <div id="working_msg"></div>
+</div>
+
+
+<div id="login_window" style="visibility: hidden" >
+  <table>
+    <tr><td>Username</td><td><input type="text" size="20" id="username_field" name="username_field" /></td></tr>
+    <tr><td>Password</td><td><input type="password" size="20" id="password_field" name="password_field" /></td></tr>
+  </table>  
+</div>  
+
+  
+    <a href="/"><img id="sgntext" src="/documents/img/sgn_logo_text.png" width="230" height="21" border="0" alt="SGN Home" title="Sol Genomics Network Home" /></a>
+
+  </td>
+  <td width="50%" class="clonecart">
+     <div id="clone_shoppingcart" style="display: none">
+         <span id="clone_cart_count"></span> clone(s) in cart (<a class="toplink" style="text-decoration: underline" href="/search/clone-order.pl">order</a>)
+     </div>
+  </td>
+  <td class="toplink" width="50%">
+
+          <a class="toplink" href="/">home</a>
+        | <a class="toplink" href="/forum/topics.pl">forum</a>
+        | <a class="toplink" href="/contact/form">contact</a>
+        | <a class="toplink" href="/help/index.pl">help</a>
+        | <a class="toplink" href="/help/faq.pl">faq</a>
+		<span id="open_developer_toolbar" style="display:none">
+
+		| <a class="toplink" href="#" onclick="openDeveloperToolbar(); return false">devbar</a>
+		</span>
+  </td>
+</tr>
+<tr>
+  <td colspan="3">
+
+  <table class="toolbar" summary="" cellspacing="0" cellpadding="0">
+<tr class="toolbar_content">
+  <td class="toolbar_l"><img src="/documents/img/toolbar_l.gif" alt="" /></td>
+  <td class="toolbar_content" onmouseover="CXGN.Page.Toolbar.showmenu('search')" onmouseout="CXGN.Page.Toolbar.hidemenu()" style="text-align: left">
+    <a class="toolbar_menuname" href="/search/direct_search.pl?search=loci">search</a>
+    <div style="position: relative; text-align: left">
+    <table cellspacing="0" cellpadding="0" id="search" class="toolbar_popmenu">
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/search/organisms">Organisms</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/search/locus">Genes</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/search/features">Genome features</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/search/stocks">Phenotypes</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/search/phenotypes/qtl">QTLs</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/search/transcripts/unigene">Unigenes</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/search/family">Gene Families</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/search/markers">Markers</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/search/genomic/clones">BACs</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/search/transcripts/est">ESTs and libraries</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/insitu/">Insitu database</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/search/images">Images</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/search/expression">Expression</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/search/people">People</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/help/faq.pl">FAQ</a></td></tr>
+    </table>
+
+    </div>
+  </td>
+  <td class="toolbar_content" onmouseover="CXGN.Page.Toolbar.showmenu('maps')" onmouseout="CXGN.Page.Toolbar.hidemenu()" style="text-align: center">
+    <a class="toolbar_menuname" href="/cview/">maps</a>
+    <div style="position: relative; text-align: left">
+    <table cellspacing="0" cellpadding="0" id="maps" class="toolbar_popmenu">
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/map.pl?map_id=9&amp;show_offsets=1&amp;show_ruler=1">Tomato-EXPEN 2000</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/map.pl?map_id=31&amp;show_offsets=1&amp;show_ruler=1">Tomato-Kazusa/SolCAP</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/map.pl?map_id=34&amp;show_offsets=1&amp;show_ruler=1">Tomato QTLs</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/map.pl?map_id=p9&amp;show_offsets=1&amp;show_ruler=1">Tomato physical map</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/map.pl?map_id=c9&amp;show_offsets=1&amp;show_ruler=1">Tomato FPC contig map</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/map.pl?map_id=il6&amp;show_offsets=1&amp;show_ruler=1">Tomato IL map</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/map.pl?map_id=13">Tomato FISH map</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/map.pl?map_id=agp">Tomato AGP map</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/map.pl?map_version_id=58">Pepper COSII map</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/map.pl?map_id=11">Pepper-AC99</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/map.pl?map_id=10">Pepper-FA03</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/map.pl?map_id=3">Potato-TXB 1992</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/map.pl?map_version_id=63">Eggplant COSII map</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/map.pl?map_id=6">Eggplant-LXM 2002</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/map.pl?map_id=15">Tobacco SSR 2007</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/map.pl?map_id=7&amp;show_offsets=1&amp;show_ruler=1">Arabidopsis COSII</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/view_chromosome.pl?show_offsets=1&amp;show_ruler=1&amp;show_offsets=1">Comparative viewer...</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/index.pl">See all available maps...</a></td></tr>
+    </table>
+
+    </div>
+  </td>
+  <td class="toolbar_content" onmouseover="CXGN.Page.Toolbar.showmenu('genomes')" onmouseout="CXGN.Page.Toolbar.hidemenu()" style="text-align: center">
+    <a class="toolbar_menuname" href="/genomes/">genomes</a>
+    <div style="position: relative; text-align: left">
+    <table cellspacing="0" cellpadding="0" id="genomes" class="toolbar_popmenu">
+       <tr><td class="toolbar_item"><span class="toolbar_item">Reference genomes</span></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/organism/Solanum_lycopersicum/genome">Tomato</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/organism/Solanum_pennellii/genome"><i>Solanum pennellii</i></a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/organism/Solanum_tuberosum/genome">Potato</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/organism/Capsicum_annuum/genome">Pepper</a></td></tr>
+       <tr><td class="toolbar_item"><span class="toolbar_item">Draft genomes</span></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/organism/Solanum_pimpinellifolium/genome"><i>Solanum pimpinellifolium</i></a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/organism/Nicotiana_benthamiana/genome"><i>Nicotiana benthamiana</i></a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/organism/Nicotiana_tabacum/genome"><i>Nicotiana tabacum</i> &amp; related</a></td></tr>
+       <tr><td class="toolbar_item"><span class="toolbar_item">Resequencing projects</span></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/organism/Solanum_lycopersicum/inbred_genomes"><i>Solanum lycopersicum</i> inbreds</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/organism/Solanum_lycopersicum/tomato_150">150 Tomato Genome Resequencing Project</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/organism/Solanum_lycopersicum/tomato_360">BGI Tomato 360 genomes</a></td></tr>
+       <tr><td class="toolbar_item"><span class="toolbar_item">Projects</span></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/solanaceae-project/index.pl">Solanaceae project (SOL)</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/organism/sol100/view">SOL-100 Project</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/organism/Solanum_lycopersicum/genome">International Tomato Sequencing Project</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/about/us_tomato_sequencing.pl">U.S. tomato sequencing project</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="http://bti.cornell.edu/research/projects/nicotiana-benthamiana"><i>Nicotiana benthamiana</i> BTI site</a></td></tr>
+    </table>
+
+    </div>
+  </td>
+  <td class="toolbar_content" onmouseover="CXGN.Page.Toolbar.showmenu('tools')" onmouseout="CXGN.Page.Toolbar.hidemenu()" style="text-align: center">
+    <a class="toolbar_menuname" href="/tools/">tools</a>
+    <div style="position: relative; text-align: left">
+    <table cellspacing="0" cellpadding="0" id="tools" class="toolbar_popmenu">
+       <tr><td class="toolbar_item"><span class="toolbar_item">Sequence Analysis</span></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/tools/blast/">BLAST</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  target=$option_target  href="http://vigs.solgenomics.net/">VIGS Tool</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/tools/align_viewer/">Alignment Analyzer</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/tools/tree_browser/">Tree Browser</a></td></tr>
+       <tr><td class="toolbar_item"><span class="toolbar_item">Mapping</span></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/jbrowse/">Genome Browser (Jbrowse)</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/cview/view_chromosome.pl?show_offsets=1&amp;show_ruler=1&amp;show_offsets=1">Comparative Map Viewer</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/tools/caps_designer/caps_input.pl">CAPS Designer</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/search/phenotypes/qtl">solQTL: QTL Mapping</a></td></tr>
+       <tr><td class="toolbar_item"><span class="toolbar_item">Molecular Biology</span></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/tools/insilicopcr">In Silico PCR</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/ted">Tomato Expression Database (TED)</a></td></tr>
+       <tr><td class="toolbar_item"><span class="toolbar_item">Systems Biology</span></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/tools/solcyc/">SolCyc Biochemical Pathways</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/tools/interactomics">Coffee Interactomic Data</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/tools/onto/">SGN Ontology Browser</a></td></tr>
+       <tr><td class="toolbar_item"><span class="toolbar_item">Breeder Tools</span></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/breeders/home">Breeder Home</a></td></tr>
+       <tr><td class="toolbar_item"><span class="toolbar_item">Bulk Query</span></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/tools/bulk?mode=ftp">FTP Site</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/tools/bulk?mode=genes">Download Gene Sequences</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/tools/bulk">Clones, Arrays, Unigenes and BACs</a></td></tr>
+       <tr><td class="toolbar_item"><a class="toolbar_item"  href="/tools/bulk?mode=converter">Unigene Converter</a></td></tr>
+    </table>
+
+    </div>
+  </td>
+
+  <td class="toolbar_search toolbar_content">
+    <form name="quicksearch" class="quicksearch" action="/search/quick_search.pl">
+      <input class="quicksearch field" type="text" name="term" size="14" />
+      <input class="quicksearch imgbutton" type="image" src="/documents/img/sol_search_button.gif" value="sol search" />
+    </form>
+  </td>
+  <td class="toolbar_r" height="1">
+    <img src="/documents/img/toolbar_r.gif" alt="" />
+  </td>
+</tr>
+</table>
+<script language="JavaScript" type="text/javascript">
+  CXGN.Page.Toolbar.addmenu('search');
+  CXGN.Page.Toolbar.addmenu('maps');
+  CXGN.Page.Toolbar.addmenu('genomes');
+  CXGN.Page.Toolbar.addmenu('tools');
+</script>
+
+
+
+<script language="JavaScript" type="text/javascript">
+jQuery( function() {
+  CXGN.Page.Toolbar.addmenu('search');
+  CXGN.Page.Toolbar.addmenu('maps');
+  CXGN.Page.Toolbar.addmenu('genomes');
+  CXGN.Page.Toolbar.addmenu('tools');
+  CXGN.Page.Toolbar.hideall();
+});
+</script>
+
+
+  </td>
+</tr>
+<tr>
+
+  <td class="toplink" colspan="3" style="text-align: right">
+
+    <a class="toplink" style="text-decoration: underline" href="/solpeople/login.pl"      >log in</a>
+  | <a class="toplink" style="text-decoration: underline" href="/solpeople/new-account.pl">new user</a>
+
+  </td>
+</tr>
+</table>
+
+<script defer="defer">
+jQuery(document).ready( function() { 
+
+  setUpLogin();
+  setUpLists();
+
+    jQuery('#working').dialog( { 
+      height: 120,
+      width:  100,
+      modal: true,
+      autoOpen: false,
+      closeOnEscape: false,
+      // open: function() {jQuery(this).closest('.ui-dialog').find('.ui-dialog-titlebar-close').hide(); },
+      open: function(event, ui) { jQuery(".ui-dialog-titlebar-close", ui.dialog).hide(); jQuery('.ui-dialog-titlebar-close').blur();},
+	  
+      title: 'Working...'
+    });
+});
+
+</script>
+
+
+  <table id="pagecontent_t" summary="" width="740" cellpadding="0" cellspacing="0" border="0">
+  <tr><td id="pagecontent_td">
+
+<!-- END HEADER -->
+
+
+
+
+
+<div id="pagetitle"><h3>Search</h3></div>
+
+
+<center>
+<table class="modesel" summary="" cellspacing="0">
+  <tr>
+    <td id="mb0_tl" class="modesel_tl"><img src="/img/modesel_tl.gif" alt="" /></td>
+    <td id="mb0_t" class="modesel_t"></td>
+    <td id="mb0_tr" class="modesel_tr"><img src="/img/modesel_tr.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb1_tl" class="modesel_tl"><img src="/img/modesel_tl.gif" alt="" /></td>
+    <td id="mb1_t" class="modesel_t"></td>
+    <td id="mb1_tr" class="modesel_tr"><img src="/img/modesel_tr.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb2_tl" class="modesel_tl"><img src="/img/modesel_tl.gif" alt="" /></td>
+    <td id="mb2_t" class="modesel_t"></td>
+    <td id="mb2_tr" class="modesel_tr"><img src="/img/modesel_tr.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb3_tl" class="modesel_tl"><img src="/img/modesel_tl.gif" alt="" /></td>
+    <td id="mb3_t" class="modesel_t"></td>
+    <td id="mb3_tr" class="modesel_tr"><img src="/img/modesel_tr.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb4_tl" class="modesel_tl"><img src="/img/modesel_tl.gif" alt="" /></td>
+    <td id="mb4_t" class="modesel_t"></td>
+    <td id="mb4_tr" class="modesel_tr"><img src="/img/modesel_tr.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb5_tl" class="modesel_tl"><img src="/img/modesel_tl.gif" alt="" /></td>
+    <td id="mb5_t" class="modesel_t"></td>
+    <td id="mb5_tr" class="modesel_tr"><img src="/img/modesel_tr.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb6_tl" class="modesel_tl"><img src="/img/modesel_tl.gif" alt="" /></td>
+    <td id="mb6_t" class="modesel_t"></td>
+    <td id="mb6_tr" class="modesel_tr"><img src="/img/modesel_tr.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb7_tl" class="modesel_tl"><img src="/img/modesel_tl.gif" alt="" /></td>
+    <td id="mb7_t" class="modesel_t"></td>
+    <td id="mb7_tr" class="modesel_tr"><img src="/img/modesel_tr.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb8_tl" class="modesel_tl"><img src="/img/modesel_tl.gif" alt="" /></td>
+    <td id="mb8_t" class="modesel_t"></td>
+    <td id="mb8_tr" class="modesel_tr"><img src="/img/modesel_tr.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb9_tl" class="modesel_tl"><img src="/img/modesel_tl.gif" alt="" /></td>
+    <td id="mb9_t" class="modesel_t"></td>
+    <td id="mb9_tr" class="modesel_tr"><img src="/img/modesel_tr.gif" alt="" /></td>
+  </tr>
+  <tr>
+    <td id="mb0_l" class="modesel_l"><img src="/img/modesel_l.gif" alt="" /></td>
+    <td id="mb0_c" class="modesel_c"><a class="modesel" onclick="CXGN.Page.FormattingHelpers.modesel_switch_highlight('','mb0'); " href="/search/organisms">Organisms</a></td>
+    <td id="mb0_r" class="modesel_r"><img src="/img/modesel_r.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb1_l" class="modesel_l"><img src="/img/modesel_l.gif" alt="" /></td>
+    <td id="mb1_c" class="modesel_c"><a class="modesel" onclick="CXGN.Page.FormattingHelpers.modesel_switch_highlight('','mb1'); " href="/search/loci">Genes</a></td>
+    <td id="mb1_r" class="modesel_r"><img src="/img/modesel_r.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb2_l" class="modesel_l"><img src="/img/modesel_l.gif" alt="" /></td>
+    <td id="mb2_c" class="modesel_c"><a class="modesel" onclick="CXGN.Page.FormattingHelpers.modesel_switch_highlight('','mb2'); " href="/search/features">Genome Features</a></td>
+    <td id="mb2_r" class="modesel_r"><img src="/img/modesel_r.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb3_l" class="modesel_l"><img src="/img/modesel_l.gif" alt="" /></td>
+    <td id="mb3_c" class="modesel_c"><a class="modesel" onclick="CXGN.Page.FormattingHelpers.modesel_switch_highlight('','mb3'); " href="/search/phenotypes">QTLs &amp; Phenotypes</a></td>
+    <td id="mb3_r" class="modesel_r"><img src="/img/modesel_r.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb4_l" class="modesel_l"><img src="/img/modesel_l.gif" alt="" /></td>
+    <td id="mb4_c" class="modesel_c"><a class="modesel" onclick="CXGN.Page.FormattingHelpers.modesel_switch_highlight('','mb4'); " href="/search/transcripts">Transcripts</a></td>
+    <td id="mb4_r" class="modesel_r"><img src="/img/modesel_r.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb5_l" class="modesel_l"><img src="/img/modesel_l.gif" alt="" /></td>
+    <td id="mb5_c" class="modesel_c"><a class="modesel" onclick="CXGN.Page.FormattingHelpers.modesel_switch_highlight('','mb5'); " href="/search/family">Unigene Families</a></td>
+    <td id="mb5_r" class="modesel_r"><img src="/img/modesel_r.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb6_l" class="modesel_l"><img src="/img/modesel_l.gif" alt="" /></td>
+    <td id="mb6_c" class="modesel_c"><a class="modesel" onclick="CXGN.Page.FormattingHelpers.modesel_switch_highlight('','mb6'); " href="/search/markers">Markers</a></td>
+    <td id="mb6_r" class="modesel_r"><img src="/img/modesel_r.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb7_l" class="modesel_l"><img src="/img/modesel_l.gif" alt="" /></td>
+    <td id="mb7_c" class="modesel_c"><a class="modesel" onclick="CXGN.Page.FormattingHelpers.modesel_switch_highlight('','mb7'); " href="/search/genomic/clones">Genomic Clones</a></td>
+    <td id="mb7_r" class="modesel_r"><img src="/img/modesel_r.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb8_l" class="modesel_l"><img src="/img/modesel_l.gif" alt="" /></td>
+    <td id="mb8_c" class="modesel_c"><a class="modesel" onclick="CXGN.Page.FormattingHelpers.modesel_switch_highlight('','mb8'); " href="/search/images">Images</a></td>
+    <td id="mb8_r" class="modesel_r"><img src="/img/modesel_r.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb9_l" class="modesel_l"><img src="/img/modesel_l.gif" alt="" /></td>
+    <td id="mb9_c" class="modesel_c"><a class="modesel" onclick="CXGN.Page.FormattingHelpers.modesel_switch_highlight('','mb9'); " href="/search/expression">Expression</a></td>
+    <td id="mb9_r" class="modesel_r"><img src="/img/modesel_r.gif" alt="" /></td>
+  </tr>
+  <tr>
+    <td id="mb0_bl" class="modesel_bl"><img src="/img/modesel_bl.gif" alt="" /></td>
+    <td id="mb0_b" class="modesel_b"></td>
+    <td id="mb0_br" class="modesel_br"><img src="/img/modesel_br.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb1_bl" class="modesel_bl"><img src="/img/modesel_bl.gif" alt="" /></td>
+    <td id="mb1_b" class="modesel_b"></td>
+    <td id="mb1_br" class="modesel_br"><img src="/img/modesel_br.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb2_bl" class="modesel_bl"><img src="/img/modesel_bl.gif" alt="" /></td>
+    <td id="mb2_b" class="modesel_b"></td>
+    <td id="mb2_br" class="modesel_br"><img src="/img/modesel_br.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb3_bl" class="modesel_bl"><img src="/img/modesel_bl.gif" alt="" /></td>
+    <td id="mb3_b" class="modesel_b"></td>
+    <td id="mb3_br" class="modesel_br"><img src="/img/modesel_br.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb4_bl" class="modesel_bl"><img src="/img/modesel_bl.gif" alt="" /></td>
+    <td id="mb4_b" class="modesel_b"></td>
+    <td id="mb4_br" class="modesel_br"><img src="/img/modesel_br.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb5_bl" class="modesel_bl"><img src="/img/modesel_bl.gif" alt="" /></td>
+    <td id="mb5_b" class="modesel_b"></td>
+    <td id="mb5_br" class="modesel_br"><img src="/img/modesel_br.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb6_bl" class="modesel_bl"><img src="/img/modesel_bl.gif" alt="" /></td>
+    <td id="mb6_b" class="modesel_b"></td>
+    <td id="mb6_br" class="modesel_br"><img src="/img/modesel_br.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb7_bl" class="modesel_bl"><img src="/img/modesel_bl.gif" alt="" /></td>
+    <td id="mb7_b" class="modesel_b"></td>
+    <td id="mb7_br" class="modesel_br"><img src="/img/modesel_br.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb8_bl" class="modesel_bl"><img src="/img/modesel_bl.gif" alt="" /></td>
+    <td id="mb8_b" class="modesel_b"></td>
+    <td id="mb8_br" class="modesel_br"><img src="/img/modesel_br.gif" alt="" /></td>
+    <td class="modesel_spacer"></td>
+    <td id="mb9_bl" class="modesel_bl"><img src="/img/modesel_bl.gif" alt="" /></td>
+    <td id="mb9_b" class="modesel_b"></td>
+    <td id="mb9_br" class="modesel_br"><img src="/img/modesel_br.gif" alt="" /></td>
+  </tr>
+</table>
+</center>
+<hr class="modesel" />
+
+
+
+
+<div id="pagetitle"><h3>Quick search for &quot;Solyc10g083560&quot;</h3></div>
+
+
+<div class="page_introduction">
+  Note: The quick search does not perform exactly the same queries as
+  full searches for the various data types.  If your desired result
+  does not appear, you may want to try again with one of the advanced
+  search tools in the "search" menu.
+</div>
+
+
+
+
+<a class="info_section_anchor" name="exact_matches"></a>
+
+<table cellspacing="0" cellpadding="0" class="infosectionhead" summary=""><tr><td class="infosectiontitle">Exact matches</td><td class="infosectionsubtitle">&nbsp;</td></tr></table>
+
+<div class="infosectioncontent" >
+
+
+  
+    <dl class="xref">
+        <dt>Genetic loci</dt>
+        <dd>
+              <ul class="xref xref_link xref_link_locuspages">
+        <li><a class="xref xref_link xref_link_locuspages" href="/phenome/locus_display.pl?locus_id=37905">Tomato locus Solyc10g083560</a>
+
+    </ul>
+
+        </dd>
+        <dt>Genomic details</dt>
+        <dd>
+              <ul class="xref xref_link xref_link_featurepages">
+        <li><a class="xref xref_link xref_link_featurepages" href="/feature/17963267/details">Solyc10g083560.1 gene feature details</a>
+
+    </ul>
+
+        </dd>
+    </dl>
+
+
+
+
+  <hr style="border: 0; border-bottom: 1px solid #aaa; width: 90%; margin: 1.5em auto 1.2em auto"  />
+
+  <div>
+    <dl>
+    <dt>Identifiers</dt>
+    <dd>
+      <div style="float: left; width: 50%">
+        <div class="ghosted">0 cDNA clone identifiers</div>
+        <div class="ghosted">0 EST identifiers</div>
+      </div>
+      <div style="float: right; width: 50%">
+        <div class="ghosted">0 unigene identifiers</div>
+        <div class="ghosted">0 array identifiers</div>
+      </div>
+      <div style="clear: both; margin-bottom: -1.7em">&nbsp;</div>
+    </dd>
+    </dl>
+  </div>
+
+
+</div>
+
+
+
+
+
+
+
+<a class="info_section_anchor" name="fuzzy_searches"></a>
+
+<table cellspacing="0" cellpadding="0" class="infosectionhead" summary=""><tr><td class="infosectiontitle">Fuzzy searches</td><td class="infosectionsubtitle">click to view search results&nbsp;</td></tr></table>
+
+<div class="infosectioncontent" >
+
+  <div style="float: left; width: 50%">
+    <dl>
+    <dt>Identifiers</dt>
+    <dd>
+      <div class="ghosted">0 marker identifiers</div>
+      
+      <div class="ghosted">0 phenotype identifiers</div>
+      <div><a class="quicksearch_hit" href="/search/locus_search.pl?w8e4_any_name_matchtype=contains&amp;w8e4_any_name=Solyc10g083560">1 locus or allele identifiers</a></div>
+    </dd>
+    <dt>People (searching by name)</dt>
+    <dd><div class="ghosted">0 people</div></dd>
+    <dt>Images</dt>
+    <dd>
+      <div class="ghosted">0 images</div>
+    </dd>
+    </dl>
+  </div>
+  <div style="float: right; width: 50%">
+    <dl>
+    <dt>cDNA libraries</dt>
+    <dd><div class="ghosted">0 cDNA libraries</div></dd>
+    <dt>Annotations</dt>
+    <dd>
+      <div class="ghosted">0 manual annotations</div>
+      <div class="ghosted">0 automatic annotations</div>
+    </dd>
+    <dt>Web pages</dt>
+    <dd>
+      <div class="ghosted">0 pages on SGN</div>
+      
+      <div class="ghosted">0 pages on the entire web</div>
+    </dd>
+    </dl>
+  </div>
+
+</div>
+
+
+
+
+
+
+
+<!-- BEGIN FOOTER-->
+
+
+  <div id="page_report_a_problem">
+    Something wrong? <a href="/contact/form?subject=Problem%20with%20page%20http%3A%2F%2Fsolgenomics.net%3A8080%2Fsearch%2Fquick%3Fterm%3DSolyc10g083560%26x%3D51%26y%3D8&body=Hello%20SGN%2C%0A%0AI%20noticed%20a%20problem%20with%20the%20page%20at%20http%3A%2F%2Fsolgenomics.net%3A8080%2Fsearch%2Fquick%3Fterm%3DSolyc10g083560%26x%3D51%26y%3D8.%0A%0A%3Cplease%20fill%20in%20details%20here%3E%0A">Report a problem</a>
+  </div>
+
+</td></tr>
+<tr><td  id="pagecontent_footer">
+
+    <table width="100%" cellspacing="0" cellpadding="0" id="pagefooter">
+      <tr><td style="vertical-align: top; width: 370px; font-size:smaller" colspan="2" >
+
+	  SGN is supported by the <a class="footer" href="http://www.nsf.gov/awardsearch/showAward?AWD_ID=0820612">NSF (#0820612)</a>,
+    <a class="footer" href="http://www.usda.gov">USDA CSREES</a> and hosted at the <a class="footer" href="http://bti.cornell.edu">Boyce Thompson Institute.</a>
+    <br />
+    Subscribe to the <a class="footer" href="http://rubisco.sgn.cornell.edu/mailman/listinfo/sgn-announce/">sgn-announce mailing list</a> for updates. 
+    Send comments using the <a href="/contact/form">feedback form</a><br />
+Cite SGN using <a class="footer" href="http://nar.oxfordjournals.org/content/early/2014/11/26/nar.gku1195.full" target="_new"> Fernandez-Pozo et al, 2014</a> | 
+    <a href="/legal.pl">Disclaimer</a></td></tr>
+      <tr><td>
+                <a href="http://bti.cornell.edu/" class="footer">
+                  <img width="91" alt="Boyce Thompson Institute" src="/documents/img/bti_logo_bw.png" title="Boyce Thompson Institute" height="70" border="0" style="position:relative; top:10px; left:0px; " /></a>
+
+                <a href="http://www.nsf.gov/" class="footer">
+                  <img width="77" alt="National Science Foundation" src="/documents/img/nsf_logo.png" title="National Science Foundation" height="76" border="0" style="position:relative;top:10px;left:20px; " /></a>
+
+		<a href="http://www.nifa.usda.gov/" class="footer">
+                  <img width="250" alt="USDA NIFA" src="/documents/img/usda_nifa_h_2.jpg" title="USDA NIFA" height="44" border="0" style="position: relative; top:-5px; left:50px"  /></a>
+
+                  <a href="http://www.gmod.org/" class="footer">
+                    <img width="150" alt="Powered by GMOD" src="/documents/img/powered_by_gmod_150x71.png" title="Powered by GMOD" height="71" border="0" style="position:relative; top:0px; left:120px" /></a>
+                
+            </td></tr>
+    </table>
+</td></tr>
+</table>
+</div>
+
+   <!-- Google Analytics Code -->
+   <script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+
+   <script type="text/javascript">
+   _uacct = "UA-2460904-1";
+   //prevent js error on remote script load failure
+   if(typeof(urchinTracker) == "function"){
+   	urchinTracker();
+    }
+   </script>
+
+
+</body>
+</html>
+
