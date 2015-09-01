@@ -30,7 +30,6 @@ def menu():
 	print(" 3 - Crear archivos FASTA por Familia")
 	print(" 4 - Análisis MEME")
 	print(" 5 - Análisis TOMTOM")
-	print(" 6 - Análisis PlantCare")
 	print(" 10 - PIPELINE")
 	print(" 0 - Salir")
 
@@ -101,7 +100,6 @@ def inicializar():
 		conn.close()
 		con.close()
 
-
 '''
  __    __  .______   .______       _______  .______   .______   
 |  |  |  | |   _  \  |   _  \     |       \ |   _  \  |   _  \  
@@ -121,7 +119,7 @@ def up_bdd():
 		while True:
 			try:
 				con = lite.connect('prom.db')
-				conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
+				conn = con.cursor()
 				conn.execute("SELECT count(nom) FROM Prom WHERE adn is null")
 				b = conn.fetchone()
 				conn.close()
@@ -183,6 +181,7 @@ def up1_bdd():
 			url = "http://solgenomics.net/search/quick?term="+i[0]+"&x=51&y=8"
 			f = opener.open(url)
 			# response = urllib.request.urlopen(url, timeout=10).read().decode('utf-8')
+			# Expresiones regulares
 			content = f.read()
 			contents = content.decode(encoding='UTF-8')
 			if contents.find("Genomic detail") >= 0:
@@ -376,17 +375,6 @@ def tomtom():
 	if con:
 		conn.close()
 		con.close()
-
-'''
-.______    __          ___      .__   __.   ______     ___      .______       _______ 
-|   _  \  |  |        /   \     |  \ |  |  /      |   /   \     |   _  \     |   ____|
-|  |_)  | |  |       /  ^  \    |   \|  | |  ,----'  /  ^  \    |  |_)  |    |  |__   
-|   ___/  |  |      /  /_\  \   |  . `  | |  |      /  /_\  \   |      /     |   __|  
-|  |      |  `----./  _____  \  |  |\   | |  `----./  _____  \  |  |\  \----.|  |____ 
-| _|      |_______/__/     \__\ |__| \__|  \______/__/     \__\ | _| `._____||_______|
-                                                                                      '''
-def plant():
-   print("PlantCare")
 
 
 '''
