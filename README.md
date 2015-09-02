@@ -3,7 +3,7 @@
 ## Requisitos:
 
 + Linux OS
-+ Python 3
++ Python3
 + Sqlite3
 + MEME
 
@@ -12,7 +12,7 @@
 + Recordar que es un pipeline sencillo
 
 - [x] ~~Elegir bdd~~
-- [ ] ~~Elegir archivo que contiene la lista de promotores.~~
+- [x] ~~Elegir archivo que contiene la lista de promotores.~~
 - [ ] Quitar la separación por familia
 - [ ] Ampliar la busqueda a varias bases de datos
 
@@ -20,13 +20,14 @@
 - [x] Python
 - [ ] Solgenomics generic
 - [ ] Bdd dinámica, crearla
-- [ ] Threads
+- [x] Threads
 - [x] Config
 - [x] Meme  
 - [x] TomTom
 - [ ] Log
 - [ ] Regular expresion
-- [ ] Parametrización por linea de comando
+- [ ] Parametrización por linea de comando- https://docs.python.org/3/library/argparse.html - https://github.com/ucdavis-bioinformatics/alignerviz/blob/master/aviz.py
+- [ ] -i input -o output
 
 ## Parametrización
 + Meme 
