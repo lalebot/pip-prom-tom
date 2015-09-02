@@ -26,6 +26,7 @@
 - [x] TomTom
 - [ ] Log
 - [ ] Regular expresion
+- [ ] Parametrización por linea de comando
 
 ## Parametrización
 + Meme 
