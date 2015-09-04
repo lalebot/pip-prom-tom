@@ -5,12 +5,12 @@
 + Linux OS
 + Python3
 + Sqlite3
-+ MEME
-+ TOMTOM
++ MEME & TOMTOM
 
 ## Todo:
 
 + Recordar que es un pipeline sencillo
+
 
 - [x] ~~Elegir bdd~~
 - [x] ~~Elegir archivo que contiene la lista de promotores.~~
