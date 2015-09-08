@@ -77,7 +77,6 @@ def inicializar():
 		file_list_prom.close()
 	except: 
 		print("Error al abrir el archivo: exa_prom.txt")
-		break
 	list_prom = list_prom.split('\n')
 	try:
 		list_prom.remove('')
@@ -86,9 +85,10 @@ def inicializar():
 	# Cargar la Bdd
 	for i in list_prom:
 		try:
+			print (i)
 			conn.execute("INSERT INTO Prom (nom) VALUES(?)",(i[0]))
-		except:
-			print("error en Insert 1")
+		except lite.Error as e:
+			print("Error al cargar la Bdd: ", e.args[0])
 	# Grabar los cambios en la Bdd
 	try: 
 		con.commit()
