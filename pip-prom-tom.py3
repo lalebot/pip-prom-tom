@@ -4,6 +4,7 @@
 '''
 Simple Pipeline que extrae Promotores de genes de Tomate - Pip-Prom-Tom
 Author: Alejandro Damián Pistilli <apistillAAA@unr.edu.ar> (Con el triple 'AAA' eliminado)
+Implementado para acceder a la bdd de la especie de tomate: xxxxxx
 '''
 
 import urllib.request
@@ -12,6 +13,7 @@ import sqlite3 as lite
 import time
 import os
 import threading
+import re
 
 '''
 .___  ___.  _______ .__   __.  __    __  
@@ -26,8 +28,8 @@ def menu():
 	print("Un Simple Pipeline que extrae Promotores de genes de Tomate.")
 	print("Menu:")
 	print(" 1 - Inicializar la Base de datos y cargar la lista de promotores")
-	print(" 2 - Cargar la Bdd desde -SolGenomics- y armarse de paciencia")
-	print(" 3 - Crear archivos FASTA")
+	print(" 2 - Cargar la Bdd desde -SolGenomics-")
+	print(" 3 - Crear archivo FASTA")
 	print(" 4 - Análisis MEME")
 	print(" 5 - Análisis TOMTOM")
 	print(" 10 - PIPELINE")
@@ -43,12 +45,13 @@ def parametros():
 	for linea in file_param.readlines():
 		# Averiguo si el script debe ejecutarse en modo pipeline o mostrar menú
 		if 'pipeline =' in linea:
-			pip_pip = linea.split('= ')[1]
+			pip_pip = linea.split('= ')[1].rstrip('\n')
 		if 'meme-path =' in linea:
-			memepath = linea.split('= ')[1]
+			memepath = linea.split('= ')[1].rstrip('\n')
 		if 'threads =' in linea:
-			nro_threads = linea.split('= ')[1]
+			nro_threads=int(linea.split('= ')[1].rstrip('\n'))
 	file_param.close()
+	return(pip_pip,memepath,nro_threads)
 
 
 '''
@@ -66,7 +69,7 @@ def inicializar():
 		con = lite.connect('prom.db')
 		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 		conn.execute("DROP TABLE IF EXISTS Prom") # Elimnar la Bdd
-		conn.execute("CREATE TABLE Prom(nom TEXT UNIQUE NOT NULL, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd
+		conn.execute("CREATE TABLE Prom(id INTEGER AUTO_INCREMENT PRYMARY KEY, nom TEXT, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd
 		con.commit() # Confirmar los cambios
 	except lite.Error as e:
 		print("Error borrar la tabla y crear Bdd: ", e.args[0])
@@ -79,9 +82,10 @@ def inicializar():
 		print("Error al abrir el archivo: exa_prom.txt")
 	list_prom = list_prom.split('\n')
 	try:
+		list_prom = list(set(list_prom))
 		list_prom.remove('')
 	except:
-		print("exa_prom sin vacios")
+		print("exa_prom sin duplicados ni espacios vacios")
 	# Cargar la Bdd
 	for i in list_prom:
 		try:
@@ -93,8 +97,8 @@ def inicializar():
 	try: 
 		con.commit()
 		print("Bdd entrada cargada.")
-	except:
-		print("Commit error Bdd entrada")
+	except lite.Error as e:
+		print("Commit error Bdd entrada: ", e.args[0])
 	# Cerrar la conexion a la Bdd
 	if con:
 		conn.close()
@@ -109,7 +113,8 @@ def inicializar():
  \______/  | _|      | _|         |_______/ |______/  |______/  
                                                                 
 '''
-def up_bdd():
+# Se utiliza la combinación de Bdd (Sqlite en nuestro caso) y Threads para que los hilos trabajen paralelamente y puedan acceder de manera conjunta a la misma base de datos actualizándola hasta estar completa.
+def up_bdd(nro_threads):
 	for i in range(nro_threads):
 		i = threading.Thread(target=up1_bdd)
 		i.start()
@@ -126,15 +131,14 @@ def up_bdd():
 				con.close()
 				break
 			except Exception as e:
-				print (e.args[0])
+				print ("Desliz en la carga. ", e.args[0])
 				if con:
 					conn.close()
 					con.close()
 				time.sleep(0.25)
-		#os.system('cls' if os.name == 'nt' else 'clear')
 		#print("Porcentaje de carga: %3.2f Procesados: %4d Faltantes: %4d" % (round((2497-b[0])*100/2497,2),2497-b[0],b[0]))
 	time.sleep(5)
-	print("Carga exitosa :)")
+	print("La carga de la Base de datos se realizó correctamente. :)")
 
 
 '''
@@ -147,8 +151,6 @@ def up_bdd():
 '''
 def up1_bdd():
 	# Consultar la bdd y traer sólo los datos que tengan el adn vacio y luego armar una lista y grabar
-	numeros = "1234567890" # Para buscar el codigo dentro del html
-	caracteres = "1234567890." # Para buscar los caracteres dentro del 1000 up
 	while True:
 		try: 
 			con = lite.connect('prom.db')
@@ -159,7 +161,7 @@ def up1_bdd():
 			con.close()
 			break
 		except Exception as e:
-			print("Error al traer la lista de nom desde la Bdd")
+			print("Error al traer la lista de nom desde la Bdd", e.args[0])
 			if con:
 				conn.close()
 				con.close()
@@ -178,24 +180,17 @@ def up1_bdd():
 		fasta=[]
 		# PRIMERA ETAPA buscar el cod
 		try:
-			url = "http://solgenomics.net/search/quick?term="+i[0]+"&x=51&y=8"
+			# url = "http://solgenomics.net/search/quick?term="+i[1]+"&x=51&y=8"
+			url = "http://solgenomics.net/search/quick?term=Solyc01g080620&x=51&y=8"
 			f = opener.open(url)
 			# response = urllib.request.urlopen(url, timeout=10).read().decode('utf-8')
-			# Expresiones regulares
 			content = f.read()
 			contents = content.decode(encoding='UTF-8')
-			if contents.find("Genomic detail") >= 0:
-				contents= contents.split('/details">')[0]
-				contents= contents.split('Genomic detail')[1]
-				if len(contents) != 0:
-					for ele in contents:
-						if ele in numeros:
-							cod+=ele
-			else:
-				cod = "NoGenDet";
-		except Exception as problema:
-			print ("1- Se ha producido un problema al acceder a la web:" + url)
-			print (problema)
+			cod = re.match('/feature/([0-9]{8})/details',contents)
+			print (cod.group(1))
+		except Exception as probl:
+			print ("1- Se ha producido un problema al acceder a la web: " + url)
+			print (probl)
 		# Segunda etapa 1000 upstream
 		try:
 			if cod != "NoGenDet":
@@ -208,9 +203,9 @@ def up1_bdd():
 			else:
 				contents= contents.split(">1000 bp upstream</option>")[0]
 				contents= contents.split("3000 bp upstream</option>")[1]
-		except Exception as problema:
-			print ("2 - Se ha producido un problema al acceder a la web:" + url)
-			print (problema)
+		except Exception as probl:
+			print ("2 - Se ha producido un problema al acceder a la web: " + url)
+			print (probl)
 		if len(contents) != 0:
 			for ele in contents:
 				if ele in caracteres:
@@ -252,17 +247,10 @@ def up1_bdd():
 
 
 '''
-  ______     ___      .______        _______      ___      .______          _______    ___      .___  ___. 
- /      |   /   \     |   _  \      /  _____|    /   \     |   _  \        |   ____|  /   \     |   \/   | 
-|  ,----'  /  ^  \    |  |_)  |    |  |  __     /  ^  \    |  |_)  |       |  |__    /  ^  \    |  \  /  | 
-|  |      /  /_\  \   |      /     |  | |_ |   /  /_\  \   |      /        |   __|  /  /_\  \   |  |\/|  | 
-|  `----./  _____  \  |  |\  \----.|  |__| |  /  _____  \  |  |\  \----.   |  |    /  _____  \  |  |  |  | 
- \______/__/     \__\ | _| `._____| \______| /__/     \__\ | _| `._____|   |__|   /__/     \__\ |__|  |__| 
-                                                                                                           
+crear fas
 '''
-def cargar_fam():
-	# Crear todas las familias
-	print("Crear todas las familias y generando archivos fasta...")
+def crear_fas():
+	print("Generando archivos fasta...")
 	try: 
 		con = lite.connect('prom.db')
 		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
@@ -387,11 +375,9 @@ def tomtom():
                                                                    '''
 def pipe():
 	print("Inicializando las Bases de datos")
-	#inicializar()
+	inicializar()
 	print("Cargar Bdd")
 	up_bdd()
-	print("Cargar")
-	cargar_fam()
 	print("Meme")
 	meme()
 	print("Tomtom")
@@ -409,7 +395,9 @@ def pipe():
                                         '''
 if __name__ == '__main__':
 	pip_pip = "false"
-	parametros()
+	# Cargo los parámetros
+	conf = parametros()
+	print (conf)
 	if pip_pip == "true":
 		pipe()
 	while True:
@@ -420,9 +408,10 @@ if __name__ == '__main__':
 		elif opcionMenu == "1":
 			inicializar()
 		elif opcionMenu == "2":
-			up_bdd()
+			up_bdd(1)
+			# up_bdd(conf[2])
 		elif opcionMenu == "3":
-			cargar_fam()
+			crear_fas()
 		elif opcionMenu == "4":
 			meme()
 		elif opcionMenu == "5":
@@ -461,5 +450,32 @@ if __name__ == '__main__':
 			if con:
 				conn.close()
 				con.close()
+		#############################################################################3
+		elif opcionMenu == "--":
+			opener = ""
+			url = ""
+			f= ""
+			content = ""
+			contents = "" #  cab_fasta y fasta
+			op = "" # cod_sg_up
+			cod = "" # cod_sg_bus8
+			opener = urllib.request.FancyURLopener({})
+			fasta=[]
+			# PRIMERA ETAPA buscar el cod
+			try:
+				# url = "http://solgenomics.net/search/quick?term="+i[1]+"&x=51&y=8"
+				url = "http://solgenomics.net/search/quick?term=Solyc01g080620&x=51&y=8"
+				f = opener.open(url)
+				# response = urllib.request.urlopen(url, timeout=10).read().decode('utf-8')
+				content = f.read()
+				contents = content.decode(encoding='UTF-8')
+				contents.split("\n")
+				for linea in contents:
+					if re.match("/feature/([0-9]{8})/details",linea):
+						print (linea)
+			except Exception as probl:
+				print ("1- Se ha producido un problema al acceder a la web: " + url)
+				print (probl)
+		#############################################################################3
 		else:
 			print("Opcion incorrecta. Intente de nuevo.")

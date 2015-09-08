@@ -59,3 +59,4 @@ $ .exit
 + Agregar la carga de la configuracion en un archivo plano .conf con variables editables y que ese archivo se valide al inicio.
 + Agregar el análisis PlantCare
 + Agregar archivo de configuracion
++ Agrego libreria *re* de regular expresions
