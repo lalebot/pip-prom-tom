@@ -27,7 +27,7 @@ def menu():
 	print("Menu:")
 	print(" 1 - Inicializar la Base de datos y cargar la lista de promotores")
 	print(" 2 - Cargar la Bdd desde -SolGenomics- y armarse de paciencia")
-	print(" 3 - Crear archivos FASTA por Familia")
+	print(" 3 - Crear archivos FASTA")
 	print(" 4 - Análisis MEME")
 	print(" 5 - Análisis TOMTOM")
 	print(" 10 - PIPELINE")
@@ -66,8 +66,8 @@ def inicializar():
 		con = lite.connect('prom.db')
 		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 		conn.execute("DROP TABLE IF EXISTS Prom") # Elimnar la Bdd
-		conn.execute("CREATE TABLE Prom(nom TEXT UNIQUE NOT NULL, fam TEXT, mf TEXT, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd
-		con.commit()
+		conn.execute("CREATE TABLE Prom(nom TEXT UNIQUE NOT NULL, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd
+		con.commit() # Confirmar los cambios
 	except lite.Error as e:
 		print("Error borrar la tabla y crear Bdd: ", e.args[0])
 	# Abrir el archivo con los datos de los promotores
@@ -77,16 +77,16 @@ def inicializar():
 		file_list_prom.close()
 	except: 
 		print("Error al abrir el archivo: exa_prom.txt")
+		break
 	list_prom = list_prom.split('\n')
 	try:
 		list_prom.remove('')
 	except:
-		print("list_prom sin vacio")
+		print("exa_prom sin vacios")
 	# Cargar la Bdd
 	for i in list_prom:
-		i=i.split('\t')
 		try:
-			conn.execute("INSERT INTO Prom (nom,fam,mf) VALUES(?,?,?)",(i[0],i[1],i[2]))
+			conn.execute("INSERT INTO Prom (nom) VALUES(?)",(i[0]))
 		except:
 			print("error en Insert 1")
 	# Grabar los cambios en la Bdd
