@@ -38,7 +38,8 @@
 Hacerlo con threads que esperen http://www.genbetadev.com/python/multiprocesamiento-en-python-threads-a-fondo-introduccion
 
 ## Bitácora
-+ Datos de inicio Excel a txt, utilizacion de sqlite como bdd,
++ Datos de inicio Excel a txt
++ utilizacion de sqlite como bdd,
 + Inicializar y crear la Bdd a partir del archivo
 + Abrir el sqlite y luego crear la bdd
 
@@ -60,3 +61,4 @@ $ .exit
 + Agregar el análisis PlantCare
 + Agregar archivo de configuracion
 + Agrego libreria *re* de regular expresions
++ 
