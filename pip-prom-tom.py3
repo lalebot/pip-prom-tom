@@ -69,7 +69,7 @@ def inicializar():
 		con = lite.connect('prom.db')
 		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 		conn.execute("DROP TABLE IF EXISTS Prom") # Elimnar la Bdd
-		conn.execute("CREATE TABLE Prom(id INTEGER AUTO_INCREMENT PRYMARY KEY, nom TEXT, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd
+		conn.execute("CREATE TABLE Prom(id INTEGER AUTO_INCREMENT PRYMARY KEY, nom TEXT UNIQUE NOT NULL, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd
 		# id nom cab_adn adn cod_sg_bus cod_sg_up exp
 		con.commit() # Confirmar los cambios
 	except lite.Error as e:
@@ -82,16 +82,13 @@ def inicializar():
 	except:
 		print("Error al abrir el archivo: exa_prom.txt")
 	list_prom = list_prom.split('\n')
-	try:
-		list_prom = list(set(list_prom))
-		list_prom.remove('')
-	except:
-		print("exa_prom sin duplicados ni espacios vacios")
+	print(len(list_prom))
 	# Cargar la Bdd
 	for i in list_prom:
 		try:
-			print (i)
-			conn.execute("INSERT INTO Prom (nom) VALUES(?)",(i[0]))
+			print(i)
+			if ([i] != '\n') or ([i] != ''):
+				conn.execute("INSERT INTO Prom (nom) VALUES(?)",[i])
 		except lite.Error as e:
 			print("Error al cargar la Bdd: ", e.args[0])
 	# Grabar los cambios en la Bdd
@@ -437,46 +434,16 @@ if __name__ == '__main__':
 
 		#############################################################################3
 		elif opcionMenu == "--":
-			#opener = ""
-			contents = ""
-			op = "" # cod_sg_up
-			cod = "" # cod_sg_bus8
-			opener = urllib.request.FancyURLopener({})
-			fasta=[]
+				# Abrir el archivo con los datos de los promotores
+				try:
+					file_list_prom = open('exa_prom.txt', 'r')
+					list_prom = file_list_prom.readlines()
+					file_list_prom.close()
+				except:
+					print (fallo)
 
-			try:
-				contents = opener.open("http://solgenomics.net/search/quick?term=Solyc01g080620&x=51&y=8").read().decode(encoding='UTF-8')
-				if re.search('/feature/([0-9]{8})/details',contents):
-					cod = re.search('/feature/([0-9]{8})/details',contents)
-				else:
-					cod="NoGenDet"
-			except Exception as probl:
-				print ("1- Se ha producido un problema al acceder a la web: " + url)
-				print (probl)
-			# Segunda etapa 1000 upstream
-			try:
-				if cod != "NoGenDet":
-					contents = opener.open("http://solgenomics.net/feature/" + cod.group(1) + "/details").read().decode(encoding='UTF-8')
-				if re.search('([0-9]{8}:[0-9]{8}..[0-9]{8})">1000 bp upstream',contents):
-					op = re.search('([0-9]{8}:[0-9]{8}..[0-9]{8})">1000 bp upstream',contents)
-					print(op.group(1))
-					print(op.group(1))
-				else:
-					op = 0
-			except Exception as probl:
-				print ("2 - Se ha producido un problema al acceder a la web: " + url)
-				print (probl)
-			# Tercera etapa bajo el FASTA y doy forma
-			try:
-				contents = opener.open("http://solgenomics.net/api/v1/sequence/download/multi?format=fasta&s=" + op.group(1)).read().decode(encoding='UTF-8')
-				fasta = contents.split('\n',1)
-			except Exception as probl:
-				print ("3 - Se ha producido un problema al acceder a la web:" + url)
-				print (prob)
-			# Grabar en la Bdd
-			if cod != '' and op != '' and len(fasta)!=0:
-				print(fasta)
-				print ("Esto anda mi chamaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaagoooooooooooooooooo")
+				for linea in list_prom:
+					print(linea)
 
 		#############################################################################3
 		else:
