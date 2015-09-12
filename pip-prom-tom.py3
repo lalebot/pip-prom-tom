@@ -70,6 +70,7 @@ def inicializar():
 		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 		conn.execute("DROP TABLE IF EXISTS Prom") # Elimnar la Bdd
 		conn.execute("CREATE TABLE Prom(id INTEGER AUTO_INCREMENT PRYMARY KEY, nom TEXT, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd
+		# id nom cab_adn adn cod_sg_bus cod_sg_up exp
 		con.commit() # Confirmar los cambios
 	except lite.Error as e:
 		print("Error borrar la tabla y crear Bdd: ", e.args[0])
@@ -121,17 +122,20 @@ def up_bdd(nro_threads):
 	b = 1
 	while b > 0:
 		time.sleep(3)
+		print("B: ",b)
 		while True:
 			try:
 				con = lite.connect('prom.db')
 				conn = con.cursor()
-				conn.execute("SELECT count(nom) FROM Prom WHERE adn is null")
+				conn.execute("SELECT count(id) FROM Prom WHERE adn is null")
+				# id nom cab_adn adn cod_sg_bus cod_sg_up exp
 				b = conn.fetchone()
+				print("Bfo: ",b)
 				conn.close()
 				con.close()
 				break
 			except Exception as e:
-				print ("Desliz en la carga. ", e.args[0])
+				print ("Desliz en la carga: ", e.args[0])
 				if con:
 					conn.close()
 					con.close()
@@ -169,10 +173,6 @@ def up1_bdd():
 	# Para cada una de las consultas que tengan ADN vacio
 	while i != None:
 		# Inicializacion dentro del For
-		opener = ""
-		url = ""
-		f= ""
-		content = ""
 		contents = "" #  cab_fasta y fasta
 		op = "" # cod_sg_up
 		cod = "" # cod_sg_bus8
@@ -180,56 +180,41 @@ def up1_bdd():
 		fasta=[]
 		# PRIMERA ETAPA buscar el cod
 		try:
-			# url = "http://solgenomics.net/search/quick?term="+i[1]+"&x=51&y=8"
-			url = "http://solgenomics.net/search/quick?term=Solyc01g080620&x=51&y=8"
-			f = opener.open(url)
 			# response = urllib.request.urlopen(url, timeout=10).read().decode('utf-8')
-			content = f.read()
-			contents = content.decode(encoding='UTF-8')
-			cod = re.match('/feature/([0-9]{8})/details',contents)
-			print (cod.group(1))
+			#contents = opener.open("http://solgenomics.net/search/quick?term="+i[1]+"Solyc01g080620&x=51&y=8").read().decode(encoding='UTF-8')
+			contents = opener.open("http://solgenomics.net/search/quick?term=Solyc01g080620&x=51&y=8").read().decode(encoding='UTF-8')
+			if re.search('/feature/([0-9]{8})/details',contents):
+				cod = re.search('/feature/([0-9]{8})/details',contents)
+			else:
+				cod="NoGenDet"
 		except Exception as probl:
 			print ("1- Se ha producido un problema al acceder a la web: " + url)
 			print (probl)
 		# Segunda etapa 1000 upstream
 		try:
 			if cod != "NoGenDet":
-				url = "http://solgenomics.net/feature/" + cod + "/details"
-				f = opener.open(url)
-				content = f.read()
-				contents= content.decode(encoding='UTF-8')
-				contents= contents.split(">1000 bp upstream</option>")[0]
-				contents= contents.split("3000 bp upstream</option>")[1]
+				contents = opener.open("http://solgenomics.net/feature/" + cod.group(1) + "/details").read().decode(encoding='UTF-8')
+			if re.search('([0-9]{8}:[0-9]{8}..[0-9]{8})">1000 bp upstream',contents):
+				op = re.search('([0-9]{8}:[0-9]{8}..[0-9]{8})">1000 bp upstream',contents)
 			else:
-				contents= contents.split(">1000 bp upstream</option>")[0]
-				contents= contents.split("3000 bp upstream</option>")[1]
+				op = 0
 		except Exception as probl:
 			print ("2 - Se ha producido un problema al acceder a la web: " + url)
 			print (probl)
-		if len(contents) != 0:
-			for ele in contents:
-				if ele in caracteres:
-					op+=ele
-				else:
-					if ele == ":":
-						op+="%3A"
 		# Tercera etapa bajo el FASTA y doy forma
 		try:
-			url = "http://solgenomics.net/api/v1/sequence/download/multi?format=fasta&s=" + op
-			f = opener.open(url)
-			content = f.read()
-			contents = content.decode(encoding='UTF-8')
+			contents = opener.open("http://solgenomics.net/api/v1/sequence/download/multi?format=fasta&s=" + op.group(1)).read().decode(encoding='UTF-8')
 			fasta = contents.split('\n',1)
-		except Exception as problema:
+		except Exception as probl:
 			print ("3 - Se ha producido un problema al acceder a la web:" + url)
-			print (problema)
+			print (prob)
 		# Grabar en la Bdd
-		if cod != '' and op !='' and len(fasta)!=0:
+		if cod != '' and op != '' and len(fasta)!=0:
 			while True:
 				try:
 					con = lite.connect('prom.db')
-					conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
-					conn.execute("UPDATE Prom SET cab_adn=?,adn=?,cod_sg_bus=?,cod_sg_up=? WHERE nom = ? ",(fasta[0],fasta[1],cod,op,i[0])) # Guardo los datos extraids en la bdd
+					conn = con.cursor()
+					conn.execute("UPDATE Prom SET cab_adn=?,adn=?,cod_sg_bus=?,cod_sg_up=? WHERE nom = ? ",(fasta[0],fasta[1],cod.group(1),op.group(1),i[0])) # Guardo los datos extraids en la bdd
 					con.commit()
 					conn.execute("SELECT nom FROM Prom WHERE adn is null ORDER BY random() LIMIT 30")
 					i=conn.fetchone()
@@ -408,8 +393,7 @@ if __name__ == '__main__':
 		elif opcionMenu == "1":
 			inicializar()
 		elif opcionMenu == "2":
-			up_bdd(1)
-			# up_bdd(conf[2])
+			up_bdd(conf[2])
 		elif opcionMenu == "3":
 			crear_fas()
 		elif opcionMenu == "4":
@@ -453,10 +437,7 @@ if __name__ == '__main__':
 
 		#############################################################################3
 		elif opcionMenu == "--":
-			opener = ""
-			url = ""
-			f= ""
-			content = ""
+			#opener = ""
 			contents = ""
 			op = "" # cod_sg_up
 			cod = "" # cod_sg_bus8
@@ -464,22 +445,39 @@ if __name__ == '__main__':
 			fasta=[]
 
 			try:
-				# url = "http://solgenomics.net/search/quick?term="+i[1]+"&x=51&y=8"
-				url = "http://solgenomics.net/search/quick?term=Solyc01g080620&x=51&y=8"
-				f = opener.open(url)
+				contents = opener.open("http://solgenomics.net/search/quick?term=Solyc01g080620&x=51&y=8").read().decode(encoding='UTF-8')
+				if re.search('/feature/([0-9]{8})/details',contents):
+					cod = re.search('/feature/([0-9]{8})/details',contents)
+				else:
+					cod="NoGenDet"
 			except Exception as probl:
 				print ("1- Se ha producido un problema al acceder a la web: " + url)
 				print (probl)
+			# Segunda etapa 1000 upstream
 			try:
-				content = f.read()
-				contents = content.decode(encoding='UTF-8')
-				contents.split('\n')
-				for linea in contents:
-					if re.match("/feature/([0-9]{8})/details",linea):
-						print (linea)
+				if cod != "NoGenDet":
+					contents = opener.open("http://solgenomics.net/feature/" + cod.group(1) + "/details").read().decode(encoding='UTF-8')
+				if re.search('([0-9]{8}:[0-9]{8}..[0-9]{8})">1000 bp upstream',contents):
+					op = re.search('([0-9]{8}:[0-9]{8}..[0-9]{8})">1000 bp upstream',contents)
+					print(op.group(1))
+					print(op.group(1))
+				else:
+					op = 0
 			except Exception as probl:
-				print ("RE: ")
+				print ("2 - Se ha producido un problema al acceder a la web: " + url)
 				print (probl)
+			# Tercera etapa bajo el FASTA y doy forma
+			try:
+				contents = opener.open("http://solgenomics.net/api/v1/sequence/download/multi?format=fasta&s=" + op.group(1)).read().decode(encoding='UTF-8')
+				fasta = contents.split('\n',1)
+			except Exception as probl:
+				print ("3 - Se ha producido un problema al acceder a la web:" + url)
+				print (prob)
+			# Grabar en la Bdd
+			if cod != '' and op != '' and len(fasta)!=0:
+				print(fasta)
+				print ("Esto anda mi chamaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaagoooooooooooooooooo")
+
 		#############################################################################3
 		else:
 			print("Opcion incorrecta. Intente de nuevo.")
