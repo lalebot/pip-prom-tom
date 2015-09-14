@@ -24,15 +24,16 @@ import re
 |__|  |__| |_______||__| \__|  \______/
 '''
 def menu():
+	print()
+	print("=================================================================")
 	print("Bienvenido al Pip-Prom-Tom")
 	print("Un Simple Pipeline que extrae Promotores de genes de Tomate.")
 	print("Menu:")
 	print(" 1 - Inicializar la Base de datos y cargar la lista de promotores")
 	print(" 2 - Cargar la Bdd desde -SolGenomics-")
 	print(" 3 - Crear archivo FASTA")
-	print(" 4 - Análisis MEME")
-	print(" 5 - Análisis TOMTOM")
-	print(" 10 - PIPELINE")
+	print(" 4 - Análisis MEME y TOMTOM")
+	print(" 9 - PIPELINE")
 	print(" 0 - Salir")
 
 
@@ -48,10 +49,12 @@ def parametros():
 			pip_pip = linea.split('= ')[1].rstrip('\n')
 		if 'meme-path =' in linea:
 			memepath = linea.split('= ')[1].rstrip('\n')
+		if 'tomtom-path =' in linea:
+			tomtompath = linea.split('= ')[1].rstrip('\n')
 		if 'threads =' in linea:
 			nro_threads=int(linea.split('= ')[1].rstrip('\n'))
 	file_param.close()
-	return(pip_pip,memepath,nro_threads)
+	return(pip_pip,memepath,nro_threads,tomtompath)
 
 
 '''
@@ -70,7 +73,7 @@ def inicializar():
 		con = lite.connect('prom.db')
 		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 		conn.execute("DROP TABLE IF EXISTS Prom") # Elimnar la Bdd
-		conn.execute("CREATE TABLE Prom(id INTEGER DEFAULT 1 PRIMARY KEY AUTOINCREMENT UNIQUE, nom TEXT UNIQUE NOT NULL, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd
+		conn.execute("CREATE TABLE Prom(id INTEGER DEFAULT 1 PRIMARY KEY AUTOINCREMENT UNIQUE, nom TEXT UNIQUE NOT NULL, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT)") # Crear las tablas de la bdd
 		# id nom cab_adn adn cod_sg_bus cod_sg_up exp
 		con.commit() # Confirmar los cambios
 	except lite.Error as e:
@@ -172,47 +175,56 @@ def up1_bdd():
 	while i != None:
 		# Inicializacion dentro del For
 		contents = "" #  cab_fasta y fasta
-		op = "" # cod_sg_up
-		cod = "" # cod_sg_bus8
+		op = 0 # cod_sg_up
+		cod = 0 # cod_sg_bus8
 		opener = urllib.request.FancyURLopener({})
 		fasta=[]
 		# PRIMERA ETAPA buscar el cod
 		try:
 			# response = urllib.request.urlopen(url, timeout=10).read().decode('utf-8')
-			#contents = opener.open("http://solgenomics.net/search/quick?term="+i[1]+"Solyc01g080620&x=51&y=8").read().decode(encoding='UTF-8')
-			contents = opener.open("http://solgenomics.net/search/quick?term=Solyc01g080620&x=51&y=8").read().decode(encoding='UTF-8')
+			contents = opener.open("http://solgenomics.net/search/quick?term="+i[0]+"&x=51&y=8").read().decode(encoding='UTF-8')
+			# contents = opener.open("http://solgenomics.net/search/quick?term=Solyc01g080620&x=51&y=8").read().decode(encoding='UTF-8')
 			if re.search('/feature/([0-9]{8})/details',contents):
-				cod = re.search('/feature/([0-9]{8})/details',contents)
+				codigo = re.search('/feature/([0-9]{8})/details',contents)
+				cod = codigo.group(1)
 			else:
-				cod="NoGenDet"
+				cod = 0
 		except Exception as probl:
-			print ("1- Se ha producido un problema al acceder a la web: " + url)
+			print ("E1 - Se ha producido un problema al acceder a la web")
+			print (i[0])
 			print (probl)
 		# Segunda etapa 1000 upstream
 		try:
-			if cod != "NoGenDet":
-				contents = opener.open("http://solgenomics.net/feature/" + cod.group(1) + "/details").read().decode(encoding='UTF-8')
-			if re.search('([0-9]{8}:[0-9]{8}..[0-9]{8})">1000 bp upstream',contents):
-				op = re.search('([0-9]{8}:[0-9]{8}..[0-9]{8})">1000 bp upstream',contents)
+			if cod != 0:
+				contents = opener.open("http://solgenomics.net/feature/" + cod + "/details").read().decode(encoding='UTF-8')
+			if re.search('([0-9]+:[0-9]+..[0-9]+)">1000 bp upstream',contents):
+				opcion = re.search('([0-9]+:[0-9]+..[0-9]+)">1000 bp upstream',contents)
+				op = opcion.group(1)
 			else:
 				op = 0
 		except Exception as probl:
-			print ("2 - Se ha producido un problema al acceder a la web: " + url)
+			print ("E2 - Se ha producido un problema al acceder a la web")
+			print (i[0])
 			print (probl)
 		# Tercera etapa bajo el FASTA y doy forma
 		try:
-			contents = opener.open("http://solgenomics.net/api/v1/sequence/download/multi?format=fasta&s=" + op.group(1)).read().decode(encoding='UTF-8')
-			fasta = contents.split('\n',1)
+			if op != 0:
+				# http://solgenomics.net/api/v1/sequence/download/multi?format=fasta&s=19629076%3A316215..317214
+				contents = opener.open("http://solgenomics.net/api/v1/sequence/download/multi?format=fasta&s=" + op).read().decode(encoding='UTF-8')
+				fasta = contents.split('\n',1)
+			else:
+				print ("E3 - Error al obtener la opción para descargar el fasta de: ", i[0])
 		except Exception as probl:
-			print ("3 - Se ha producido un problema al acceder a la web:" + url)
-			print (prob)
+			print ("E3 - Se ha producido un problema al acceder a la web")
+			print (i[0])
+			print (probl)
 		# Grabar en la Bdd
-		if cod != '' and op != '' and len(fasta)!=0:
+		if cod != 0 and op != 0 and len(fasta) != 0:
 			while True:
 				try:
 					con = lite.connect('prom.db')
 					conn = con.cursor()
-					conn.execute("UPDATE Prom SET cab_adn=?,adn=?,cod_sg_bus=?,cod_sg_up=? WHERE nom = ? ",(fasta[0],fasta[1],cod.group(1),op.group(1),i[0]))
+					conn.execute("UPDATE Prom SET cab_adn=?,adn=?,cod_sg_bus=?,cod_sg_up=? WHERE nom = ? ",(fasta[0],fasta[1],cod,op,i[0]))
 					con.commit()
 					conn.execute("SELECT nom FROM Prom WHERE adn is null ORDER BY random() LIMIT 30")
 					i=conn.fetchone()
@@ -266,79 +278,63 @@ def crear_fas():
 |  |  |  | |  |____ |  |  |  | |  |____
 |__|  |__| |_______||__|  |__| |_______|
                                         '''
-def meme():
+def meme(meme_path, tomtom_path):
 	# bc="export PATH=$PATH:" + os.getcwd() + "/meme/bin; "
-	# bc=("export PATH=$PATH:$HOME/meme/bin;") # para que se ubiqeu el meme
-	path_meme = os.getcwd()+'/meme_out/'
-	if not os.path.exists(path_meme):
-		os.makedirs(path_meme)
+	# bc=("export PATH=$PATH:$HOME/meme/bin;") # para que se ubique el meme
+	print("Análisis con MEME")
+	os.system('export LD_LIBRARY_PATH:=$PATH:/usr/lib/openmpi/lib/') # libreria que puede traer problema con el MEME descargado de AUR
+	path_meme_out = os.getcwd() + '/meme_out/'
+	if not os.path.exists(path_meme_out):
+		os.makedirs(path_meme_out)
 	try:
-		con = lite.connect('prom.db')
-		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
-		conn.execute("select distinct fam from Prom")
-	except:
-		print("Error: select distinct fam from Prom")
-	for i in conn:
-		try:
-			f=i[0].replace("/","--")
-			f=f.replace(" ","-")
-			path = os.getcwd()+'/Fam/'+ f +".fasta"
-			if (len(open(path,'r').readlines())) > 25: #Sólo proceso del Meme las familias con más de un promotor
-				# dna -mod oops -w 8 -minw 6 -maxw 8 -nmotifs 5 -psp dna4_8.psp -revcomp -maxsize 1000000000000 -o
-				# bashCom = bc + 'meme ' + path + " -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc "+ path_meme + f + "/"
-				bashCom = 'meme-meme ' + path + " -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc "+ path_meme + f + "/"
-				os.system(bashCom)
-		except Exception as e:
-			print("Error al analizar el meme por familias fasta")
-			print(e[0])
-	if con:
-		conn.close()
-		con.close()
+		path_fasta = os.getcwd() + "/prom_res.fasta"
+		# dna -mod oops -w 8 -minw 6 -maxw 8 -nmotifs 5 -psp dna4_8.psp -revcomp -maxsize 1000000000000 -o
+		# bashCom = bc + 'meme ' + path + " -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc "+ path_meme_out + f + "/"
+		meme_bash = meme_path + ' ' + path_fasta + " -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc " + path_meme_out + "/"
+		os.system(meme_bash)
+	except Exception as e:
+		print("Error al analizar con MEME")
+		print(e)
 
-
-'''
-.___________.  ______   .___  ___. .___________.  ______   .___  ___.
-|           | /  __  \  |   \/   | |           | /  __  \  |   \/   |
-`---|  |----`|  |  |  | |  \  /  | `---|  |----`|  |  |  | |  \  /  |
-    |  |     |  |  |  | |  |\/|  |     |  |     |  |  |  | |  |\/|  |
-    |  |     |  `--'  | |  |  |  |     |  |     |  `--'  | |  |  |  |
-    |__|      \______/  |__|  |__|     |__|      \______/  |__|  |__|
-                                                                      '''
-def tomtom():
 	print("Análisis con TOMTOM")
-	#bc=("export PATH=$PATH:$HOME/meme/bin;")
-	path_tomtom = os.getcwd()+'/tomtom_out/'
-	if not os.path.exists(path_tomtom):
-		os.makedirs(path_tomtom)
-	# http://meme-suite.org/meme-software/Databases/motifs/motif_databases.12.7.tgz
-	path_db = os.getcwd() + "/motif_databases/JASPAR_CORE_2014_plants.meme"
+	# bc=("export PATH=$PATH:$HOME/meme/bin;")
+	path_tomtom_out = os.getcwd() + '/tomtom_out/'
+	if not os.path.exists(path_tomtom_out):
+		os.makedirs(path_tomtom_out)
+	contents = "" 
+	opener = urllib.request.FancyURLopener({})
 	try:
-		con = lite.connect('prom.db')
-		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
-		conn.execute("SELECT DISTINCT fam FROM Prom")
-	except:
-		print("Error tomtom: select distinct fam from Prom")
-	for i in conn:
-		try:
-			f=i[0].replace("/","--")
-			f=i[0].replace("/","--")
-			f=f.replace(" ","-")
-			path = os.getcwd()+'/meme_out/'+ f +"/meme.txt" # meme
-			path_fasta = os.getcwd()+'/Fam/'+ f +".fasta"
-			if (len(open(path_fasta,'r').readlines())) > 25: #Sólo proceso del Meme las familias con más de un promotor
-				# tomtom -oc tomtom_example_output_files -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc STRGGTCAN.meme JASPAR_CORE_2009.meme
-				# tomtom -oc trial -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc motiflist.meme databaselist.meme
-				# bashCom = bc + 'tomtom ' + " -oc " + path_tomtom + f + "/ -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc " + path + " " + path_db
-				bashCom = 'meme-tomtom ' + " -oc " + path_tomtom + f + "/ -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc " + path + " " + path_db
-				os.system(bashCom)
-		except Exception as e:
-			print("Error al analizar el tomtom por familias fasta")
-			print(e[0])
-			print(i[0])
-	if con:
-		conn.close()
-		con.close()
+		contents = opener.open("http://meme-suite.org/meme-software/index.html").read().decode(encoding='UTF-8')
+		if re.search('Databases/motifs/motif_databases.([.0-9]+).tgz',contents):
+			codigo = re.search('Databases/motifs/motif_databases.([.0-9]+).tgz',contents)
+			print ("Versión de la Bdd: ", codigo.group(1))
+		else:
+			print ("No se pudo descargar la bdd de motivos")
+	except Exception as probl:
+		print ("TT - Se ha producido un problema al descargar la bdd de motivos")
+		print (probl)
+	path_dbb_out = os.getcwd() + '/.tmp/'
+	if not os.path.exists(path_dbb_out):
+		os.makedirs(path_dbb_out)
+	bashCom = "wget http://meme-suite.org/meme-software/Databases/motifs/motif_databases." + codigo.group(1) + ".tgz -P " + path_dbb_out
+	os.system(bashCom)
+	bashCom = " tar -xvzf " + path_dbb_out + "motif_databases." + codigo.group(1) + ".tgz"
+	os.system(bashCom)
 
+	path_db = os.getcwd() + "/motif_databases/JASPAR/JASPAR_CORE_2014_plants.meme"
+	try:
+		path_meme_file = path_meme_out + "meme.txt"
+		# tomtom -oc tomtom_example_output_files -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc STRGGTCAN.meme JASPAR_CORE_2009.meme
+		# tomtom -oc trial -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc motiflist.meme databaselist.meme
+		# bashCom = bc + 'tomtom ' + " -oc " + path_tomtom + f + "/ -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc " + path + " " + path_db
+		bashCom = tomtom_path + " -oc " + path_tomtom_out + " -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc " + path_meme_file + " " + path_db
+		os.system(bashCom)
+	except Exception as e:
+		print("Error al analizar el TOMTOM")
+		print(e[0])
+		print(i[0])
+
+		# Borrar tmp
 
 '''
 .______    __  .______    _______  __       __  .__   __.  _______
@@ -352,12 +348,12 @@ def pipe():
 	print("Inicializando las Bases de datos")
 	inicializar()
 	print("Cargar Bdd")
-	up_bdd()
+	up_bdd(conf[2])
+	print("FASTA")
+	crear_fas()
 	print("Meme")
-	meme()
-	print("Tomtom")
-	tomtom()
-	print("¡Pipeline completo!")
+	meme(conf[1],conf[3])
+	print("¡Pipeline completo! Revise los resultados.")
 	exit();
 
 '''
@@ -387,57 +383,11 @@ if __name__ == '__main__':
 		elif opcionMenu == "3":
 			crear_fas()
 		elif opcionMenu == "4":
-			meme()
-		elif opcionMenu == "5":
-			tomtom()
-		elif opcionMenu == "6":
-			plant()
-		elif opcionMenu == "7":
+			meme(conf[1],conf[3])
+		elif opcionMenu == "9":
 			pipe()
-		# Visualizar la Bdd
-		elif opcionMenu == "4-":
-			try:
-				con = lite.connect('prom.db')
-				conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
-			except:
-				print("Error")
-			conn.execute("SELECT nom FROM Prom WHERE adn is null ORDER BY random() LIMIT 30")
-			i=conn.fetchone()
-			print(i)
-
-			dump_file = open('dump.txt', 'w')
-			dump_file.close()
-			conn.execute("SELECT count(nom) FROM Prom WHERE adn is null")
-			a=conn.fetchone()
-			conn.execute("SELECT count(nom) FROM Prom WHERE adn is not null")
-			b=conn.fetchone()
-			print("Con adn")
-			print(b[0])
-			print(a[0])
-			print(round(b[0]/2497,2))
-			conn.execute("SELECT * FROM Prom")# WHERE adn is not null")
-			for i in conn:
-				dump_file=open("dump.txt", 'a')
-				#dump_file.write(i[0] + "\n")
-				dump_file.write(i[3]+"\t"+i[0]+"\t"+i[1]+"\t"+i[2]+"\n"+i[4]+"\n")
-				dump_file.close()
-			if con:
-				conn.close()
-				con.close()
-
-		#############################################################################3
-		elif opcionMenu == "--":
-				# Abrir el archivo con los datos de los promotores
-				try:
-					file_list_prom = open('exa_prom.txt', 'r')
-					list_prom = file_list_prom.readlines()
-					file_list_prom.close()
-				except:
-					print (fallo)
-
-				for linea in list_prom:
-					print(linea)
-
+		############################################################################3
+		# elif opcionMenu == "--":
 		#############################################################################3
 		else:
 			print("Opcion incorrecta. Intente de nuevo.")
