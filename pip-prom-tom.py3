@@ -28,6 +28,7 @@ def menu():
 	print("=================================================================")
 	print("Bienvenido al Pip-Prom-Tom")
 	print("Un Simple Pipeline que extrae Promotores de genes de Tomate.")
+	print("=================================================================")
 	print("Menu:")
 	print(" 1 - Inicializar la Base de datos y cargar la lista de promotores")
 	print(" 2 - Cargar la Bdd desde -SolGenomics-")
@@ -35,11 +36,12 @@ def menu():
 	print(" 4 - Análisis MEME y TOMTOM")
 	print(" 9 - PIPELINE")
 	print(" 0 - Salir")
+	print("=================================================================")
 
 
 def parametros():
 	try:
-		file_param = open('init.conf', 'r')
+		file_param = open('ini.conf', 'r')
 	except:
 		print("Error al abrir el archivo de configuración")
 		exit()
@@ -52,7 +54,7 @@ def parametros():
 		if 'tomtom-path =' in linea:
 			tomtompath = linea.split('= ')[1].rstrip('\n')
 		if 'threads =' in linea:
-			nro_threads=int(linea.split('= ')[1].rstrip('\n'))
+			nro_threads = int(linea.split('= ')[1].rstrip('\n'))
 	file_param.close()
 	return(pip_pip,memepath,nro_threads,tomtompath)
 
@@ -69,7 +71,7 @@ def parametros():
 def inicializar():
 	print("Inicialización")
 	try:
-		os.system('sqlite3 prom.db &') ##
+		os.system('sqlite3 prom.db &')
 		con = lite.connect('prom.db')
 		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 		conn.execute("DROP TABLE IF EXISTS Prom") # Elimnar la Bdd
@@ -309,7 +311,8 @@ def meme(meme_path, tomtom_path):
 			codigo = re.search('Databases/motifs/motif_databases.([.0-9]+).tgz',contents)
 			print ("Versión de la Bdd: ", codigo.group(1))
 		else:
-			print ("No se pudo descargar la bdd de motivos")
+			print ("No se pudo descargar la bdd de motivos.")
+			break
 	except Exception as probl:
 		print ("TT - Se ha producido un problema al descargar la bdd de motivos")
 		print (probl)
