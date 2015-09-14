@@ -29,6 +29,7 @@
 - [x] Regular expresion
 - [ ] Parametrización por linea de comando- https://docs.python.org/3/library/argparse.html - https://github.com/ucdavis-bioinformatics/alignerviz/blob/master/aviz.py
 - [ ] -i input -o output
+- [ ] Crear DB SQL desde el código
 
 ## Parametrización
 + Meme 
@@ -61,4 +62,4 @@ $ .exit
 + Agregar el análisis PlantCare
 + Agregar archivo de configuracion
 + Agrego libreria *re* de regular expresions
-+ 
++ Visor SQL: sqlitebrowser

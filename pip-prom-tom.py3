@@ -66,6 +66,7 @@ def parametros():
 def inicializar():
 	print("Inicialización")
 	try:
+		os.system('sqlite3 prom.db &') ##
 		con = lite.connect('prom.db')
 		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 		conn.execute("DROP TABLE IF EXISTS Prom") # Elimnar la Bdd
