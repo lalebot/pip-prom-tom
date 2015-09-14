@@ -5,6 +5,7 @@
 Simple Pipeline que extrae Promotores de genes de Tomate - Pip-Prom-Tom
 Author: Alejandro Damián Pistilli <apistillAAA@unr.edu.ar> (Con el triple 'AAA' eliminado)
 Implementado para acceder a la bdd de la especie de tomate: xxxxxx
+Hecho in Argentina.
 '''
 
 import urllib.request
@@ -41,7 +42,7 @@ def menu():
 
 def parametros():
 	try:
-		file_param = open('ini.conf', 'r')
+		file_param = open('conf.ini', 'r')
 	except:
 		print("Error al abrir el archivo de configuración")
 		exit()
@@ -69,7 +70,10 @@ def parametros():
 
 '''
 def inicializar():
+	print("==============")
 	print("Inicialización")
+	print("==============")
+	# Agregar el borrado de prom.db, .tmp, meme_out, o meter todo dentro de una carpeta con el nombre del trabajo
 	try:
 		os.system('sqlite3 prom.db &')
 		con = lite.connect('prom.db')
@@ -158,6 +162,9 @@ def up_bdd(nro_threads):
 '''
 def up1_bdd():
 	# Consultar la bdd y traer sólo los datos que tengan el adn vacio y luego armar una lista y grabar
+	print("=========================================")
+	print("Cargando las secuencias desde SolGenomics")
+	print("=========================================")
 	while True:
 		try:
 			con = lite.connect('prom.db')
@@ -283,7 +290,9 @@ def crear_fas():
 def meme(meme_path, tomtom_path):
 	# bc="export PATH=$PATH:" + os.getcwd() + "/meme/bin; "
 	# bc=("export PATH=$PATH:$HOME/meme/bin;") # para que se ubique el meme
+	print("=================")
 	print("Análisis con MEME")
+	print("=================")
 	os.system('export LD_LIBRARY_PATH:=$PATH:/usr/lib/openmpi/lib/') # libreria que puede traer problema con el MEME descargado de AUR
 	path_meme_out = os.getcwd() + '/meme_out/'
 	if not os.path.exists(path_meme_out):
@@ -297,8 +306,9 @@ def meme(meme_path, tomtom_path):
 	except Exception as e:
 		print("Error al analizar con MEME")
 		print(e)
-
+	print("===================")
 	print("Análisis con TOMTOM")
+	print("===================")
 	# bc=("export PATH=$PATH:$HOME/meme/bin;")
 	path_tomtom_out = os.getcwd() + '/tomtom_out/'
 	if not os.path.exists(path_tomtom_out):
@@ -312,14 +322,13 @@ def meme(meme_path, tomtom_path):
 			print ("Versión de la Bdd: ", codigo.group(1))
 		else:
 			print ("No se pudo descargar la bdd de motivos.")
-			break
 	except Exception as probl:
 		print ("TT - Se ha producido un problema al descargar la bdd de motivos")
 		print (probl)
 	path_dbb_out = os.getcwd() + '/.tmp/'
 	if not os.path.exists(path_dbb_out):
 		os.makedirs(path_dbb_out)
-	bashCom = "wget http://meme-suite.org/meme-software/Databases/motifs/motif_databases." + codigo.group(1) + ".tgz -P " + path_dbb_out
+	bashCom = "wget http://meme-suite.org/meme-software/Databases/motifs/motif_databases." + codigo.group(1) + ".tgz -P " + path_dbb_out + " -c -np"
 	os.system(bashCom)
 	bashCom = " tar -xvzf " + path_dbb_out + "motif_databases." + codigo.group(1) + ".tgz"
 	os.system(bashCom)
@@ -348,16 +357,14 @@ def meme(meme_path, tomtom_path):
 | _|      |__| | _|      |_______||_______||__| |__| \__| |_______|
                                                                    '''
 def pipe():
-	print("Inicializando las Bases de datos")
+	print("========")
+	print("Pipeline")
+	print("========")
 	inicializar()
-	print("Cargar Bdd")
 	up_bdd(conf[2])
-	print("FASTA")
 	crear_fas()
-	print("Meme")
 	meme(conf[1],conf[3])
 	print("¡Pipeline completo! Revise los resultados.")
-	exit();
 
 '''
 .___  ___.      ___       __  .__   __.
