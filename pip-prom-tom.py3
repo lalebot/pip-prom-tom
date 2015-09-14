@@ -4,6 +4,7 @@
 '''
 Simple Pipeline que extrae Promotores de genes de Tomate - Pip-Prom-Tom
 Author: Alejandro Damián Pistilli <apistillAAA@unr.edu.ar> (Con el triple 'AAA' eliminado)
+Implementado para acceder a la bdd de la especie de tomate: xxxxxx
 '''
 
 import urllib.request
@@ -12,22 +13,23 @@ import sqlite3 as lite
 import time
 import os
 import threading
+import re
 
 '''
-.___  ___.  _______ .__   __.  __    __  
-|   \/   | |   ____||  \ |  | |  |  |  | 
-|  \  /  | |  |__   |   \|  | |  |  |  | 
-|  |\/|  | |   __|  |  . `  | |  |  |  | 
-|  |  |  | |  |____ |  |\   | |  `--'  | 
-|__|  |__| |_______||__| \__|  \______/  
+.___  ___.  _______ .__   __.  __    __
+|   \/   | |   ____||  \ |  | |  |  |  |
+|  \  /  | |  |__   |   \|  | |  |  |  |
+|  |\/|  | |   __|  |  . `  | |  |  |  |
+|  |  |  | |  |____ |  |\   | |  `--'  |
+|__|  |__| |_______||__| \__|  \______/
 '''
 def menu():
 	print("Bienvenido al Pip-Prom-Tom")
 	print("Un Simple Pipeline que extrae Promotores de genes de Tomate.")
 	print("Menu:")
 	print(" 1 - Inicializar la Base de datos y cargar la lista de promotores")
-	print(" 2 - Cargar la Bdd desde -SolGenomics- y armarse de paciencia")
-	print(" 3 - Crear archivos FASTA por Familia")
+	print(" 2 - Cargar la Bdd desde -SolGenomics-")
+	print(" 3 - Crear archivo FASTA")
 	print(" 4 - Análisis MEME")
 	print(" 5 - Análisis TOMTOM")
 	print(" 10 - PIPELINE")
@@ -37,37 +39,40 @@ def menu():
 def parametros():
 	try:
 		file_param = open('init.conf', 'r')
-	except: 
+	except:
 		print("Error al abrir el archivo de configuración")
 		exit()
 	for linea in file_param.readlines():
 		# Averiguo si el script debe ejecutarse en modo pipeline o mostrar menú
 		if 'pipeline =' in linea:
-			pip_pip = linea.split('= ')[1]
+			pip_pip = linea.split('= ')[1].rstrip('\n')
 		if 'meme-path =' in linea:
-			memepath = linea.split('= ')[1]
+			memepath = linea.split('= ')[1].rstrip('\n')
 		if 'threads =' in linea:
-			nro_threads = linea.split('= ')[1]
+			nro_threads=int(linea.split('= ')[1].rstrip('\n'))
 	file_param.close()
+	return(pip_pip,memepath,nro_threads)
 
 
 '''
- __  .__   __.  __    ______  __       ___       __       __   ________      ___      .______      
-|  | |  \ |  | |  |  /      ||  |     /   \     |  |     |  | |       /     /   \     |   _  \     
-|  | |   \|  | |  | |  ,----'|  |    /  ^  \    |  |     |  | `---/  /     /  ^  \    |  |_)  |    
-|  | |  . `  | |  | |  |     |  |   /  /_\  \   |  |     |  |    /  /     /  /_\  \   |      /     
+ __  .__   __.  __    ______  __       ___       __       __   ________      ___      .______
+|  | |  \ |  | |  |  /      ||  |     /   \     |  |     |  | |       /     /   \     |   _  \
+|  | |   \|  | |  | |  ,----'|  |    /  ^  \    |  |     |  | `---/  /     /  ^  \    |  |_)  |
+|  | |  . `  | |  | |  |     |  |   /  /_\  \   |  |     |  |    /  /     /  /_\  \   |      /
 |  | |  |\   | |  | |  `----.|  |  /  _____  \  |  `----.|  |   /  /----./  _____  \  |  |\  \----.
 |__| |__| \__| |__|  \______||__| /__/     \__\ |_______||__|  /________/__/     \__\ | _| `._____|
-                                                                                                   
+
 '''
 def inicializar():
 	print("Inicialización")
 	try:
+		os.system('sqlite3 prom.db &') ##
 		con = lite.connect('prom.db')
 		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 		conn.execute("DROP TABLE IF EXISTS Prom") # Elimnar la Bdd
-		conn.execute("CREATE TABLE Prom(nom TEXT UNIQUE NOT NULL, fam TEXT, mf TEXT, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd
-		con.commit()
+		conn.execute("CREATE TABLE Prom(id INTEGER DEFAULT 1 PRIMARY KEY AUTOINCREMENT UNIQUE, nom TEXT UNIQUE NOT NULL, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd
+		# id nom cab_adn adn cod_sg_bus cod_sg_up exp
+		con.commit() # Confirmar los cambios
 	except lite.Error as e:
 		print("Error borrar la tabla y crear Bdd: ", e.args[0])
 	# Abrir el archivo con los datos de los promotores
@@ -75,41 +80,41 @@ def inicializar():
 		file_list_prom = open('exa_prom.txt', 'r')
 		list_prom = file_list_prom.read()
 		file_list_prom.close()
-	except: 
+	except:
 		print("Error al abrir el archivo: exa_prom.txt")
 	list_prom = list_prom.split('\n')
-	try:
-		list_prom.remove('')
-	except:
-		print("list_prom sin vacio")
+	print(len(list_prom))
 	# Cargar la Bdd
 	for i in list_prom:
-		i=i.split('\t')
 		try:
-			conn.execute("INSERT INTO Prom (nom,fam,mf) VALUES(?,?,?)",(i[0],i[1],i[2]))
-		except:
-			print("error en Insert 1")
+			print(i)
+			if ([i] != '\n') or ([i] != ''):
+				conn.execute("INSERT INTO Prom(id,nom) VALUES(null,?)",([i]))
+		except lite.Error as e:
+			print("Error al cargar la Bdd: ", e.args[0])
 	# Grabar los cambios en la Bdd
-	try: 
+	try:
 		con.commit()
 		print("Bdd entrada cargada.")
-	except:
-		print("Commit error Bdd entrada")
+	except lite.Error as e:
+		print("Commit error Bdd entrada: ", e.args[0])
 	# Cerrar la conexion a la Bdd
 	if con:
 		conn.close()
 		con.close()
 
 '''
- __    __  .______   .______       _______  .______   .______   
-|  |  |  | |   _  \  |   _  \     |       \ |   _  \  |   _  \  
-|  |  |  | |  |_)  | |  |_)  |    |  .--.  ||  |_)  | |  |_)  | 
-|  |  |  | |   ___/  |   ___/     |  |  |  ||   _  <  |   _  <  
-|  `--'  | |  |      |  |         |  '--'  ||  |_)  | |  |_)  | 
- \______/  | _|      | _|         |_______/ |______/  |______/  
-                                                                
+ __    __  .______   .______       _______  .______   .______
+|  |  |  | |   _  \  |   _  \     |       \ |   _  \  |   _  \
+|  |  |  | |  |_)  | |  |_)  |    |  .--.  ||  |_)  | |  |_)  |
+|  |  |  | |   ___/  |   ___/     |  |  |  ||   _  <  |   _  <
+|  `--'  | |  |      |  |         |  '--'  ||  |_)  | |  |_)  |
+ \______/  | _|      | _|         |_______/ |______/  |______/
+
 '''
-def up_bdd():
+# Se utiliza la combinación de Bdd (Sqlite en nuestro caso) y Threads para que los hilos trabajen paralelamente y puedan acceder de manera conjunta a la misma base de datos actualizándola hasta estar completa. Además ante cualquier corte del proceso de carga se puede retomar.
+def up_bdd(nro_threads):
+	print("Cantidad de threads lanzados: ", nro_threads)
 	for i in range(nro_threads):
 		i = threading.Thread(target=up1_bdd)
 		i.start()
@@ -120,37 +125,36 @@ def up_bdd():
 			try:
 				con = lite.connect('prom.db')
 				conn = con.cursor()
-				conn.execute("SELECT count(nom) FROM Prom WHERE adn is null")
-				b = conn.fetchone()
+				conn.execute("SELECT count(id) FROM Prom WHERE adn is null")
+				# id nom cab_adn adn cod_sg_bus cod_sg_up exp
+				b = conn.fetchone()[0]
+				print("Promotores que faltan cargar: ",b)
 				conn.close()
 				con.close()
 				break
 			except Exception as e:
-				print (e.args[0])
+				print ("Desliz en la carga: ", e.args[0])
 				if con:
 					conn.close()
 					con.close()
 				time.sleep(0.25)
-		#os.system('cls' if os.name == 'nt' else 'clear')
 		#print("Porcentaje de carga: %3.2f Procesados: %4d Faltantes: %4d" % (round((2497-b[0])*100/2497,2),2497-b[0],b[0]))
 	time.sleep(5)
-	print("Carga exitosa :)")
+	print("La carga de la Base de datos se realizó correctamente. :)")
 
 
 '''
- __    __  .______    __     .______    _______   _______  
-|  |  |  | |   _  \  /_ |    |   _  \  |       \ |       \ 
+ __    __  .______    __     .______    _______   _______
+|  |  |  | |   _  \  /_ |    |   _  \  |       \ |       \
 |  |  |  | |  |_)  |  | |    |  |_)  | |  .--.  ||  .--.  |
 |  |  |  | |   ___/   | |    |   _  <  |  |  |  ||  |  |  |
 |  `--'  | |  |       | |    |  |_)  | |  '--'  ||  '--'  |
- \______/  | _|       |_|    |______/  |_______/ |_______/ 
+ \______/  | _|       |_|    |______/  |_______/ |_______/
 '''
 def up1_bdd():
 	# Consultar la bdd y traer sólo los datos que tengan el adn vacio y luego armar una lista y grabar
-	numeros = "1234567890" # Para buscar el codigo dentro del html
-	caracteres = "1234567890." # Para buscar los caracteres dentro del 1000 up
 	while True:
-		try: 
+		try:
 			con = lite.connect('prom.db')
 			conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 			conn.execute("SELECT nom FROM Prom WHERE adn is null ORDER BY random() LIMIT 10")
@@ -159,7 +163,7 @@ def up1_bdd():
 			con.close()
 			break
 		except Exception as e:
-			print("Error al traer la lista de nom desde la Bdd")
+			print("Error al traer la lista de nom desde la Bdd", e.args[0])
 			if con:
 				conn.close()
 				con.close()
@@ -167,10 +171,6 @@ def up1_bdd():
 	# Para cada una de las consultas que tengan ADN vacio
 	while i != None:
 		# Inicializacion dentro del For
-		opener = ""
-		url = ""
-		f= ""
-		content = ""
 		contents = "" #  cab_fasta y fasta
 		op = "" # cod_sg_up
 		cod = "" # cod_sg_bus8
@@ -178,63 +178,41 @@ def up1_bdd():
 		fasta=[]
 		# PRIMERA ETAPA buscar el cod
 		try:
-			url = "http://solgenomics.net/search/quick?term="+i[0]+"&x=51&y=8"
-			f = opener.open(url)
 			# response = urllib.request.urlopen(url, timeout=10).read().decode('utf-8')
-			# Expresiones regulares
-			content = f.read()
-			contents = content.decode(encoding='UTF-8')
-			if contents.find("Genomic detail") >= 0:
-				contents= contents.split('/details">')[0]
-				contents= contents.split('Genomic detail')[1]
-				if len(contents) != 0:
-					for ele in contents:
-						if ele in numeros:
-							cod+=ele
+			#contents = opener.open("http://solgenomics.net/search/quick?term="+i[1]+"Solyc01g080620&x=51&y=8").read().decode(encoding='UTF-8')
+			contents = opener.open("http://solgenomics.net/search/quick?term=Solyc01g080620&x=51&y=8").read().decode(encoding='UTF-8')
+			if re.search('/feature/([0-9]{8})/details',contents):
+				cod = re.search('/feature/([0-9]{8})/details',contents)
 			else:
-				cod = "NoGenDet";
-		except Exception as problema:
-			print ("1- Se ha producido un problema al acceder a la web:" + url)
-			print (problema)
+				cod="NoGenDet"
+		except Exception as probl:
+			print ("1- Se ha producido un problema al acceder a la web: " + url)
+			print (probl)
 		# Segunda etapa 1000 upstream
 		try:
 			if cod != "NoGenDet":
-				url = "http://solgenomics.net/feature/" + cod + "/details"
-				f = opener.open(url)
-				content = f.read()
-				contents= content.decode(encoding='UTF-8')
-				contents= contents.split(">1000 bp upstream</option>")[0]
-				contents= contents.split("3000 bp upstream</option>")[1]
+				contents = opener.open("http://solgenomics.net/feature/" + cod.group(1) + "/details").read().decode(encoding='UTF-8')
+			if re.search('([0-9]{8}:[0-9]{8}..[0-9]{8})">1000 bp upstream',contents):
+				op = re.search('([0-9]{8}:[0-9]{8}..[0-9]{8})">1000 bp upstream',contents)
 			else:
-				contents= contents.split(">1000 bp upstream</option>")[0]
-				contents= contents.split("3000 bp upstream</option>")[1]
-		except Exception as problema:
-			print ("2 - Se ha producido un problema al acceder a la web:" + url)
-			print (problema)
-		if len(contents) != 0:
-			for ele in contents:
-				if ele in caracteres:
-					op+=ele
-				else:
-					if ele == ":":
-						op+="%3A"
+				op = 0
+		except Exception as probl:
+			print ("2 - Se ha producido un problema al acceder a la web: " + url)
+			print (probl)
 		# Tercera etapa bajo el FASTA y doy forma
 		try:
-			url = "http://solgenomics.net/api/v1/sequence/download/multi?format=fasta&s=" + op
-			f = opener.open(url)
-			content = f.read()
-			contents = content.decode(encoding='UTF-8')
+			contents = opener.open("http://solgenomics.net/api/v1/sequence/download/multi?format=fasta&s=" + op.group(1)).read().decode(encoding='UTF-8')
 			fasta = contents.split('\n',1)
-		except Exception as problema:
+		except Exception as probl:
 			print ("3 - Se ha producido un problema al acceder a la web:" + url)
-			print (problema)
+			print (prob)
 		# Grabar en la Bdd
-		if cod != '' and op !='' and len(fasta)!=0:
+		if cod != '' and op != '' and len(fasta)!=0:
 			while True:
 				try:
 					con = lite.connect('prom.db')
-					conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
-					conn.execute("UPDATE Prom SET cab_adn=?,adn=?,cod_sg_bus=?,cod_sg_up=? WHERE nom = ? ",(fasta[0],fasta[1],cod,op,i[0])) # Guardo los datos extraids en la bdd
+					conn = con.cursor()
+					conn.execute("UPDATE Prom SET cab_adn=?,adn=?,cod_sg_bus=?,cod_sg_up=? WHERE nom = ? ",(fasta[0],fasta[1],cod.group(1),op.group(1),i[0]))
 					con.commit()
 					conn.execute("SELECT nom FROM Prom WHERE adn is null ORDER BY random() LIMIT 30")
 					i=conn.fetchone()
@@ -246,70 +224,55 @@ def up1_bdd():
 					if con:
 						conn.close()
 						con.close()
-					# time.sleep(1)
 		else:
 			print("Cod, o op o fasta estan vacios")
 
 
 '''
-  ______     ___      .______        _______      ___      .______          _______    ___      .___  ___. 
- /      |   /   \     |   _  \      /  _____|    /   \     |   _  \        |   ____|  /   \     |   \/   | 
-|  ,----'  /  ^  \    |  |_)  |    |  |  __     /  ^  \    |  |_)  |       |  |__    /  ^  \    |  \  /  | 
-|  |      /  /_\  \   |      /     |  | |_ |   /  /_\  \   |      /        |   __|  /  /_\  \   |  |\/|  | 
-|  `----./  _____  \  |  |\  \----.|  |__| |  /  _____  \  |  |\  \----.   |  |    /  _____  \  |  |  |  | 
- \______/__/     \__\ | _| `._____| \______| /__/     \__\ | _| `._____|   |__|   /__/     \__\ |__|  |__| 
-                                                                                                           
+  ______ .______       _______     ___      .______          _______    ___           _______.___________.    ___      
+ /      ||   _  \     |   ____|   /   \     |   _  \        |   ____|  /   \         /       |           |   /   \     
+|  ,----'|  |_)  |    |  |__     /  ^  \    |  |_)  |       |  |__    /  ^  \       |   (----`---|  |----`  /  ^  \    
+|  |     |      /     |   __|   /  /_\  \   |      /        |   __|  /  /_\  \       \   \       |  |      /  /_\  \   
+|  `----.|  |\  \----.|  |____ /  _____  \  |  |\  \----.   |  |    /  _____  \  .----)   |      |  |     /  _____  \  
+ \______|| _| `._____||_______/__/     \__\ | _| `._____|   |__|   /__/     \__\ |_______/       |__|    /__/     \__\ 
+                                                                                                                       
 '''
-def cargar_fam():
-	# Crear todas las familias
-	print("Crear todas las familias y generando archivos fasta...")
-	try: 
+def crear_fas():
+	print("Generando archivos fasta...")
+	try:
 		con = lite.connect('prom.db')
-		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
-		conn.execute("select distinct fam from Prom")
-	except:
-		print("Error: select distinct fam from Prom")
+		conn = con.cursor()
+		conn.execute("SELECT * FROM Prom WHERE adn not null")
+	except Exception as e:
+		print("Error: SELECT DISTINCT fam FROM Prom", e.args[0])
+	file_fam = open('prom_res.fasta', 'w')
 	for i in conn:
 		try:
-			f=i[0].replace("/","--")
-			f=f.replace(" ","-")
-			file_fam = open(os.getcwd()+'/Fam/'+ f +'.fasta', 'w')
-			file_fam.close()
-		except:
-			print("Error crear familias fasta")
-			print(i)
-			break
-	conn.execute("SELECT * FROM Prom WHERE adn not null")
-	for i in conn:
-		try:
-			f=i[1].replace("/","--")
-			f=f.replace(" ","-")
-			file_fam = open(os.getcwd()+'/Fam/'+ f +'.fasta', 'a')
-			file_fam.write(i[3]+"\t"+i[0]+"\t"+i[1]+"\t"+i[2]+"\n"+i[4]+"\n")
-			file_fam.close()
-		except:
+			file_fam.write(i[2]+"\n"+i[3])
+		except Exception as probl:
 			print("Error guardar en familia")
-			print(i)
+			print(probl)
 			break
+	file_fam.close()
 	if con:
 		conn.close()
 		con.close()
 
 '''
-.___  ___.  _______ .___  ___.  _______ 
+.___  ___.  _______ .___  ___.  _______
 |   \/   | |   ____||   \/   | |   ____|
-|  \  /  | |  |__   |  \  /  | |  |__   
-|  |\/|  | |   __|  |  |\/|  | |   __|  
-|  |  |  | |  |____ |  |  |  | |  |____ 
+|  \  /  | |  |__   |  \  /  | |  |__
+|  |\/|  | |   __|  |  |\/|  | |   __|
+|  |  |  | |  |____ |  |  |  | |  |____
 |__|  |__| |_______||__|  |__| |_______|
                                         '''
 def meme():
-	# bc="export PATH=$PATH:" + os.getcwd() + "/meme/bin; " 
+	# bc="export PATH=$PATH:" + os.getcwd() + "/meme/bin; "
 	# bc=("export PATH=$PATH:$HOME/meme/bin;") # para que se ubiqeu el meme
 	path_meme = os.getcwd()+'/meme_out/'
 	if not os.path.exists(path_meme):
 		os.makedirs(path_meme)
-	try: 
+	try:
 		con = lite.connect('prom.db')
 		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 		conn.execute("select distinct fam from Prom")
@@ -334,12 +297,12 @@ def meme():
 
 
 '''
-.___________.  ______   .___  ___. .___________.  ______   .___  ___. 
-|           | /  __  \  |   \/   | |           | /  __  \  |   \/   | 
-`---|  |----`|  |  |  | |  \  /  | `---|  |----`|  |  |  | |  \  /  | 
-    |  |     |  |  |  | |  |\/|  |     |  |     |  |  |  | |  |\/|  | 
-    |  |     |  `--'  | |  |  |  |     |  |     |  `--'  | |  |  |  | 
-    |__|      \______/  |__|  |__|     |__|      \______/  |__|  |__| 
+.___________.  ______   .___  ___. .___________.  ______   .___  ___.
+|           | /  __  \  |   \/   | |           | /  __  \  |   \/   |
+`---|  |----`|  |  |  | |  \  /  | `---|  |----`|  |  |  | |  \  /  |
+    |  |     |  |  |  | |  |\/|  |     |  |     |  |  |  | |  |\/|  |
+    |  |     |  `--'  | |  |  |  |     |  |     |  `--'  | |  |  |  |
+    |__|      \______/  |__|  |__|     |__|      \______/  |__|  |__|
                                                                       '''
 def tomtom():
 	print("Análisis con TOMTOM")
@@ -349,7 +312,7 @@ def tomtom():
 		os.makedirs(path_tomtom)
 	# http://meme-suite.org/meme-software/Databases/motifs/motif_databases.12.7.tgz
 	path_db = os.getcwd() + "/motif_databases/JASPAR_CORE_2014_plants.meme"
-	try: 
+	try:
 		con = lite.connect('prom.db')
 		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 		conn.execute("SELECT DISTINCT fam FROM Prom")
@@ -378,20 +341,18 @@ def tomtom():
 
 
 '''
-.______    __  .______    _______  __       __  .__   __.  _______ 
+.______    __  .______    _______  __       __  .__   __.  _______
 |   _  \  |  | |   _  \  |   ____||  |     |  | |  \ |  | |   ____|
-|  |_)  | |  | |  |_)  | |  |__   |  |     |  | |   \|  | |  |__   
-|   ___/  |  | |   ___/  |   __|  |  |     |  | |  . `  | |   __|  
-|  |      |  | |  |      |  |____ |  `----.|  | |  |\   | |  |____ 
+|  |_)  | |  | |  |_)  | |  |__   |  |     |  | |   \|  | |  |__
+|   ___/  |  | |   ___/  |   __|  |  |     |  | |  . `  | |   __|
+|  |      |  | |  |      |  |____ |  `----.|  | |  |\   | |  |____
 | _|      |__| | _|      |_______||_______||__| |__| \__| |_______|
                                                                    '''
 def pipe():
 	print("Inicializando las Bases de datos")
-	#inicializar()
+	inicializar()
 	print("Cargar Bdd")
 	up_bdd()
-	print("Cargar")
-	cargar_fam()
 	print("Meme")
 	meme()
 	print("Tomtom")
@@ -400,16 +361,18 @@ def pipe():
 	exit();
 
 '''
-.___  ___.      ___       __  .__   __. 
-|   \/   |     /   \     |  | |  \ |  | 
-|  \  /  |    /  ^  \    |  | |   \|  | 
-|  |\/|  |   /  /_\  \   |  | |  . `  | 
-|  |  |  |  /  _____  \  |  | |  |\   | 
-|__|  |__| /__/     \__\ |__| |__| \__| 
+.___  ___.      ___       __  .__   __.
+|   \/   |     /   \     |  | |  \ |  |
+|  \  /  |    /  ^  \    |  | |   \|  |
+|  |\/|  |   /  /_\  \   |  | |  . `  |
+|  |  |  |  /  _____  \  |  | |  |\   |
+|__|  |__| /__/     \__\ |__| |__| \__|
                                         '''
 if __name__ == '__main__':
 	pip_pip = "false"
-	parametros()
+	# Cargo los parámetros
+	conf = parametros()
+	print (conf)
 	if pip_pip == "true":
 		pipe()
 	while True:
@@ -420,9 +383,9 @@ if __name__ == '__main__':
 		elif opcionMenu == "1":
 			inicializar()
 		elif opcionMenu == "2":
-			up_bdd()
+			up_bdd(conf[2])
 		elif opcionMenu == "3":
-			cargar_fam()
+			crear_fas()
 		elif opcionMenu == "4":
 			meme()
 		elif opcionMenu == "5":
@@ -433,7 +396,7 @@ if __name__ == '__main__':
 			pipe()
 		# Visualizar la Bdd
 		elif opcionMenu == "4-":
-			try: 
+			try:
 				con = lite.connect('prom.db')
 				conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 			except:
@@ -441,12 +404,12 @@ if __name__ == '__main__':
 			conn.execute("SELECT nom FROM Prom WHERE adn is null ORDER BY random() LIMIT 30")
 			i=conn.fetchone()
 			print(i)
-			
+
 			dump_file = open('dump.txt', 'w')
 			dump_file.close()
-			conn.execute("SELECT count(nom) FROM Prom WHERE adn is null") 
+			conn.execute("SELECT count(nom) FROM Prom WHERE adn is null")
 			a=conn.fetchone()
-			conn.execute("SELECT count(nom) FROM Prom WHERE adn is not null") 
+			conn.execute("SELECT count(nom) FROM Prom WHERE adn is not null")
 			b=conn.fetchone()
 			print("Con adn")
 			print(b[0])
@@ -461,5 +424,20 @@ if __name__ == '__main__':
 			if con:
 				conn.close()
 				con.close()
+
+		#############################################################################3
+		elif opcionMenu == "--":
+				# Abrir el archivo con los datos de los promotores
+				try:
+					file_list_prom = open('exa_prom.txt', 'r')
+					list_prom = file_list_prom.readlines()
+					file_list_prom.close()
+				except:
+					print (fallo)
+
+				for linea in list_prom:
+					print(linea)
+
+		#############################################################################3
 		else:
 			print("Opcion incorrecta. Intente de nuevo.")

@@ -1,2 +1,3 @@
-.ropeproyect
 *.db
+.ropeproject
+*_res.fasta
