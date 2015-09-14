@@ -70,7 +70,7 @@ def inicializar():
 		con = lite.connect('prom.db')
 		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 		conn.execute("DROP TABLE IF EXISTS Prom") # Elimnar la Bdd
-		conn.execute("CREATE TABLE Prom(id INTEGER AUTO_INCREMENT PRYMARY KEY, nom TEXT UNIQUE NOT NULL, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd
+		conn.execute("CREATE TABLE Prom(id INTEGER DEFAULT 1 PRIMARY KEY AUTOINCREMENT UNIQUE, nom TEXT UNIQUE NOT NULL, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT, exp TEXT)") # Crear las tablas de la bdd
 		# id nom cab_adn adn cod_sg_bus cod_sg_up exp
 		con.commit() # Confirmar los cambios
 	except lite.Error as e:
@@ -89,7 +89,7 @@ def inicializar():
 		try:
 			print(i)
 			if ([i] != '\n') or ([i] != ''):
-				conn.execute("INSERT INTO Prom (nom) VALUES(?)",[i])
+				conn.execute("INSERT INTO Prom(id,nom) VALUES(null,?)",([i]))
 		except lite.Error as e:
 			print("Error al cargar la Bdd: ", e.args[0])
 	# Grabar los cambios en la Bdd
@@ -112,23 +112,23 @@ def inicializar():
  \______/  | _|      | _|         |_______/ |______/  |______/
 
 '''
-# Se utiliza la combinación de Bdd (Sqlite en nuestro caso) y Threads para que los hilos trabajen paralelamente y puedan acceder de manera conjunta a la misma base de datos actualizándola hasta estar completa.
+# Se utiliza la combinación de Bdd (Sqlite en nuestro caso) y Threads para que los hilos trabajen paralelamente y puedan acceder de manera conjunta a la misma base de datos actualizándola hasta estar completa. Además ante cualquier corte del proceso de carga se puede retomar.
 def up_bdd(nro_threads):
+	print("Cantidad de threads lanzados: ", nro_threads)
 	for i in range(nro_threads):
 		i = threading.Thread(target=up1_bdd)
 		i.start()
 	b = 1
 	while b > 0:
 		time.sleep(3)
-		print("B: ",b)
 		while True:
 			try:
 				con = lite.connect('prom.db')
 				conn = con.cursor()
 				conn.execute("SELECT count(id) FROM Prom WHERE adn is null")
 				# id nom cab_adn adn cod_sg_bus cod_sg_up exp
-				b = conn.fetchone()
-				print("Bfo: ",b)
+				b = conn.fetchone()[0]
+				print("Promotores que faltan cargar: ",b)
 				conn.close()
 				con.close()
 				break
@@ -212,7 +212,7 @@ def up1_bdd():
 				try:
 					con = lite.connect('prom.db')
 					conn = con.cursor()
-					conn.execute("UPDATE Prom SET cab_adn=?,adn=?,cod_sg_bus=?,cod_sg_up=? WHERE nom = ? ",(fasta[0],fasta[1],cod.group(1),op.group(1),i[0])) # Guardo los datos extraids en la bdd
+					conn.execute("UPDATE Prom SET cab_adn=?,adn=?,cod_sg_bus=?,cod_sg_up=? WHERE nom = ? ",(fasta[0],fasta[1],cod.group(1),op.group(1),i[0]))
 					con.commit()
 					conn.execute("SELECT nom FROM Prom WHERE adn is null ORDER BY random() LIMIT 30")
 					i=conn.fetchone()
@@ -224,44 +224,36 @@ def up1_bdd():
 					if con:
 						conn.close()
 						con.close()
-					# time.sleep(1)
 		else:
 			print("Cod, o op o fasta estan vacios")
 
 
 '''
-crear fas
+  ______ .______       _______     ___      .______          _______    ___           _______.___________.    ___      
+ /      ||   _  \     |   ____|   /   \     |   _  \        |   ____|  /   \         /       |           |   /   \     
+|  ,----'|  |_)  |    |  |__     /  ^  \    |  |_)  |       |  |__    /  ^  \       |   (----`---|  |----`  /  ^  \    
+|  |     |      /     |   __|   /  /_\  \   |      /        |   __|  /  /_\  \       \   \       |  |      /  /_\  \   
+|  `----.|  |\  \----.|  |____ /  _____  \  |  |\  \----.   |  |    /  _____  \  .----)   |      |  |     /  _____  \  
+ \______|| _| `._____||_______/__/     \__\ | _| `._____|   |__|   /__/     \__\ |_______/       |__|    /__/     \__\ 
+                                                                                                                       
 '''
 def crear_fas():
 	print("Generando archivos fasta...")
 	try:
 		con = lite.connect('prom.db')
-		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
-		conn.execute("select distinct fam from Prom")
-	except:
-		print("Error: select distinct fam from Prom")
+		conn = con.cursor()
+		conn.execute("SELECT * FROM Prom WHERE adn not null")
+	except Exception as e:
+		print("Error: SELECT DISTINCT fam FROM Prom", e.args[0])
+	file_fam = open('prom_res.fasta', 'w')
 	for i in conn:
 		try:
-			f=i[0].replace("/","--")
-			f=f.replace(" ","-")
-			file_fam = open(os.getcwd()+'/Fam/'+ f +'.fasta', 'w')
-			file_fam.close()
-		except:
-			print("Error crear familias fasta")
-			print(i)
-			break
-	conn.execute("SELECT * FROM Prom WHERE adn not null")
-	for i in conn:
-		try:
-			f=i[1].replace("/","--")
-			f=f.replace(" ","-")
-			file_fam = open(os.getcwd()+'/Fam/'+ f +'.fasta', 'a')
-			file_fam.write(i[3]+"\t"+i[0]+"\t"+i[1]+"\t"+i[2]+"\n"+i[4]+"\n")
-			file_fam.close()
-		except:
+			file_fam.write(i[2]+"\n"+i[3])
+		except Exception as probl:
 			print("Error guardar en familia")
-			print(i)
+			print(probl)
 			break
+	file_fam.close()
 	if con:
 		conn.close()
 		con.close()
