@@ -5,14 +5,14 @@
 + Linux OS
 + Python3
 + Sqlite3
-+ MEME & TOMTOM
 + wget
 + tar
 
++ MEME & TOMTOM
+
+
 ## Todo:
-
 + Recordar que es un pipeline sencillo
-
 - [x] ~~Elegir bdd~~
 - [x] Elegir archivo que contiene la lista de promotores.
 - [x] Quitar la separación por familia
@@ -26,11 +26,11 @@
 - [x] Regular expresion
 - [x] Parametrización por linea de comando- https://docs.python.org/3/library/argparse.html - https://github.com/ucdavis-bioinformatics/alignerviz/blob/master/aviz.py
 - [x] -i input -o output
-- [ ] Bdd dinámica, crearla
+- [ ] ~~Bdd dinámica, crearla~~
 - [ ] Ampliar la busqueda a varias bases de datos
 - [x] Crear DB SQL desde el código
 - [ ] ver de analizar los archivos y parametrizar el tom tom y meme
-- [ ] Mejorar la interfaz y los mensajes que se muestran
+- [x] Mejorar la interfaz y los mensajes que se muestran
 
 ## Parametrización
 + Meme 
