@@ -7,13 +7,14 @@
 + Sqlite3
 + MEME & TOMTOM
 + wget
++ tar
 
 ## Todo:
 
 + Recordar que es un pipeline sencillo
 
 - [x] ~~Elegir bdd~~
-- [x] ~~Elegir archivo que contiene la lista de promotores.~~
+- [x] Elegir archivo que contiene la lista de promotores.
 - [x] Quitar la separación por familia
 - [x] Git
 - [x] Python
@@ -27,7 +28,6 @@
 - [ ] -i input -o output
 - [ ] Bdd dinámica, crearla
 - [ ] Ampliar la busqueda a varias bases de datos
-- [ ] Solgenomics generic
 - [x] Crear DB SQL desde el código
 - [ ] ver de analizar los archivos y parametrizar el tom tom y meme
 - [ ] Mejorar la interfaz y los mensajes que se muestran
@@ -62,4 +62,4 @@ $ .exit
 + Agregar archivo de configuracion
 + Agrego libreria *re* de regular expresions
 + Visor SQL: sqlitebrowser
-+ Descargar la última bdd de motivos de MEME
++ Descargar la última bdd de motivos de MEME utilizando wget y descomprimirla usando tar

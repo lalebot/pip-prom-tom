@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 '''
-Simple Pipeline que extrae Promotores de genes de Tomate - Pip-Prom-Tom
-Author: Alejandro Damián Pistilli <apistillAAA@unr.edu.ar> (Con el triple 'AAA' eliminado)
+Un simple pipeline que extrae promotores de genes de Tomate - Pip-Prom-Tom
+Coder: Alejandro Damián Pistilli <apistillAAA@unr.edu.ar> (Con el triple 'AAA' eliminado)
 Implementado para acceder a la bdd de la especie de tomate: xxxxxx
 Hecho in Argentina.
 '''
@@ -14,6 +14,7 @@ import sqlite3 as lite
 import os
 import threading
 import re
+import optparse
 
 '''
 .___  ___.  _______ .__   __.  __    __
@@ -30,18 +31,25 @@ def menu():
 	print("Un Simple Pipeline que extrae Promotores de genes de Tomate.")
 	print("=================================================================")
 	print("Menu:")
-	print(" 1 - Inicializar la Base de datos y cargar la lista de promotores")
+	print(" 1 - Inicializar Proyecto y cargar la lista de promotores")
 	print(" 2 - Cargar la Bdd desde -SolGenomics-")
 	print(" 3 - Crear archivo FASTA")
 	print(" 4 - Análisis MEME y TOMTOM")
 	print(" 9 - PIPELINE")
 	print(" 0 - Salir")
 	print("=================================================================")
+	print()
+
 
 '''
-param
+.______      ___      .______          ___      .___  ___. 
+|   _  \    /   \     |   _  \        /   \     |   \/   | 
+|  |_)  |  /  ^  \    |  |_)  |      /  ^  \    |  \  /  | 
+|   ___/  /  /_\  \   |      /      /  /_\  \   |  |\/|  | 
+|  |     /  _____  \  |  |\  \----./  _____  \  |  |  |  | 
+| _|    /__/     \__\ | _| `._____/__/     \__\ |__|  |__| 
+                                                           
 '''
-
 def parametros():
 	try:
 		file_param = open('conf.ini', 'r')
@@ -153,7 +161,7 @@ def up_bdd(nro_threads):
 					conn.close()
 					con.close()
 				time.sleep(0.25)
-		#print("Porcentaje de carga: %3.2f Procesados: %4d Faltantes: %4d" % (round((2497-b[0])*100/2497,2),2497-b[0],b[0]))
+		# print("Porcentaje de carga: %3.2f Procesados: %4d Faltantes: %4d" % (round((2497-b[0])*100/2497,2),2497-b[0],b[0]))
 	time.sleep(5)
 	print("La carga de la Base de datos se realizó correctamente. :)")
 
@@ -260,7 +268,7 @@ def up1_bdd():
                                                                                                                        
 '''
 def crear_fas():
-	print("Generando archivos fasta...")
+	print("Generando archivo FASTA...")
 	try:
 		con = lite.connect('prom.db')
 		conn = con.cursor()
@@ -294,60 +302,65 @@ def meme(meme_path, tomtom_path):
 	print("=================")
 	print("Análisis con MEME")
 	print("=================")
-	os.system('export LD_LIBRARY_PATH:=$PATH:/usr/lib/openmpi/lib/') # libreria que puede traer problema con el MEME descargado de AUR
-	path_meme_out = os.getcwd() + '/meme_out/'
-	if not os.path.exists(path_meme_out):
-		os.makedirs(path_meme_out)
-	try:
-		path_fasta = os.getcwd() + "/prom_res.fasta"
-		# dna -mod oops -w 8 -minw 6 -maxw 8 -nmotifs 5 -psp dna4_8.psp -revcomp -maxsize 1000000000000 -o
-		# bashCom = bc + 'meme ' + path + " -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc "+ path_meme_out + f + "/"
-		meme_bash = meme_path + ' ' + path_fasta + " -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc " + path_meme_out + "/"
-		os.system(meme_bash)
-	except Exception as e:
-		print("Error al analizar con MEME")
-		print(e)
+	path_fasta = os.getcwd() + "/prom_res.fasta"
+	if (os.path.isfile(path_fasta)):
+		os.system('export LD_LIBRARY_PATH:=$PATH:/usr/lib/openmpi/lib/') # libreria que puede traer problema con el MEME descargado de AUR
+		path_meme_out = os.getcwd() + '/meme_out/'
+		if not os.path.exists(path_meme_out):
+			os.makedirs(path_meme_out)
+		try:
+			# dna -mod oops -w 8 -minw 6 -maxw 8 -nmotifs 5 -psp dna4_8.psp -revcomp -maxsize 1000000000000 -o
+			# bashCom = bc + 'meme ' + path + " -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc "+ path_meme_out + f + "/"
+			meme_bash = meme_path + ' ' + path_fasta + " -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc " + path_meme_out + "/"
+			os.system(meme_bash)
+		except Exception as e:
+			print("Error al analizar con MEME")
+			print(e)
+	else:
+		print("Error en el análisis de MEME: No se encuentra el archivo fasta de resultados.")
 	print("===================")
 	print("Análisis con TOMTOM")
 	print("===================")
 	# bc=("export PATH=$PATH:$HOME/meme/bin;")
-	path_tomtom_out = os.getcwd() + '/tomtom_out/'
-	if not os.path.exists(path_tomtom_out):
-		os.makedirs(path_tomtom_out)
-	contents = "" 
-	opener = urllib.request.FancyURLopener({})
-	try:
-		contents = opener.open("http://meme-suite.org/meme-software/index.html").read().decode(encoding='UTF-8')
-		if re.search('Databases/motifs/motif_databases.([.0-9]+).tgz',contents):
-			codigo = re.search('Databases/motifs/motif_databases.([.0-9]+).tgz',contents)
-			print ("Versión de la Bdd: ", codigo.group(1))
-		else:
-			print ("No se pudo descargar la bdd de motivos.")
-	except Exception as probl:
-		print ("TT - Se ha producido un problema al descargar la bdd de motivos")
-		print (probl)
-	path_dbb_out = os.getcwd() + '/.tmp/'
-	if not os.path.exists(path_dbb_out):
-		os.makedirs(path_dbb_out)
-	bashCom = "wget http://meme-suite.org/meme-software/Databases/motifs/motif_databases." + codigo.group(1) + ".tgz -P " + path_dbb_out + " -c -np"
-	os.system(bashCom)
-	bashCom = " tar -xvzf " + path_dbb_out + "motif_databases." + codigo.group(1) + ".tgz"
-	os.system(bashCom)
-
-	path_db = os.getcwd() + "/motif_databases/JASPAR/JASPAR_CORE_2014_plants.meme"
-	try:
-		path_meme_file = path_meme_out + "meme.txt"
-		# tomtom -oc tomtom_example_output_files -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc STRGGTCAN.meme JASPAR_CORE_2009.meme
-		# tomtom -oc trial -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc motiflist.meme databaselist.meme
-		# bashCom = bc + 'tomtom ' + " -oc " + path_tomtom + f + "/ -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc " + path + " " + path_db
-		bashCom = tomtom_path + " -oc " + path_tomtom_out + " -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc " + path_meme_file + " " + path_db
-		os.system(bashCom)
-	except Exception as e:
-		print("Error al analizar el TOMTOM")
-		print(e[0])
-		print(i[0])
-
-		# Borrar tmp
+	path_meme_file = path_meme_out + "meme.txt"
+	if (os.path.isfile(path_meme_file)):
+		path_tomtom_out = os.getcwd() + '/tomtom_out/'
+		if not os.path.exists(path_tomtom_out):
+			os.makedirs(path_tomtom_out)
+		path_dbb_out = os.getcwd() + '/.tmp/'
+		if not os.path.exists(path_dbb_out):
+				os.makedirs(path_dbb_out)
+		path_db = os.getcwd() + "/motif_databases/JASPAR/JASPAR_CORE_2014_plants.meme"
+		if not (os.path.isfile(path_db)):
+			contents = "" 
+			opener = urllib.request.FancyURLopener({})
+			try:
+				contents = opener.open("http://meme-suite.org/meme-software/index.html").read().decode(encoding='UTF-8')
+				if re.search('Databases/motifs/motif_databases.([.0-9]+).tgz',contents):
+					codigo = re.search('Databases/motifs/motif_databases.([.0-9]+).tgz',contents)
+					print ("Versión de la Bdd: ", codigo.group(1))
+				else:
+					print ("No se pudo descargar la bdd de motivos.")
+				bashCom = "wget http://meme-suite.org/meme-software/Databases/motifs/motif_databases." + codigo.group(1) + ".tgz -P " + path_dbb_out + " -c -np"
+				os.system(bashCom)
+				bashCom = " tar -xvzf " + path_dbb_out + "motif_databases." + codigo.group(1) + ".tgz"
+				os.system(bashCom)
+			except Exception as probl:
+				print ("TT - Se ha producido un problema al descargar la bdd de motivos")
+				print (probl)
+		try:
+			# tomtom -oc tomtom_example_output_files -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc STRGGTCAN.meme JASPAR_CORE_2009.meme
+			# tomtom -oc trial -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc motiflist.meme databaselist.meme
+			# bashCom = bc + 'tomtom ' + " -oc " + path_tomtom + f + "/ -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc " + path + " " + path_db
+			bashCom = tomtom_path + " -oc " + path_tomtom_out + " -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc " + path_meme_file + " " + path_db
+			os.system(bashCom)
+		except Exception as e:
+			print("Error al analizar el TOMTOM")
+			print(i[0])
+			print(e[0])
+			# Borrar tmp
+	else:
+		print("Error en el análisis TOMTOM: No se encuentra el archivo MEME de entrada.")
 
 '''
 .______    __  .______    _______  __       __  .__   __.  _______
@@ -378,7 +391,14 @@ def pipe():
 if __name__ == '__main__':
 	pip_pip = "false"
 	conf = parametros()
-	print (conf)
+
+	# Parsing
+	parser = optparse.OptionParser()
+	parser.add_option('-i', '--in', help='Archivo de entrada')
+	parser.add_option('-o', '--out', help='Proyecto de salida')
+
+	(options, args) = parser.parse_args()
+
 	if pip_pip == "true":
 		pipe()
 	while True:
@@ -397,7 +417,11 @@ if __name__ == '__main__':
 		elif opcionMenu == "9":
 			pipe()
 		##########################################################################
-		# elif opcionMenu == "--":
+		elif opcionMenu == "--":
+			path_meme_out = os.getcwd() + '/meme_out/'
+			if (os.path.isfile(path_meme_out+"meme.txt")):
+				print("esta")
+
 		##########################################################################
 		else:
 			print("Opcion incorrecta. Intente de nuevo.")
