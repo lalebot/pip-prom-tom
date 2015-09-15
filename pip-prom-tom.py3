@@ -11,7 +11,6 @@ Hecho in Argentina.
 import urllib.request
 import urllib.parse
 import sqlite3 as lite
-import time
 import os
 import threading
 import re
@@ -39,6 +38,9 @@ def menu():
 	print(" 0 - Salir")
 	print("=================================================================")
 
+'''
+param
+'''
 
 def parametros():
 	try:
@@ -73,6 +75,7 @@ def inicializar():
 	print("==============")
 	print("Inicialización")
 	print("==============")
+	# Agregar verificación si sale todo bien
 	# Agregar el borrado de prom.db, .tmp, meme_out, o meter todo dentro de una carpeta con el nombre del trabajo
 	try:
 		os.system('sqlite3 prom.db &')
@@ -84,7 +87,7 @@ def inicializar():
 		con.commit() # Confirmar los cambios
 	except lite.Error as e:
 		print("Error borrar la tabla y crear Bdd: ", e.args[0])
-	# Abrir el archivo con los datos de los promotores
+	# Abrir el archivo con lista de los promotores
 	try:
 		file_list_prom = open('exa_prom.txt', 'r')
 		list_prom = file_list_prom.read()
@@ -121,8 +124,11 @@ def inicializar():
  \______/  | _|      | _|         |_______/ |______/  |______/
 
 '''
-# Se utiliza la combinación de Bdd (Sqlite en nuestro caso) y Threads para que los hilos trabajen paralelamente y puedan acceder de manera conjunta a la misma base de datos actualizándola hasta estar completa. Además ante cualquier corte del proceso de carga se puede retomar.
+# Se utiliza la combinación de Bdd (Sqlite3) y Threads para que los hilos trabajen paralelamente y puedan acceder de manera conjunta a la misma base de datos actualizándola hasta estar completa. Además ante cualquier corte del proceso de carga se puede retomar facilmente.
 def up_bdd(nro_threads):
+	print("=========================================")
+	print("Cargando las secuencias desde SolGenomics")
+	print("=========================================")
 	print("Cantidad de threads lanzados: ", nro_threads)
 	for i in range(nro_threads):
 		i = threading.Thread(target=up1_bdd)
@@ -161,10 +167,7 @@ def up_bdd(nro_threads):
  \______/  | _|       |_|    |______/  |_______/ |_______/
 '''
 def up1_bdd():
-	# Consultar la bdd y traer sólo los datos que tengan el adn vacio y luego armar una lista y grabar
-	print("=========================================")
-	print("Cargando las secuencias desde SolGenomics")
-	print("=========================================")
+	# Consultar la bdd y traer sólo los datos que tengan el adn vacío
 	while True:
 		try:
 			con = lite.connect('prom.db')
@@ -182,8 +185,7 @@ def up1_bdd():
 			time.sleep(0.5) # Esperar para volver a intentar acceder a la bdd
 	# Para cada una de las consultas que tengan ADN vacio
 	while i != None:
-		# Inicializacion dentro del For
-		contents = "" #  cab_fasta y fasta
+		contents = "" # cab_fasta y fasta
 		op = 0 # cod_sg_up
 		cod = 0 # cod_sg_bus8
 		opener = urllib.request.FancyURLopener({})
@@ -215,10 +217,9 @@ def up1_bdd():
 			print ("E2 - Se ha producido un problema al acceder a la web")
 			print (i[0])
 			print (probl)
-		# Tercera etapa bajo el FASTA y doy forma
+		# Tercera etapa bajo el FASTA
 		try:
 			if op != 0:
-				# http://solgenomics.net/api/v1/sequence/download/multi?format=fasta&s=19629076%3A316215..317214
 				contents = opener.open("http://solgenomics.net/api/v1/sequence/download/multi?format=fasta&s=" + op).read().decode(encoding='UTF-8')
 				fasta = contents.split('\n',1)
 			else:
@@ -376,7 +377,6 @@ def pipe():
                                         '''
 if __name__ == '__main__':
 	pip_pip = "false"
-	# Cargo los parámetros
 	conf = parametros()
 	print (conf)
 	if pip_pip == "true":
@@ -396,8 +396,8 @@ if __name__ == '__main__':
 			meme(conf[1],conf[3])
 		elif opcionMenu == "9":
 			pipe()
-		############################################################################3
+		##########################################################################
 		# elif opcionMenu == "--":
-		#############################################################################3
+		##########################################################################
 		else:
 			print("Opcion incorrecta. Intente de nuevo.")
