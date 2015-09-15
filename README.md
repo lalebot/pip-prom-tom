@@ -59,6 +59,7 @@ $ .exit
 + se va transformando en un pipeline
 + threading
 + Agregar la carga de la configuracion en un archivo plano .conf con variables editables y que ese archivo se valide al inicio.
++ Elimada la opción de separar por familias
 + Agregar archivo de configuracion
 + Agrego libreria *re* de regular expresions
 + Visor SQL: sqlitebrowser

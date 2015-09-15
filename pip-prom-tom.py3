@@ -397,7 +397,6 @@ def pipe(path_out,filein,proy_name,conf1,conf2,conf3):
 if __name__ == '__main__':
 	conf = parametros()
 
-	# Parsing
 	parser = optparse.OptionParser()
 	parser.add_option('-i', '--in', dest="filein", metavar="FILE",help='Archivo de entrada',default=None)
 	parser.add_option('-o', '--out', dest="dirout", help='Proyecto de salida', default="proy_out")
@@ -440,10 +439,6 @@ if __name__ == '__main__':
 				meme(conf[1],conf[3],path_out)
 			elif opcionMenu == "9":
 				pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3])
-			##########################################################################
-			elif opcionMenu == "--":
-				print("J")
-			##########################################################################
 			else:
 				print("Opcion incorrecta. Intente de nuevo.")
 	else:
