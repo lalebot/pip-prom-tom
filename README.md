@@ -24,8 +24,8 @@
 - [x] TomTom
 - [ ] Log
 - [x] Regular expresion
-- [ ] Parametrización por linea de comando- https://docs.python.org/3/library/argparse.html - https://github.com/ucdavis-bioinformatics/alignerviz/blob/master/aviz.py
-- [ ] -i input -o output
+- [x] Parametrización por linea de comando- https://docs.python.org/3/library/argparse.html - https://github.com/ucdavis-bioinformatics/alignerviz/blob/master/aviz.py
+- [x] -i input -o output
 - [ ] Bdd dinámica, crearla
 - [ ] Ampliar la busqueda a varias bases de datos
 - [x] Crear DB SQL desde el código
@@ -63,3 +63,4 @@ $ .exit
 + Agrego libreria *re* de regular expresions
 + Visor SQL: sqlitebrowser
 + Descargar la última bdd de motivos de MEME utilizando wget y descomprimirla usando tar
++ Se crea una carpeta con el nombre del proyecto en donde se guarda todo el contenido de la salida

@@ -11,6 +11,7 @@ Hecho in Argentina.
 import urllib.request
 import urllib.parse
 import sqlite3 as lite
+import time
 import os
 import threading
 import re
@@ -24,10 +25,10 @@ import optparse
 |  |  |  | |  |____ |  |\   | |  `--'  |
 |__|  |__| |_______||__| \__|  \______/
 '''
-def menu():
+def menu(proy):
 	print()
 	print("=================================================================")
-	print("Bienvenido al Pip-Prom-Tom")
+	print("Bienvenido al Pip-Prom-Tom - Nombre del proyecto: ",proy)
 	print("Un Simple Pipeline que extrae Promotores de genes de Tomate.")
 	print("=================================================================")
 	print("Menu:")
@@ -79,43 +80,42 @@ def parametros():
 |__| |__| \__| |__|  \______||__| /__/     \__\ |_______||__|  /________/__/     \__\ | _| `._____|
 
 '''
-def inicializar():
-	print("==============")
+def inicializar(path_out,filein):
+	print("\n==============")
 	print("Inicialización")
 	print("==============")
-	# Agregar verificación si sale todo bien
-	# Agregar el borrado de prom.db, .tmp, meme_out, o meter todo dentro de una carpeta con el nombre del trabajo
 	try:
-		os.system('sqlite3 prom.db &')
-		con = lite.connect('prom.db')
+		os.system('sqlite3 '+ path_out + 'prom.db &')
+		con = lite.connect(path_out + 'prom.db')
 		conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 		conn.execute("DROP TABLE IF EXISTS Prom") # Elimnar la Bdd
 		conn.execute("CREATE TABLE Prom(id INTEGER DEFAULT 1 PRIMARY KEY AUTOINCREMENT UNIQUE, nom TEXT UNIQUE NOT NULL, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT)") # Crear las tablas de la bdd
 		# id nom cab_adn adn cod_sg_bus cod_sg_up exp
 		con.commit() # Confirmar los cambios
 	except lite.Error as e:
-		print("Error borrar la tabla y crear Bdd: ", e.args[0])
+		print("Error al crear Bdd: ")
+		print(e)
+		exit()
 	# Abrir el archivo con lista de los promotores
 	try:
-		file_list_prom = open('exa_prom.txt', 'r')
+		file_list_prom = open(filein, 'r')
 		list_prom = file_list_prom.read()
 		file_list_prom.close()
 	except:
-		print("Error al abrir el archivo: exa_prom.txt")
+		print("Error al abrir el archivo de entrada")
 	list_prom = list_prom.split('\n')
-	print(len(list_prom))
 	# Cargar la Bdd
 	for i in list_prom:
 		try:
 			print(i)
-			if ([i] != '\n') or ([i] != ''):
+			if ([i] != '\n') or ([i] != '') or ([i] != ' '):
 				conn.execute("INSERT INTO Prom(id,nom) VALUES(null,?)",([i]))
 		except lite.Error as e:
 			print("Error al cargar la Bdd: ", e.args[0])
 	# Grabar los cambios en la Bdd
 	try:
 		con.commit()
-		print("Bdd entrada cargada.")
+		print("\n Código de promotores cargados.")
 	except lite.Error as e:
 		print("Commit error Bdd entrada: ", e.args[0])
 	# Cerrar la conexion a la Bdd
@@ -133,25 +133,25 @@ def inicializar():
 
 '''
 # Se utiliza la combinación de Bdd (Sqlite3) y Threads para que los hilos trabajen paralelamente y puedan acceder de manera conjunta a la misma base de datos actualizándola hasta estar completa. Además ante cualquier corte del proceso de carga se puede retomar facilmente.
-def up_bdd(nro_threads):
-	print("=========================================")
+def up_bdd(nro_threads,path_out):
+	print("\n=========================================")
 	print("Cargando las secuencias desde SolGenomics")
 	print("=========================================")
 	print("Cantidad de threads lanzados: ", nro_threads)
+
 	for i in range(nro_threads):
-		i = threading.Thread(target=up1_bdd)
+		i = threading.Thread(target=up1_bdd, args=(path_out,))
 		i.start()
 	b = 1
 	while b > 0:
-		time.sleep(3)
+		time.sleep(1)
 		while True:
 			try:
-				con = lite.connect('prom.db')
+				con = lite.connect(path_out + 'prom.db')
 				conn = con.cursor()
 				conn.execute("SELECT count(id) FROM Prom WHERE adn is null")
 				# id nom cab_adn adn cod_sg_bus cod_sg_up exp
 				b = conn.fetchone()[0]
-				print("Promotores que faltan cargar: ",b)
 				conn.close()
 				con.close()
 				break
@@ -174,11 +174,11 @@ def up_bdd(nro_threads):
 |  `--'  | |  |       | |    |  |_)  | |  '--'  ||  '--'  |
  \______/  | _|       |_|    |______/  |_______/ |_______/
 '''
-def up1_bdd():
+def up1_bdd(path_out):
 	# Consultar la bdd y traer sólo los datos que tengan el adn vacío
 	while True:
 		try:
-			con = lite.connect('prom.db')
+			con = lite.connect(path_out + 'prom.db')
 			conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
 			conn.execute("SELECT nom FROM Prom WHERE adn is null ORDER BY random() LIMIT 10")
 			i=conn.fetchone()
@@ -240,12 +240,16 @@ def up1_bdd():
 		if cod != 0 and op != 0 and len(fasta) != 0:
 			while True:
 				try:
-					con = lite.connect('prom.db')
+					con = lite.connect(path_out + 'prom.db')
 					conn = con.cursor()
 					conn.execute("UPDATE Prom SET cab_adn=?,adn=?,cod_sg_bus=?,cod_sg_up=? WHERE nom = ? ",(fasta[0],fasta[1],cod,op,i[0]))
 					con.commit()
-					conn.execute("SELECT nom FROM Prom WHERE adn is null ORDER BY random() LIMIT 30")
+					conn.execute("SELECT nom FROM Prom WHERE adn is null ORDER BY random() LIMIT 20")
 					i=conn.fetchone()
+					conn.execute("SELECT count(id) FROM Prom WHERE adn is null")
+					b = conn.fetchone()[0]
+					if (b > 0): 
+						print("Promotores que faltan cargar: ", b)
 					conn.close()
 					con.close()
 					break
@@ -267,23 +271,25 @@ def up1_bdd():
  \______|| _| `._____||_______/__/     \__\ | _| `._____|   |__|   /__/     \__\ |_______/       |__|    /__/     \__\ 
                                                                                                                        
 '''
-def crear_fas():
-	print("Generando archivo FASTA...")
+def crear_fas(path_out, proy_name):
+	print("\n=====================")
+	print("Creando archivo fasta")
+	print("=====================")
 	try:
-		con = lite.connect('prom.db')
+		con = lite.connect(path_out + 'prom.db')
 		conn = con.cursor()
 		conn.execute("SELECT * FROM Prom WHERE adn not null")
 	except Exception as e:
 		print("Error: SELECT DISTINCT fam FROM Prom", e.args[0])
-	file_fam = open('prom_res.fasta', 'w')
+	file_fas = open(path_out + proy_name +'.fasta', 'w')
 	for i in conn:
 		try:
-			file_fam.write(i[2]+"\n"+i[3])
+			file_fas.write(i[2]+"\n"+i[3])
 		except Exception as probl:
-			print("Error guardar en familia")
+			print("Error guardar el fasta")
 			print(probl)
 			break
-	file_fam.close()
+	file_fas.close()
 	if con:
 		conn.close()
 		con.close()
@@ -296,16 +302,16 @@ def crear_fas():
 |  |  |  | |  |____ |  |  |  | |  |____
 |__|  |__| |_______||__|  |__| |_______|
                                         '''
-def meme(meme_path, tomtom_path):
+def meme(meme_path, tomtom_path, path_out):
 	# bc="export PATH=$PATH:" + os.getcwd() + "/meme/bin; "
 	# bc=("export PATH=$PATH:$HOME/meme/bin;") # para que se ubique el meme
-	print("=================")
+	print("\n=================")
 	print("Análisis con MEME")
 	print("=================")
-	path_fasta = os.getcwd() + "/prom_res.fasta"
+	path_fasta = path_out + proy_name +'.fasta'
 	if (os.path.isfile(path_fasta)):
 		os.system('export LD_LIBRARY_PATH:=$PATH:/usr/lib/openmpi/lib/') # libreria que puede traer problema con el MEME descargado de AUR
-		path_meme_out = os.getcwd() + '/meme_out/'
+		path_meme_out = path_out + 'meme_out/'
 		if not os.path.exists(path_meme_out):
 			os.makedirs(path_meme_out)
 		try:
@@ -318,19 +324,20 @@ def meme(meme_path, tomtom_path):
 			print(e)
 	else:
 		print("Error en el análisis de MEME: No se encuentra el archivo fasta de resultados.")
-	print("===================")
+
+	print("\n===================")
 	print("Análisis con TOMTOM")
 	print("===================")
 	# bc=("export PATH=$PATH:$HOME/meme/bin;")
 	path_meme_file = path_meme_out + "meme.txt"
 	if (os.path.isfile(path_meme_file)):
-		path_tomtom_out = os.getcwd() + '/tomtom_out/'
+		path_tomtom_out = path_out + 'tomtom_out/'
 		if not os.path.exists(path_tomtom_out):
 			os.makedirs(path_tomtom_out)
-		path_dbb_out = os.getcwd() + '/.tmp/'
+		path_dbb_out = path_out + 'tmp/'
 		if not os.path.exists(path_dbb_out):
-				os.makedirs(path_dbb_out)
-		path_db = os.getcwd() + "/motif_databases/JASPAR/JASPAR_CORE_2014_plants.meme"
+			os.makedirs(path_dbb_out)
+		path_db = path_out + "motif_databases/JASPAR/JASPAR_CORE_2014_plants.meme"
 		if not (os.path.isfile(path_db)):
 			contents = "" 
 			opener = urllib.request.FancyURLopener({})
@@ -343,7 +350,7 @@ def meme(meme_path, tomtom_path):
 					print ("No se pudo descargar la bdd de motivos.")
 				bashCom = "wget http://meme-suite.org/meme-software/Databases/motifs/motif_databases." + codigo.group(1) + ".tgz -P " + path_dbb_out + " -c -np"
 				os.system(bashCom)
-				bashCom = " tar -xvzf " + path_dbb_out + "motif_databases." + codigo.group(1) + ".tgz"
+				bashCom = " tar -xvzf " + path_dbb_out + "motif_databases." + codigo.group(1) + ".tgz" + " -C " + path_out
 				os.system(bashCom)
 			except Exception as probl:
 				print ("TT - Se ha producido un problema al descargar la bdd de motivos")
@@ -358,7 +365,6 @@ def meme(meme_path, tomtom_path):
 			print("Error al analizar el TOMTOM")
 			print(i[0])
 			print(e[0])
-			# Borrar tmp
 	else:
 		print("Error en el análisis TOMTOM: No se encuentra el archivo MEME de entrada.")
 
@@ -370,15 +376,15 @@ def meme(meme_path, tomtom_path):
 |  |      |  | |  |      |  |____ |  `----.|  | |  |\   | |  |____
 | _|      |__| | _|      |_______||_______||__| |__| \__| |_______|
                                                                    '''
-def pipe():
+def pipe(path_out,filein,proy_name,conf1,conf2,conf3):
 	print("========")
 	print("Pipeline")
 	print("========")
-	inicializar()
-	up_bdd(conf[2])
-	crear_fas()
-	meme(conf[1],conf[3])
-	print("¡Pipeline completo! Revise los resultados.")
+	inicializar(path_out,filein)
+	up_bdd(conf2,path_out)
+	crear_fas(path_out,proy_name)
+	meme(conf1,conf3,path_out)
+	print("\n¡Pipeline completo! Revise los resultados.\n")
 
 '''
 .___  ___.      ___       __  .__   __.
@@ -389,39 +395,56 @@ def pipe():
 |__|  |__| /__/     \__\ |__| |__| \__|
                                         '''
 if __name__ == '__main__':
-	pip_pip = "false"
 	conf = parametros()
 
 	# Parsing
 	parser = optparse.OptionParser()
-	parser.add_option('-i', '--in', help='Archivo de entrada')
-	parser.add_option('-o', '--out', help='Proyecto de salida')
-
+	parser.add_option('-i', '--in', dest="filein", metavar="FILE",help='Archivo de entrada',default=None)
+	parser.add_option('-o', '--out', dest="dirout", help='Proyecto de salida', default="proy_out")
+	parser.add_option('-p', '--pip', dest="pipe",help='Modo pipeline', default="0")
 	(options, args) = parser.parse_args()
 
-	if pip_pip == "true":
-		pipe()
-	while True:
-		menu()
-		opcionMenu = input("Ingrese una opción: ")
-		if opcionMenu == "0":
-			exit()
-		elif opcionMenu == "1":
-			inicializar()
-		elif opcionMenu == "2":
-			up_bdd(conf[2])
-		elif opcionMenu == "3":
-			crear_fas()
-		elif opcionMenu == "4":
-			meme(conf[1],conf[3])
-		elif opcionMenu == "9":
-			pipe()
-		##########################################################################
-		elif opcionMenu == "--":
-			path_meme_out = os.getcwd() + '/meme_out/'
-			if (os.path.isfile(path_meme_out+"meme.txt")):
-				print("esta")
-
-		##########################################################################
+	if os.path.exists(options.filein):
+		path_out = os.getcwd()+ "/" + options.dirout + "_out/"
+		proy_name = options.dirout
+		if os.path.exists(path_out):
+			while True:
+				opcionMenu = input("El proyecto ya existe ¿Desea continuar con el mismo? (s/n): ")
+				if opcionMenu == "s":
+					break
+				elif opcionMenu == "n":
+					nuevoproy = input("Ingrese el nombre del nuevo proyecto: ")
+					path_out = os.getcwd()+ "/" + nuevoproy + "_out/"
+					proy_name = nuevoproy
+					os.makedirs(path_out)
+					break
 		else:
-			print("Opcion incorrecta. Intente de nuevo.")
+			os.makedirs(path_out)
+
+		if (conf[0] == "true") or (options.pipe == "1"):
+			pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3])
+			exit()
+		
+		while True:
+			menu(proy_name)
+			opcionMenu = input("Ingrese una opción: ")
+			if opcionMenu == "0":
+				exit()
+			elif opcionMenu == "1":
+				inicializar(path_out,options.filein)
+			elif opcionMenu == "2":
+				up_bdd(conf[2],path_out)
+			elif opcionMenu == "3":
+				crear_fas(path_out,proy_name)
+			elif opcionMenu == "4":
+				meme(conf[1],conf[3],path_out)
+			elif opcionMenu == "9":
+				pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3])
+			##########################################################################
+			elif opcionMenu == "--":
+				print("J")
+			##########################################################################
+			else:
+				print("Opcion incorrecta. Intente de nuevo.")
+	else:
+		print("No se encuentra el archivo de entrada.")

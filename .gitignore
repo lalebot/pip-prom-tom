@@ -1,7 +1,2 @@
-*.db
 .ropeproject
-*_res.fasta
-meme_out
-tomtom_out
-.tmp
-motif_databases
+*_out
