@@ -54,11 +54,28 @@ Este archivo.
 #### conf.ini
 Archivo de configuración parametrizable.
 
+```bash
+# Config
+
+# Pipeline on/off
+pipeline = false
+
+# Number of threads
+threads = 20
+
+# Path MEME
+meme-path = /usr/bin/meme-meme
+
+# Path TOMTOM
+tomtom-path = /usr/bin/meme-tomtom
+```
+
+
 #### exa_prom.txt
 Lista de códigos de promotores de ejemplo.
 
 #### pip-prom-tom.py3
 Código del script.
 
-
+---
 <img src="https://theapproachdotorg.files.wordpress.com/2012/05/killer-tomato.jpg" align="left" width="200">

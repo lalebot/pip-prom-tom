@@ -1,16 +1,5 @@
 # Pipeline Especialización en Bioinformática
 
-## Requisitos:
-
-+ Linux OS
-+ Python3
-+ Sqlite3
-+ wget
-+ tar
-
-+ MEME & TOMTOM
-
-
 ## Todo:
 + Recordar que es un pipeline sencillo
 - [x] ~~Elegir bdd~~
@@ -31,10 +20,11 @@
 - [x] Crear DB SQL desde el código
 - [ ] ver de analizar los archivos y parametrizar el tom tom y meme
 - [x] Mejorar la interfaz y los mensajes que se muestran
+- [ ] Chequear parámetros
+- [ ] Parametrización
+        + Meme 
+        + Tomtom
 
-## Parametrización
-+ Meme 
-+ Tomtom
 
 ## Materiales
 Hacerlo con threads que esperen http://www.genbetadev.com/python/multiprocesamiento-en-python-threads-a-fondo-introduccion

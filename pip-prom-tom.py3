@@ -28,8 +28,8 @@ import optparse
 def menu(proy):
 	print()
 	print("=================================================================")
-	print("Bienvenido al Pip-Prom-Tom - Nombre del proyecto: ",proy)
-	print("Un Simple Pipeline que extrae Promotores de genes de Tomate.")
+	print("Bienvenido al Pip-Prom-Tom - Nombre del proyecto: ", proy)
+	print("Un Pipeline para extrae Promotores de genes de Tomate.")
 	print("=================================================================")
 	print("Menu:")
 	print(" 1 - Inicializar Proyecto y cargar la lista de promotores")
@@ -63,10 +63,20 @@ def parametros():
 			pip_pip = linea.split('= ')[1].rstrip('\n')
 		if 'meme-path =' in linea:
 			memepath = linea.split('= ')[1].rstrip('\n')
+			if not (os.path.isfile(memepath)):
+				print("El path del programa MEME es incorrecto, por favor corrija el archivo conf.ini")
+				exit()
+			# revisar que el archivo
 		if 'tomtom-path =' in linea:
 			tomtompath = linea.split('= ')[1].rstrip('\n')
+			if not (os.path.isfile(tomtompath)):
+				print("El path del programa TOMTOM es incorrecto, por favor corrija el archivo conf.ini")
+				exit()
 		if 'threads =' in linea:
-			nro_threads = int(linea.split('= ')[1].rstrip('\n'))
+			try:
+				nro_threads = int(linea.split('= ')[1].rstrip('\n'))
+			exeption
+
 	file_param.close()
 	return(pip_pip,memepath,nro_threads,tomtompath)
 
