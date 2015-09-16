@@ -410,13 +410,14 @@ def pipe(path_out,filein,proy_name,conf1,conf2,conf3,conf4,conf5):
 |__|  |__| /__/     \__\ |__| |__| \__|
                                         '''
 if __name__ == '__main__':
-	conf = parametros()
 
 	parser = optparse.OptionParser()
 	parser.add_option('-i', '--in', dest="filein", metavar="FILE",help='Archivo de entrada',default=None)
 	parser.add_option('-o', '--out', dest="dirout", help='Proyecto de salida', default="proy_out")
 	parser.add_option('-p', '--pip', dest="pipe",help='Modo pipeline', default="0")
 	(options, args) = parser.parse_args()
+
+	conf = parametros()
 
 	if os.path.exists(options.filein):
 		path_out = os.getcwd()+ "/" + options.dirout + "_out/"

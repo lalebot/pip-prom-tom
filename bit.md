@@ -22,8 +22,8 @@
 - [x] Mejorar la interfaz y los mensajes que se muestran
 - [ ] Chequear parámetros
 - [ ] Parametrización
-        + Meme 
-        + Tomtom
+    + Meme 
+    + Tomtom
 
 
 ## Materiales
@@ -55,3 +55,4 @@ $ .exit
 + Visor SQL: sqlitebrowser
 + Descargar la última bdd de motivos de MEME utilizando wget y descomprimirla usando tar
 + Se crea una carpeta con el nombre del proyecto en donde se guarda todo el contenido de la salida
++ Agrega la verificación del archivo conf.ini

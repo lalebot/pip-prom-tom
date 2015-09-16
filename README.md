@@ -34,7 +34,7 @@ Descargar la última versión desde http://meme-suite.org/doc/download.html?man_
 ```bash
 $ git clone http://github.com/lalebot/pip-prom-tom.git
 $ cd pip-prom-tom
-$ python pip-prom-tom.py3 -i list_prom.txt -o proyecto1
+$ python3 pip-prom-tom.py3 -i list_prom.txt -o proyecto1
 ```
 
 Donde **list_prom.txt** es el nombre del archivo que contiene la lista de promotores y **proyecto1** es el nombre del proyecto de análisis.
