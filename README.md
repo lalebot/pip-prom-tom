@@ -62,4 +62,4 @@ Código del script.
 
 
 #### ¡Tomates!
-![Tomate](https://theapproachdotorg.files.wordpress.com/2012/05/killer-tomato.jpg "Tomate")
+<img src="https://theapproachdotorg.files.wordpress.com/2012/05/killer-tomato.jpg" width="48">
