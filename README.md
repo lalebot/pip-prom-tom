@@ -13,10 +13,13 @@ Script para extraer secuencia de promotores de la especie xxx desde la web Solge
     + wget
     + tar
     + git
++ MEME
+    * ghostscript
+    * imagemagick
 
 Instalación
 ```bash
-$ sudo apt-get install python3 sqlite3 wget tar git
+$ sudo apt-get install python3 sqlite3 wget tar git ghostscript imagemagick
 ```
 
 
@@ -58,19 +61,23 @@ Es este archivo.
 Contiene el archivo de configuración parametrizable.
 
 ```bash
-# Config
+# Archivo de configuración inicial
 
-# Pipeline on/off
+# Pipeline on/off por defecto
 pipeline = false
 
-# Number of threads
-threads = 20
+# Número de threads que se lanzan
+threads = 40
 
-# Path MEME
+# Path del MEME
 meme-path = /usr/bin/meme-meme
+# Parámetros de MEME. Default = -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc
+meme-param = -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc
 
-# Path TOMTOM
+# Path del TOMTOM
 tomtom-path = /usr/bin/meme-tomtom
+# Parámetros de TOMTOM. Default = -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc
+tomtom-param = -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc
 ```
 
 

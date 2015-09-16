@@ -155,7 +155,7 @@ def up_bdd(nro_threads,path_out):
 	print("\n=========================================")
 	print("Cargando las secuencias desde SolGenomics")
 	print("=========================================")
-	print("Cantidad de threads lanzados: ", nro_threads, " por favor espere.")
+	print("Cantidad de threads lanzados: ", nro_threads, ", por favor espere.")
 
 	for i in range(nro_threads):
 		i = threading.Thread(target=up1_bdd, args=(path_out,))
@@ -180,7 +180,7 @@ def up_bdd(nro_threads,path_out):
 					con.close()
 				time.sleep(0.25)
 		# print("Porcentaje de carga: %3.2f Procesados: %4d Faltantes: %4d" % (round((2497-b[0])*100/2497,2),2497-b[0],b[0]))
-	time.sleep(5)
+	# time.sleep(5)
 	print("La carga de la Base de datos se realizó correctamente. :)")
 
 
@@ -213,7 +213,7 @@ def up1_bdd(path_out):
 	while i != None:
 		contents = "" # cab_fasta y fasta
 		op = 0 # cod_sg_up
-		cod = 0 # cod_sg_bus8
+		cod = 0 # cod_sg_bus
 		opener = urllib.request.FancyURLopener({})
 		fasta=[]
 		# PRIMERA ETAPA buscar el cod
@@ -267,7 +267,7 @@ def up1_bdd(path_out):
 					conn.execute("SELECT count(id) FROM Prom WHERE adn is null")
 					b = conn.fetchone()[0]
 					if (b > 0): 
-						print("Promotores que faltan cargar: ", b)
+						print("Promotores que faltan cargar: ",b)
 					conn.close()
 					con.close()
 					break
@@ -281,13 +281,13 @@ def up1_bdd(path_out):
 
 
 '''
-  ______ .______       _______     ___      .______          _______    ___           _______.___________.    ___      
- /      ||   _  \     |   ____|   /   \     |   _  \        |   ____|  /   \         /       |           |   /   \     
-|  ,----'|  |_)  |    |  |__     /  ^  \    |  |_)  |       |  |__    /  ^  \       |   (----`---|  |----`  /  ^  \    
-|  |     |      /     |   __|   /  /_\  \   |      /        |   __|  /  /_\  \       \   \       |  |      /  /_\  \   
-|  `----.|  |\  \----.|  |____ /  _____  \  |  |\  \----.   |  |    /  _____  \  .----)   |      |  |     /  _____  \  
- \______|| _| `._____||_______/__/     \__\ | _| `._____|   |__|   /__/     \__\ |_______/       |__|    /__/     \__\ 
-                                                                                                                       
+ _______    ___           _______.___________.    ___      
+|   ____|  /   \         /       |           |   /   \     
+|  |__    /  ^  \       |   (----`---|  |----`  /  ^  \    
+|   __|  /  /_\  \       \   \       |  |      /  /_\  \   
+|  |    /  _____  \  .----)   |      |  |     /  _____  \  
+|__|   /__/     \__\ |_______/       |__|    /__/     \__\ 
+                                                           
 '''
 def crear_fas(path_out, proy_name):
 	print("\n=====================")
@@ -330,8 +330,6 @@ def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
 	if (os.path.isfile(path_fasta)):
 		os.system('export LD_LIBRARY_PATH:=$PATH:/usr/lib/openmpi/lib/') # libreria que puede traer problema con el MEME descargado de AUR
 		path_meme_out = path_out + 'meme_out/'
-		if not os.path.exists(path_meme_out):
-			os.makedirs(path_meme_out)
 		try:
 			# dna -mod oops -w 8 -minw 6 -maxw 8 -nmotifs 5 -psp dna4_8.psp -revcomp -maxsize 1000000000000 -o
 			# bashCom = bc + 'meme ' + path + " -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc "+ path_meme_out + f + "/"
@@ -350,8 +348,6 @@ def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
 	path_meme_file = path_meme_out + "meme.txt"
 	if (os.path.isfile(path_meme_file)):
 		path_tomtom_out = path_out + 'tomtom_out/'
-		if not os.path.exists(path_tomtom_out):
-			os.makedirs(path_tomtom_out)
 		path_dbb_out = path_out + 'tmp/'
 		if not os.path.exists(path_dbb_out):
 			os.makedirs(path_dbb_out)
@@ -368,7 +364,7 @@ def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
 					print ("No se pudo descargar la bdd de motivos.")
 				bashCom = "wget http://meme-suite.org/meme-software/Databases/motifs/motif_databases." + codigo.group(1) + ".tgz -P " + path_dbb_out + " -c -np"
 				os.system(bashCom)
-				bashCom = " tar -xvzf " + path_dbb_out + "motif_databases." + codigo.group(1) + ".tgz" + " -C " + path_out
+				bashCom = " tar -xvzf " + path_dbb_out + "motif_databases." + codigo.group(1) + ".tgz" + " -C " + path_out + " > /dev/null 2>&1"
 				os.system(bashCom)
 			except Exception as probl:
 				print ("TT - Se ha producido un problema al descargar la bdd de motivos")
