@@ -27,7 +27,7 @@ $ sudo apt-get install python3 sqlite3 wget tar git
 ## Descarga e instalación del script
 
 ```bash
-$ git clone https://github.com/lalebot/pip-prom-tom.git
+$ git clone http://github.com/lalebot/pip-prom-tom.git
 $ cd pip-prom-tom
 $ python pip-prom-tom.py3 -i list_prom.txt -o proy_out
 ```
@@ -61,5 +61,4 @@ Lista de códigos de promotores de ejemplo.
 Código del script.
 
 
-#### ¡Tomates!
-<img src="https://theapproachdotorg.files.wordpress.com/2012/05/killer-tomato.jpg" width="48">
+<img src="https://theapproachdotorg.files.wordpress.com/2012/05/killer-tomato.jpg" align="left" width="200">
