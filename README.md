@@ -21,7 +21,9 @@ $ sudo apt-get install python3 sqlite3 wget tar git
 
 
 #### Programas de análisis
-+ MEME & TOMTOM
+MEME & TOMTOM
+
+Descargar la última versión desde http://meme-suite.org/doc/download.html?man_type=web
 
 
 ## Descarga e instalación del script
@@ -29,8 +31,10 @@ $ sudo apt-get install python3 sqlite3 wget tar git
 ```bash
 $ git clone http://github.com/lalebot/pip-prom-tom.git
 $ cd pip-prom-tom
-$ python pip-prom-tom.py3 -i list_prom.txt -o proy_out
+$ python pip-prom-tom.py3 -i list_prom.txt -o proyecto1
 ```
+
+Donde **list_prom.txt** es el nombre del archivo que contiene la lista de promotores y **proyecto1** es el nombre del proyecto de análisis.
 
 Obtener ayuda de las opciones agregar **-h**
 ```bash
@@ -39,20 +43,19 @@ $ python pip-prom-tom.py3 -h
 
 Para ejecutar el script en modo pipeline agregar **-p 1**
 ```bash
-$ python pip-prom-tom.py3 -i list_prom.txt -o proy_out -p 1
+$ python pip-prom-tom.py3 -i list_prom.txt -o proyecto1 -p 1
 ```
 
-## Uso
-ejemplos
+El resultado se almacena en una carpeta que tiene el *nombre-del-proyecto_out*.
 
 
 ## Contenido de los archivos
 
 #### README.md
-Este archivo.
+Es este archivo.
 
 #### conf.ini
-Archivo de configuración parametrizable.
+Contiene el archivo de configuración parametrizable.
 
 ```bash
 # Config
@@ -72,10 +75,11 @@ tomtom-path = /usr/bin/meme-tomtom
 
 
 #### exa_prom.txt
-Lista de códigos de promotores de ejemplo.
+Contiene una lista de códigos de promotores de ejemplo.
+
 
 #### pip-prom-tom.py3
-Código del script.
+Contiene el código del script.
 
 ---
 <img src="https://theapproachdotorg.files.wordpress.com/2012/05/killer-tomato.jpg" align="left" width="200">

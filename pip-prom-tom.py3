@@ -65,20 +65,28 @@ def parametros():
 			memepath = linea.split('= ')[1].rstrip('\n')
 			if not (os.path.isfile(memepath)):
 				print("El path del programa MEME es incorrecto, por favor corrija el archivo conf.ini")
+				file_param.close()
 				exit()
-			# revisar que el archivo
+		if 'meme-param =' in linea:
+			memeparam = linea.split('= ')[1].rstrip('\n')
 		if 'tomtom-path =' in linea:
 			tomtompath = linea.split('= ')[1].rstrip('\n')
 			if not (os.path.isfile(tomtompath)):
 				print("El path del programa TOMTOM es incorrecto, por favor corrija el archivo conf.ini")
+				file_param.close()
 				exit()
+		if 'tomtom-param =' in linea:
+			tomtomparam = linea.split('= ')[1].rstrip('\n')
 		if 'threads =' in linea:
 			try:
 				nro_threads = int(linea.split('= ')[1].rstrip('\n'))
-			exeption
-
+			except Exception as e:
+				print("El número de threads es incorrecto, por favor corrija el archivo conf.ini")
+				print(e)
+				file_param.close()
+				exit()
 	file_param.close()
-	return(pip_pip,memepath,nro_threads,tomtompath)
+	return(pip_pip,memepath,nro_threads,tomtompath,memeparam,tomtomparam)
 
 
 '''
@@ -125,7 +133,7 @@ def inicializar(path_out,filein):
 	# Grabar los cambios en la Bdd
 	try:
 		con.commit()
-		print("\n Código de promotores cargados.")
+		print("\nCódigo de promotores cargados.")
 	except lite.Error as e:
 		print("Commit error Bdd entrada: ", e.args[0])
 	# Cerrar la conexion a la Bdd
@@ -147,7 +155,7 @@ def up_bdd(nro_threads,path_out):
 	print("\n=========================================")
 	print("Cargando las secuencias desde SolGenomics")
 	print("=========================================")
-	print("Cantidad de threads lanzados: ", nro_threads)
+	print("Cantidad de threads lanzados: ", nro_threads, " por favor espere.")
 
 	for i in range(nro_threads):
 		i = threading.Thread(target=up1_bdd, args=(path_out,))
@@ -312,7 +320,7 @@ def crear_fas(path_out, proy_name):
 |  |  |  | |  |____ |  |  |  | |  |____
 |__|  |__| |_______||__|  |__| |_______|
                                         '''
-def meme(meme_path, tomtom_path, path_out):
+def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
 	# bc="export PATH=$PATH:" + os.getcwd() + "/meme/bin; "
 	# bc=("export PATH=$PATH:$HOME/meme/bin;") # para que se ubique el meme
 	print("\n=================")
@@ -327,7 +335,7 @@ def meme(meme_path, tomtom_path, path_out):
 		try:
 			# dna -mod oops -w 8 -minw 6 -maxw 8 -nmotifs 5 -psp dna4_8.psp -revcomp -maxsize 1000000000000 -o
 			# bashCom = bc + 'meme ' + path + " -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc "+ path_meme_out + f + "/"
-			meme_bash = meme_path + ' ' + path_fasta + " -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc " + path_meme_out + "/"
+			meme_bash = meme_path + ' ' + path_fasta + " " + memeparam + " " + path_meme_out + "/"
 			os.system(meme_bash)
 		except Exception as e:
 			print("Error al analizar con MEME")
@@ -369,7 +377,7 @@ def meme(meme_path, tomtom_path, path_out):
 			# tomtom -oc tomtom_example_output_files -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc STRGGTCAN.meme JASPAR_CORE_2009.meme
 			# tomtom -oc trial -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc motiflist.meme databaselist.meme
 			# bashCom = bc + 'tomtom ' + " -oc " + path_tomtom + f + "/ -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc " + path + " " + path_db
-			bashCom = tomtom_path + " -oc " + path_tomtom_out + " -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc " + path_meme_file + " " + path_db
+			bashCom = tomtom_path + " -oc " + path_tomtom_out + " " + tomtomparam + " " + path_meme_file + " " + path_db
 			os.system(bashCom)
 		except Exception as e:
 			print("Error al analizar el TOMTOM")
@@ -386,15 +394,16 @@ def meme(meme_path, tomtom_path, path_out):
 |  |      |  | |  |      |  |____ |  `----.|  | |  |\   | |  |____
 | _|      |__| | _|      |_______||_______||__| |__| \__| |_______|
                                                                    '''
-def pipe(path_out,filein,proy_name,conf1,conf2,conf3):
+def pipe(path_out,filein,proy_name,conf1,conf2,conf3,conf4,conf5):
 	print("========")
 	print("Pipeline")
 	print("========")
 	inicializar(path_out,filein)
 	up_bdd(conf2,path_out)
 	crear_fas(path_out,proy_name)
-	meme(conf1,conf3,path_out)
+	meme(conf1,conf3,path_out,conf4,conf5)
 	print("\n¡Pipeline completo! Revise los resultados.\n")
+	exit()
 
 '''
 .___  ___.      ___       __  .__   __.
@@ -431,9 +440,9 @@ if __name__ == '__main__':
 			os.makedirs(path_out)
 
 		if (conf[0] == "true") or (options.pipe == "1"):
-			pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3])
+			pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5])
 			exit()
-		
+
 		while True:
 			menu(proy_name)
 			opcionMenu = input("Ingrese una opción: ")
@@ -446,9 +455,9 @@ if __name__ == '__main__':
 			elif opcionMenu == "3":
 				crear_fas(path_out,proy_name)
 			elif opcionMenu == "4":
-				meme(conf[1],conf[3],path_out)
+				meme(conf[1],conf[3],path_out,conf[4],conf[5])
 			elif opcionMenu == "9":
-				pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3])
+				pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5])
 			else:
 				print("Opcion incorrecta. Intente de nuevo.")
 	else:
