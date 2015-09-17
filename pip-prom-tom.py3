@@ -361,13 +361,13 @@ def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
 					codigo = re.search('Databases/motifs/motif_databases.([.0-9]+).tgz',contents)
 					print ("Versión de la Bdd: ", codigo.group(1))
 				else:
-					print ("No se pudo descargar la bdd de motivos.")
+					print ("No se pudo descargar la bdd de promotores.")
 				bashCom = "wget http://meme-suite.org/meme-software/Databases/motifs/motif_databases." + codigo.group(1) + ".tgz -P " + path_dbb_out + " -c -np"
 				os.system(bashCom)
 				bashCom = " tar -xvzf " + path_dbb_out + "motif_databases." + codigo.group(1) + ".tgz" + " -C " + path_out + " > /dev/null 2>&1"
 				os.system(bashCom)
 			except Exception as probl:
-				print ("TT - Se ha producido un problema al descargar la bdd de motivos")
+				print ("TT - Se ha producido un problema al descargar la bdd de promotores")
 				print (probl)
 		try:
 			# tomtom -oc tomtom_example_output_files -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc STRGGTCAN.meme JASPAR_CORE_2009.meme

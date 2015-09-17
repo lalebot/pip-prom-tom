@@ -24,10 +24,12 @@ $ sudo apt-get install python3 sqlite3 wget tar git ghostscript imagemagick
 
 
 #### Programas de análisis
-MEME & TOMTOM
 
-Descargar la última versión desde http://meme-suite.org/doc/download.html?man_type=web
+**MEME & TOMTOM**
 
+Descargar: http://meme-suite.org/doc/download.html?man_type=web
+
+Instalación:
 ```bash
 $ tar zxf meme_4.10.1.tar.gz
 $ cd meme_4.10.1
@@ -35,9 +37,11 @@ $ ./configure --prefix=$HOME/meme --with-url=http://meme-suite.org --enable-buil
 $ make
 $ make test
 $ make install
-#Edit your shell configuration file to add $HOME/meme/bin to your shell path. This can often be done by editing the file named .profile to add the following line:
-$ export PATH=$HOME/meme/bin:$PATH
 ```
+
+Then, edit your shell configuration file to add $HOME/meme/bin to your shell path. This can often be done by editing the file named .profile to add the following line: 
+**export PATH=$HOME/meme/bin:$PATH**
+
 
 
 ## Descarga e instalación del script
