@@ -24,7 +24,8 @@
 - [x] Parametrización
     + Meme 
     + Tomtom
-- [ ] Modificar 1000up, ~~por parámetros~~ y por parseo
+- [x] Modificar 1000up, ~~por parámetros~~ y por parseo
+- [ ] Testeo de lo anterior
 - [ ] PlantCare, separados, exportandolo a txt
 
 ## Materiales

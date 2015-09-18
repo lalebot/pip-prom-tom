@@ -172,7 +172,6 @@ def up_bdd(nro_threads,path_out,up,down,gap):
 					con.close()
 				time.sleep(0.25)
 		# print("Porcentaje de carga: %3.2f Procesados: %4d Faltantes: %4d" % (round((2497-b[0])*100/2497,2),2497-b[0],b[0]))
-	# time.sleep(5)
 	print("La carga de la Base de datos se realizó correctamente. :)")
 
 
@@ -211,7 +210,7 @@ def up1_bdd(path_out,up,down,gap):
 		# E1 buscar el cod
 		try:
 			# response = urllib.request.urlopen(url, timeout=10).read().decode('utf-8')
-			contents = opener.open("http://solgenomics.net/search/quick?term=Solyc06g050520&x=51&y=8").read().decode(encoding='UTF-8')
+			contents = opener.open("http://solgenomics.net/search/quick?term=" + i[0] + "&x=51&y=8").read().decode(encoding='UTF-8')
 			if re.search('/feature/([0-9]{8})/details',contents):
 				codigo = re.search('/feature/([0-9]{8})/details',contents)
 				cod = codigo.group(1)
@@ -226,15 +225,14 @@ def up1_bdd(path_out,up,down,gap):
 			if cod != 0:
 				contents = opener.open("http://solgenomics.net/feature/" + cod + "/details").read().decode(encoding='UTF-8')
 			if re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents):
-				if (int(up) > 0):
+				if (up > 0):
 					opcion = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents)
-					dest_ud = int(opcion.group(3)) + int(up) - 1
-					dest_gap = int(opcion.group(3)) - int(gap)
+					dest_ud = int(opcion.group(3)) + up - 1
+					dest_gap = int(opcion.group(3)) - gap
 					op = str(opcion.group(1)) + ":" + str(dest_ud) + ".." + str(dest_gap)
-					exit()
-				elif (int(down) > 0):
+				elif (down > 0):
 					opcion = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp downstream',contents)
-					dest_ud = int(opcion.group(3)) + int(down) - 1 + int(gap)
+					dest_ud = int(opcion.group(3)) + down - 1 + gap
 					op = str(opcion.group(1)) + ":" + str(dest_ud) + ".." + str(opcion.group(3))
 			else:
 				op = 0
@@ -323,9 +321,9 @@ def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
 	print("\n=================")
 	print("Análisis con MEME")
 	print("=================")
-	if not (os.path.isfile(meme_path) or os.path.isfile(tomtompath)):
-		print("El path del programa MEME y/o TOMTOM es incorrecto, por favor corrija el archivo conf.ini y vuelva a ejecutar el script.")
-		exit()
+	if not (os.path.isfile(meme_path) or os.path.isfile(tomtom_path)):
+		print("El path del programa MEME y/o TOMTOM es incorrecto, por favor corrija el archivo conf.ini y vuelva a ejecutar el script.\n")
+		input("Presiona Enter para continuar...")
 	else:
 		path_fasta = path_out + proy_name +'.fasta'
 		if (os.path.isfile(path_fasta)):
@@ -451,11 +449,13 @@ if __name__ == '__main__':
 			elif opcionMenu == "1":
 				inicializar(path_out,options.filein)
 			elif opcionMenu == "2":
-				up_bdd(conf[2],path_out,options.up,options.down,options.gap)
+				up_bdd(conf[2],path_out,int(options.up),int(options.down),int(options.gap))
 			elif opcionMenu == "3":
 				crear_fas(path_out,proy_name)
 			elif opcionMenu == "4":
 				meme(conf[1],conf[3],path_out,conf[4],conf[5])
+			#elif opcionMenu == "5":
+			#	meme(conf[1],conf[3],path_out,conf[4],conf[5])
 			elif opcionMenu == "9":
 				pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5])
 			###################################################################################################
