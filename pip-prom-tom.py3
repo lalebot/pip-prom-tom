@@ -63,18 +63,10 @@ def parametros():
 			pip_pip = linea.split('= ')[1].rstrip('\n')
 		if 'meme-path =' in linea:
 			memepath = linea.split('= ')[1].rstrip('\n')
-			if not (os.path.isfile(memepath)):
-				print("El path del programa MEME es incorrecto, por favor corrija el archivo conf.ini")
-				file_param.close()
-				exit()
 		if 'meme-param =' in linea:
 			memeparam = linea.split('= ')[1].rstrip('\n')
 		if 'tomtom-path =' in linea:
 			tomtompath = linea.split('= ')[1].rstrip('\n')
-			if not (os.path.isfile(tomtompath)):
-				print("El path del programa TOMTOM es incorrecto, por favor corrija el archivo conf.ini")
-				file_param.close()
-				exit()
 		if 'tomtom-param =' in linea:
 			tomtomparam = linea.split('= ')[1].rstrip('\n')
 		if 'threads =' in linea:
@@ -151,14 +143,14 @@ def inicializar(path_out,filein):
 
 '''
 # Se utiliza la combinación de Bdd (Sqlite3) y Threads para que los hilos trabajen paralelamente y puedan acceder de manera conjunta a la misma base de datos actualizándola hasta estar completa. Además ante cualquier corte del proceso de carga se puede retomar facilmente.
-def up_bdd(nro_threads,path_out):
+def up_bdd(nro_threads,path_out,up,down):
 	print("\n=========================================")
 	print("Cargando las secuencias desde SolGenomics")
 	print("=========================================")
 	print("Cantidad de threads lanzados: ", nro_threads, ", por favor espere.")
 
 	for i in range(nro_threads):
-		i = threading.Thread(target=up1_bdd, args=(path_out,))
+		i = threading.Thread(target=up1_bdd, args=(path_out,up,down))
 		i.start()
 	b = 1
 	while b > 0:
@@ -192,7 +184,7 @@ def up_bdd(nro_threads,path_out):
 |  `--'  | |  |       | |    |  |_)  | |  '--'  ||  '--'  |
  \______/  | _|       |_|    |______/  |_______/ |_______/
 '''
-def up1_bdd(path_out):
+def up1_bdd(path_out,up,down):
 	# Consultar la bdd y traer sólo los datos que tengan el adn vacío
 	while True:
 		try:
@@ -220,7 +212,6 @@ def up1_bdd(path_out):
 		try:
 			# response = urllib.request.urlopen(url, timeout=10).read().decode('utf-8')
 			contents = opener.open("http://solgenomics.net/search/quick?term="+i[0]+"&x=51&y=8").read().decode(encoding='UTF-8')
-			# contents = opener.open("http://solgenomics.net/search/quick?term=Solyc01g080620&x=51&y=8").read().decode(encoding='UTF-8')
 			if re.search('/feature/([0-9]{8})/details',contents):
 				codigo = re.search('/feature/([0-9]{8})/details',contents)
 				cod = codigo.group(1)
@@ -234,9 +225,22 @@ def up1_bdd(path_out):
 		try:
 			if cod != 0:
 				contents = opener.open("http://solgenomics.net/feature/" + cod + "/details").read().decode(encoding='UTF-8')
-			if re.search('([0-9]+:[0-9]+..[0-9]+)">1000 bp upstream',contents):
-				opcion = re.search('([0-9]+:[0-9]+..[0-9]+)">1000 bp upstream',contents)
-				op = opcion.group(1)
+			#<option value="19629072:66114653..66119652">5000 bp upstream</option>
+			#<option value="19629072:66116653..66119652">3000 bp upstream</option>
+			#<option value="19629072:66118653..66119652">1000 bp upstream</option>
+			#<option value="19629072:66124515..66125514">1000 bp downstream</option>
+			#<option value="19629072:66124515..66127514">3000 bp downstream</option>
+			#<option value="19629072:66124515..66129514">5000 bp downstream</option>
+			# 				19629069:78630767..78631766
+			# 				19629069:19628768..78631766
+			if re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents):
+				opcionu = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents)
+				opciond = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp downstream',contents)
+				print(opcionu.group(0))
+				dest_up = int(opcionu.group(3)) - int(up) -1
+				op = str(opcionu.group(1)) + ":" + str(dest_up) + ".." + str(opcionu.group(3))
+				print(op)
+				exit()
 			else:
 				op = 0
 		except Exception as probl:
@@ -321,66 +325,62 @@ def crear_fas(path_out, proy_name):
 |__|  |__| |_______||__|  |__| |_______|
                                         '''
 def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
-	# bc="export PATH=$PATH:" + os.getcwd() + "/meme/bin; "
-	# bc=("export PATH=$PATH:$HOME/meme/bin;") # para que se ubique el meme
 	print("\n=================")
 	print("Análisis con MEME")
 	print("=================")
-	path_fasta = path_out + proy_name +'.fasta'
-	if (os.path.isfile(path_fasta)):
-		os.system('export LD_LIBRARY_PATH:=$PATH:/usr/lib/openmpi/lib/') # libreria que puede traer problema con el MEME descargado de AUR
-		path_meme_out = path_out + 'meme_out/'
-		try:
-			# dna -mod oops -w 8 -minw 6 -maxw 8 -nmotifs 5 -psp dna4_8.psp -revcomp -maxsize 1000000000000 -o
-			# bashCom = bc + 'meme ' + path + " -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc "+ path_meme_out + f + "/"
-			meme_bash = meme_path + ' ' + path_fasta + " " + memeparam + " " + path_meme_out + "/"
-			os.system(meme_bash)
-		except Exception as e:
-			print("Error al analizar con MEME")
-			print(e)
+	if not (os.path.isfile(meme_path) or os.path.isfile(tomtompath)):
+		print("El path del programa MEME y/o TOMTOM es incorrecto, por favor corrija el archivo conf.ini y vuelva a ejecutar el script.")
+		exit()
 	else:
-		print("Error en el análisis de MEME: No se encuentra el archivo fasta de resultados.")
-
-	print("\n===================")
-	print("Análisis con TOMTOM")
-	print("===================")
-	# bc=("export PATH=$PATH:$HOME/meme/bin;")
-	path_meme_file = path_meme_out + "meme.txt"
-	if (os.path.isfile(path_meme_file)):
-		path_tomtom_out = path_out + 'tomtom_out/'
-		path_dbb_out = path_out + 'tmp/'
-		if not os.path.exists(path_dbb_out):
-			os.makedirs(path_dbb_out)
-		path_db = path_out + "motif_databases/JASPAR/JASPAR_CORE_2014_plants.meme"
-		if not (os.path.isfile(path_db)):
-			contents = "" 
-			opener = urllib.request.FancyURLopener({})
+		path_fasta = path_out + proy_name +'.fasta'
+		if (os.path.isfile(path_fasta)):
+			os.system('export LD_LIBRARY_PATH:=$PATH:/usr/lib/openmpi/lib/') # libreria que puede traer problema con el MEME
+			path_meme_out = path_out + 'meme_out/'
 			try:
-				contents = opener.open("http://meme-suite.org/meme-software/index.html").read().decode(encoding='UTF-8')
-				if re.search('Databases/motifs/motif_databases.([.0-9]+).tgz',contents):
-					codigo = re.search('Databases/motifs/motif_databases.([.0-9]+).tgz',contents)
-					print ("Versión de la Bdd: ", codigo.group(1))
-				else:
-					print ("No se pudo descargar la bdd de promotores.")
-				bashCom = "wget http://meme-suite.org/meme-software/Databases/motifs/motif_databases." + codigo.group(1) + ".tgz -P " + path_dbb_out + " -c -np"
+				meme_bash = meme_path + ' ' + path_fasta + " " + memeparam + " " + path_meme_out + "/"
+				os.system(meme_bash)
+			except Exception as e:
+				print("Error al analizar con MEME")
+				print(e)
+		else:
+			print("Error en el análisis de MEME: No se encuentra el archivo fasta de resultados.")
+
+		print("\n===================")
+		print("Análisis con TOMTOM")
+		print("===================")
+		path_meme_file = path_meme_out + "meme.txt"
+		if (os.path.isfile(path_meme_file)):
+			path_tomtom_out = path_out + 'tomtom_out/'
+			path_dbb_out = path_out + 'tmp/'
+			if not os.path.exists(path_dbb_out):
+				os.makedirs(path_dbb_out)
+			path_db = path_out + "motif_databases/JASPAR/JASPAR_CORE_2014_plants.meme"
+			if not (os.path.isfile(path_db)):
+				contents = "" 
+				opener = urllib.request.FancyURLopener({})
+				try:
+					contents = opener.open("http://meme-suite.org/meme-software/index.html").read().decode(encoding='UTF-8')
+					if re.search('Databases/motifs/motif_databases.([.0-9]+).tgz',contents):
+						codigo = re.search('Databases/motifs/motif_databases.([.0-9]+).tgz',contents)
+						print ("Versión de la Bdd: ", codigo.group(1))
+					else:
+						print ("No se pudo descargar la bdd de promotores.")
+					bashCom = "wget http://meme-suite.org/meme-software/Databases/motifs/motif_databases." + codigo.group(1) + ".tgz -P " + path_dbb_out + " -c -np"
+					os.system(bashCom)
+					bashCom = " tar -xvzf " + path_dbb_out + "motif_databases." + codigo.group(1) + ".tgz" + " -C " + path_out + " > /dev/null 2>&1"
+					os.system(bashCom)
+				except Exception as probl:
+					print ("TT - Se ha producido un problema al descargar la bdd de promotores")
+					print (probl)
+			try:
+				bashCom = tomtom_path + " -oc " + path_tomtom_out + " " + tomtomparam + " " + path_meme_file + " " + path_db
 				os.system(bashCom)
-				bashCom = " tar -xvzf " + path_dbb_out + "motif_databases." + codigo.group(1) + ".tgz" + " -C " + path_out + " > /dev/null 2>&1"
-				os.system(bashCom)
-			except Exception as probl:
-				print ("TT - Se ha producido un problema al descargar la bdd de promotores")
-				print (probl)
-		try:
-			# tomtom -oc tomtom_example_output_files -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc STRGGTCAN.meme JASPAR_CORE_2009.meme
-			# tomtom -oc trial -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc motiflist.meme databaselist.meme
-			# bashCom = bc + 'tomtom ' + " -oc " + path_tomtom + f + "/ -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc " + path + " " + path_db
-			bashCom = tomtom_path + " -oc " + path_tomtom_out + " " + tomtomparam + " " + path_meme_file + " " + path_db
-			os.system(bashCom)
-		except Exception as e:
-			print("Error al analizar el TOMTOM")
-			print(i[0])
-			print(e[0])
-	else:
-		print("Error en el análisis TOMTOM: No se encuentra el archivo MEME de entrada.")
+			except Exception as e:
+				print("Error al analizar el TOMTOM")
+				print(i[0])
+				print(e[0])
+		else:
+			print("Error en el análisis TOMTOM: No se encuentra el archivo MEME de entrada.")
 
 '''
 .______    __  .______    _______  __       __  .__   __.  _______
@@ -414,8 +414,12 @@ if __name__ == '__main__':
 	parser = optparse.OptionParser()
 	parser.add_option('-i', '--in', dest="filein", metavar="FILE",help='Archivo de entrada',default=None)
 	parser.add_option('-o', '--out', dest="dirout", help='Proyecto de salida', default="proy_out")
-	parser.add_option('-p', '--pip', dest="pipe",help='Modo pipeline', default="0")
+	parser.add_option('-p', '--pip', dest="pipe",help='Modo pipeline', default=0)
+	parser.add_option('-u', '--up', dest="up",help='Cantidad bp upstream', default=1000)
+	parser.add_option('-d', '--down', dest="down",help='Cantidad bp downstream', default=0)
 	(options, args) = parser.parse_args()
+
+	# revisar los parse
 
 	conf = parametros()
 
@@ -436,7 +440,7 @@ if __name__ == '__main__':
 		else:
 			os.makedirs(path_out)
 
-		if (conf[0] == "true") or (options.pipe == "1"):
+		if (conf[0] == "true") or (options.pipe == 1):
 			pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5])
 			exit()
 
@@ -448,13 +452,59 @@ if __name__ == '__main__':
 			elif opcionMenu == "1":
 				inicializar(path_out,options.filein)
 			elif opcionMenu == "2":
-				up_bdd(conf[2],path_out)
+				up_bdd(conf[2],path_out,options.up,options.down)
 			elif opcionMenu == "3":
 				crear_fas(path_out,proy_name)
 			elif opcionMenu == "4":
 				meme(conf[1],conf[3],path_out,conf[4],conf[5])
 			elif opcionMenu == "9":
 				pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5])
+			###################################################################################################
+			elif opcionMenu == "--":
+				contents = "" # cab_fasta y fasta
+				op = 0 # cod_sg_up
+				cod = 0 # cod_sg_bus
+				opener = urllib.request.FancyURLopener({})
+				fasta=[]
+				# E1 buscar el cod
+				try:
+					# response = urllib.request.urlopen(url, timeout=10).read().decode('utf-8')
+					contents = opener.open("http://solgenomics.net/search/quick?term=Solyc06g050520&x=51&y=8").read().decode(encoding='UTF-8')
+					if re.search('/feature/([0-9]{8})/details',contents):
+						codigo = re.search('/feature/([0-9]{8})/details',contents)
+						cod = codigo.group(1)
+					else:
+						cod = 0
+				except Exception as probl:
+					print ("E1 - Se ha producido un problema al acceder a la web")
+					print (i[0])
+					print (probl)
+				# E2
+				try:
+					if cod != 0:
+						contents = opener.open("http://solgenomics.net/feature/" + cod + "/details").read().decode(encoding='UTF-8')
+					#<option value="19629072:66114653..66119652">5000 bp upstream</option>
+					#<option value="19629072:66116653..66119652">3000 bp upstream</option>
+					#<option value="19629072:66118653..66119652">1000 bp upstream</option>
+					#<option value="19629072:66124515..66125514">1000 bp downstream</option>
+					#<option value="19629072:66124515..66127514">3000 bp downstream</option>
+					#<option value="19629072:66124515..66129514">5000 bp downstream</option>
+					if re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents):
+						opcionu = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents)
+						opciond = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp downstream',contents)
+						print(opcionu.group(0))
+						print(opciond.group(0))
+						dest_up = int(opcionu.group(3)) + int(options.up) - 1
+						op = str(opcionu.group(1)) + ":" + str(dest_up) + ".." + str(opcionu.group(3))
+						print(op)
+						exit()
+					else:
+						op = 0
+				except Exception as probl:
+					print ("E2 - Se ha producido un problema al acceder a la web")
+					print (i[0])
+					print (probl)
+			###################################################################################################
 			else:
 				print("Opcion incorrecta. Intente de nuevo.")
 	else:
