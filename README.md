@@ -54,7 +54,7 @@ $ python3 pip-prom-tom.py3 -i list_prom.txt -o proyecto1
 
 Donde **list_prom.txt** es el nombre del archivo que contiene la lista de promotores y **proyecto1** es el nombre del proyecto de análisis.
 
-Obtener ayuda de las opciones agregar **-h**
+Obtener *ayuda* de las opciones agregar **-h**
 ```bash
 $ python pip-prom-tom.py3 -h
 ```
@@ -64,9 +64,9 @@ Para ejecutar el script en modo pipeline agregar **-p 1**
 $ python pip-prom-tom.py3 -i list_prom.txt -o proyecto1 -p 1
 ```
 
-Para elegir el tamaño de pb upstream agregar **-u** o downstream **-d**. por defecto **-u 0 -d 0**
+Para elegir el tamaño de pb upstream agregar **-u** o downstream **-d** . Se puede pasar por parámetros el valor de un gap para extraer parte del motivo que codifica con **-g**
 ```bash
-$ python pip-prom-tom.py3 -i list_prom.txt -o proyecto1 -u 1000
+$ python pip-prom-tom.py3 -i list_prom.txt -o proyecto1 -u 1000 -g 250
 ```
 
 El resultado se almacena en una carpeta que tiene el *nombre-del-proyecto_out*
