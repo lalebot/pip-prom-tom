@@ -184,7 +184,7 @@ def up_bdd(nro_threads,path_out,up,down):
 |  `--'  | |  |       | |    |  |_)  | |  '--'  ||  '--'  |
  \______/  | _|       |_|    |______/  |_______/ |_______/
 '''
-def up1_bdd(path_out,up,down):
+def up1_bdd(path_out,up,down,gap):
 	# Consultar la bdd y traer sólo los datos que tengan el adn vacío
 	while True:
 		try:
@@ -208,10 +208,10 @@ def up1_bdd(path_out,up,down):
 		cod = 0 # cod_sg_bus
 		opener = urllib.request.FancyURLopener({})
 		fasta=[]
-		# PRIMERA ETAPA buscar el cod
+		# E1 buscar el cod
 		try:
 			# response = urllib.request.urlopen(url, timeout=10).read().decode('utf-8')
-			contents = opener.open("http://solgenomics.net/search/quick?term="+i[0]+"&x=51&y=8").read().decode(encoding='UTF-8')
+			contents = opener.open("http://solgenomics.net/search/quick?term=Solyc06g050520&x=51&y=8").read().decode(encoding='UTF-8')
 			if re.search('/feature/([0-9]{8})/details',contents):
 				codigo = re.search('/feature/([0-9]{8})/details',contents)
 				cod = codigo.group(1)
@@ -221,26 +221,21 @@ def up1_bdd(path_out,up,down):
 			print ("E1 - Se ha producido un problema al acceder a la web")
 			print (i[0])
 			print (probl)
-		# Segunda etapa 1000 upstream
+		# E2
 		try:
 			if cod != 0:
 				contents = opener.open("http://solgenomics.net/feature/" + cod + "/details").read().decode(encoding='UTF-8')
-			#<option value="19629072:66114653..66119652">5000 bp upstream</option>
-			#<option value="19629072:66116653..66119652">3000 bp upstream</option>
-			#<option value="19629072:66118653..66119652">1000 bp upstream</option>
-			#<option value="19629072:66124515..66125514">1000 bp downstream</option>
-			#<option value="19629072:66124515..66127514">3000 bp downstream</option>
-			#<option value="19629072:66124515..66129514">5000 bp downstream</option>
-			# 				19629069:78630767..78631766
-			# 				19629069:19628768..78631766
 			if re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents):
-				opcionu = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents)
-				opciond = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp downstream',contents)
-				print(opcionu.group(0))
-				dest_up = int(opcionu.group(3)) - int(up) -1
-				op = str(opcionu.group(1)) + ":" + str(dest_up) + ".." + str(opcionu.group(3))
-				print(op)
-				exit()
+				if (up > 0):
+					opcion = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents)
+					dest_ud = int(opcion.group(3)) + int(up) - 1
+					dest_gap = int(opcion.group(3)) - int(gap)
+					op = str(opcion.group(1)) + ":" + str(dest_ud) + ".." + str(dest_gap)
+					exit()
+				elif (down > 0):
+					opcion = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp downstream',contents)
+					dest_ud = int(opcion.group(3)) + int(down) - 1 + int(gap)
+					op = str(opcion.group(1)) + ":" + str(dest_ud) + ".." + str(opcion.group(3))
 			else:
 				op = 0
 		except Exception as probl:
@@ -413,13 +408,17 @@ if __name__ == '__main__':
 
 	parser = optparse.OptionParser()
 	parser.add_option('-i', '--in', dest="filein", metavar="FILE",help='Archivo de entrada',default=None)
-	parser.add_option('-o', '--out', dest="dirout", help='Proyecto de salida', default="proy_out")
-	parser.add_option('-p', '--pip', dest="pipe",help='Modo pipeline', default=0)
-	parser.add_option('-u', '--up', dest="up",help='Cantidad bp upstream', default=1000)
-	parser.add_option('-d', '--down', dest="down",help='Cantidad bp downstream', default=0)
+	parser.add_option('-o', '--out', dest="dirout", help='Proyecto de salida (default="proy_out")', default="proy_out")
+	parser.add_option('-p', '--pip', dest="pipe",help='Modo pipeline (default=0)', default=0)
+	parser.add_option('-u', '--up', dest="up",help='Cantidad bp upstream (default=0)', default=0)
+	parser.add_option('-d', '--down', dest="down",help='Cantidad bp downstream (default=0)', default=0)
+	parser.add_option('-g', '--gap', dest="gap",help='Gap de bp upstream o downstream (default=0)', default=0)
 	(options, args) = parser.parse_args()
 
 	# revisar los parse
+	if not (((int(options.up) >= 0) and (int(options.down) == 0)) or ((int(options.up) == 0) and (int(options.down) >= 0))) or (int(options.up) == int(options.down) == 0):
+		print("Error: Verificar los parámetrod de upstream y downstream.")
+		exit()
 
 	conf = parametros()
 
@@ -452,7 +451,7 @@ if __name__ == '__main__':
 			elif opcionMenu == "1":
 				inicializar(path_out,options.filein)
 			elif opcionMenu == "2":
-				up_bdd(conf[2],path_out,options.up,options.down)
+				up_bdd(conf[2],path_out,options.up,options.down,options.gap)
 			elif opcionMenu == "3":
 				crear_fas(path_out,proy_name)
 			elif opcionMenu == "4":
@@ -460,51 +459,8 @@ if __name__ == '__main__':
 			elif opcionMenu == "9":
 				pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5])
 			###################################################################################################
-			elif opcionMenu == "--":
-				contents = "" # cab_fasta y fasta
-				op = 0 # cod_sg_up
-				cod = 0 # cod_sg_bus
-				opener = urllib.request.FancyURLopener({})
-				fasta=[]
-				# E1 buscar el cod
-				try:
-					# response = urllib.request.urlopen(url, timeout=10).read().decode('utf-8')
-					contents = opener.open("http://solgenomics.net/search/quick?term=Solyc06g050520&x=51&y=8").read().decode(encoding='UTF-8')
-					if re.search('/feature/([0-9]{8})/details',contents):
-						codigo = re.search('/feature/([0-9]{8})/details',contents)
-						cod = codigo.group(1)
-					else:
-						cod = 0
-				except Exception as probl:
-					print ("E1 - Se ha producido un problema al acceder a la web")
-					print (i[0])
-					print (probl)
-				# E2
-				try:
-					if cod != 0:
-						contents = opener.open("http://solgenomics.net/feature/" + cod + "/details").read().decode(encoding='UTF-8')
-					#<option value="19629072:66114653..66119652">5000 bp upstream</option>
-					#<option value="19629072:66116653..66119652">3000 bp upstream</option>
-					#<option value="19629072:66118653..66119652">1000 bp upstream</option>
-					#<option value="19629072:66124515..66125514">1000 bp downstream</option>
-					#<option value="19629072:66124515..66127514">3000 bp downstream</option>
-					#<option value="19629072:66124515..66129514">5000 bp downstream</option>
-					if re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents):
-						opcionu = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents)
-						opciond = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp downstream',contents)
-						print(opcionu.group(0))
-						print(opciond.group(0))
-						dest_up = int(opcionu.group(3)) + int(options.up) - 1
-						op = str(opcionu.group(1)) + ":" + str(dest_up) + ".." + str(opcionu.group(3))
-						print(op)
-						exit()
-					else:
-						op = 0
-				except Exception as probl:
-					print ("E2 - Se ha producido un problema al acceder a la web")
-					print (i[0])
-					print (probl)
-			###################################################################################################
+			#elif opcionMenu == "--":
+
 			else:
 				print("Opcion incorrecta. Intente de nuevo.")
 	else:

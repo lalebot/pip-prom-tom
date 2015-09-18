@@ -64,9 +64,9 @@ Para ejecutar el script en modo pipeline agregar **-p 1**
 $ python pip-prom-tom.py3 -i list_prom.txt -o proyecto1 -p 1
 ```
 
-Para elegir el tamaño de pb upstream agregar **-u** y downstream **-d**. por defecto **-u 1000 -d 0**
+Para elegir el tamaño de pb upstream agregar **-u** o downstream **-d**. por defecto **-u 0 -d 0**
 ```bash
-$ python pip-prom-tom.py3 -i list_prom.txt -o proyecto1 -u 1000 -d 0
+$ python pip-prom-tom.py3 -i list_prom.txt -o proyecto1 -u 1000
 ```
 
 El resultado se almacena en una carpeta que tiene el *nombre-del-proyecto_out*
