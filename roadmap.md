@@ -18,13 +18,14 @@
 - [ ] ~~Bdd dinámica, crearla~~
 - [ ] Ampliar la busqueda a varias bases de datos
 - [x] Crear DB SQL desde el código
-- [ ] ver de analizar los archivos y parametrizar el tom tom y meme
+- [x] ver de analizar los archivos y parametrizar el tom tom y meme
 - [x] Mejorar la interfaz y los mensajes que se muestran
-- [ ] Chequear parámetros
-- [ ] Parametrización
+- [x] Chequear parámetros
+- [x] Parametrización
     + Meme 
     + Tomtom
-
+- [ ] Modificar 1000up, por parámetros y por parseo
+- [ ] PlantCare, separados, exportandolo a txt
 
 ## Materiales
 Hacerlo con threads que esperen http://www.genbetadev.com/python/multiprocesamiento-en-python-threads-a-fondo-introduccion
