@@ -143,14 +143,14 @@ def inicializar(path_out,filein):
 
 '''
 # Se utiliza la combinación de Bdd (Sqlite3) y Threads para que los hilos trabajen paralelamente y puedan acceder de manera conjunta a la misma base de datos actualizándola hasta estar completa. Además ante cualquier corte del proceso de carga se puede retomar facilmente.
-def up_bdd(nro_threads,path_out,up,down):
+def up_bdd(nro_threads,path_out,up,down,gap):
 	print("\n=========================================")
 	print("Cargando las secuencias desde SolGenomics")
 	print("=========================================")
 	print("Cantidad de threads lanzados: ", nro_threads, ", por favor espere.")
 
 	for i in range(nro_threads):
-		i = threading.Thread(target=up1_bdd, args=(path_out,up,down))
+		i = threading.Thread(target=up1_bdd, args=(path_out,up,down,gap))
 		i.start()
 	b = 1
 	while b > 0:
@@ -226,13 +226,13 @@ def up1_bdd(path_out,up,down,gap):
 			if cod != 0:
 				contents = opener.open("http://solgenomics.net/feature/" + cod + "/details").read().decode(encoding='UTF-8')
 			if re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents):
-				if (up > 0):
+				if (int(up) > 0):
 					opcion = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents)
 					dest_ud = int(opcion.group(3)) + int(up) - 1
 					dest_gap = int(opcion.group(3)) - int(gap)
 					op = str(opcion.group(1)) + ":" + str(dest_ud) + ".." + str(dest_gap)
 					exit()
-				elif (down > 0):
+				elif (int(down) > 0):
 					opcion = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp downstream',contents)
 					dest_ud = int(opcion.group(3)) + int(down) - 1 + int(gap)
 					op = str(opcion.group(1)) + ":" + str(dest_ud) + ".." + str(opcion.group(3))
@@ -242,7 +242,7 @@ def up1_bdd(path_out,up,down,gap):
 			print ("E2 - Se ha producido un problema al acceder a la web")
 			print (i[0])
 			print (probl)
-		# Tercera etapa bajo el FASTA
+		# E3 FASTA
 		try:
 			if op != 0:
 				contents = opener.open("http://solgenomics.net/api/v1/sequence/download/multi?format=fasta&s=" + op).read().decode(encoding='UTF-8')
