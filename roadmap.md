@@ -27,6 +27,7 @@
 - [ ] PlantCare, separados, exportandolo a txt
 - [ ] 
 
+
 ## Materiales
 Hacerlo con threads que esperen http://www.genbetadev.com/python/multiprocesamiento-en-python-threads-a-fondo-introduccion
 
