@@ -1,6 +1,6 @@
 # Pipeline de Promotores de Tomate
 
-Script para extraer secuencia de promotores de la especie xxx desde la web Solgenomics, para luego ser analizados con MEME y TOMTOM.
+Script para extraer secuencia de promotores de la especie Solanum lycopersicum desde la web Solgenomics, para luego ser analizados con MEME y TOMTOM.
 
 ![Tomate](http://www.ghesaf.ro/wp-content/uploads/2011/09/tomate-heinz-1370.jpg "Tomate")
 
@@ -54,7 +54,7 @@ $ python3 pip-prom-tom.py3 -i list_prom.txt -o proyecto1
 
 Donde **list_prom.txt** es el nombre del archivo que contiene la lista de promotores y **proyecto1** es el nombre del proyecto de análisis.
 
-Obtener ayuda de las opciones agregar **-h**
+Obtener *ayuda* de las opciones agregar **-h**
 ```bash
 $ python pip-prom-tom.py3 -h
 ```
@@ -64,7 +64,12 @@ Para ejecutar el script en modo pipeline agregar **-p 1**
 $ python pip-prom-tom.py3 -i list_prom.txt -o proyecto1 -p 1
 ```
 
-El resultado se almacena en una carpeta que tiene el *nombre-del-proyecto_out*.
+Para elegir el tamaño de pb upstream agregar **-u** o downstream **-d** . Se puede pasar por parámetros el valor de un gap para extraer parte del motivo que codifica con **-g**
+```bash
+$ python pip-prom-tom.py3 -i list_prom.txt -o proyecto1 -u 1000 -g 250
+```
+
+El resultado se almacena en una carpeta que tiene el *nombre-del-proyecto_out*
 
 
 ## Contenido de los archivos

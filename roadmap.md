@@ -16,16 +16,17 @@
 - [x] Parametrización por linea de comando- https://docs.python.org/3/library/argparse.html - https://github.com/ucdavis-bioinformatics/alignerviz/blob/master/aviz.py
 - [x] -i input -o output
 - [ ] ~~Bdd dinámica, crearla~~
-- [ ] Ampliar la busqueda a varias bases de datos
+- [ ] ~~Ampliar la busqueda a varias bases de datos~~
 - [x] Crear DB SQL desde el código
 - [x] ver de analizar los archivos y parametrizar el tom tom y meme
 - [x] Mejorar la interfaz y los mensajes que se muestran
 - [x] Chequear parámetros
-- [x] Parametrización
-    + Meme 
-    + Tomtom
-- [ ] Modificar 1000up, por parámetros y por parseo
+- [x] Parametrización Meme y Tomtom
+- [x] Modificar bp 1000up, ~~por parámetros~~ y por parseo
+- [ ] Testeo de lo anterior!!!
 - [ ] PlantCare, separados, exportandolo a txt
+- [ ] 
+
 
 ## Materiales
 Hacerlo con threads que esperen http://www.genbetadev.com/python/multiprocesamiento-en-python-threads-a-fondo-introduccion
@@ -57,3 +58,5 @@ $ .exit
 + Descargar la última bdd de motivos de MEME utilizando wget y descomprimirla usando tar
 + Se crea una carpeta con el nombre del proyecto en donde se guarda todo el contenido de la salida
 + Agrega la verificación del archivo conf.ini
++ Pasar por parámetro el upstream y el downstream
++ Agregar el gap para ampliar la bùsqueda
