@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 
 '''
-Un simple pipeline que extrae promotores de genes de Tomate - Pip-Prom-Tom
-Coder: Alejandro Damián Pistilli <apistillAAA@unr.edu.ar> (Con el triple 'AAA' eliminado)
-Implementado para acceder a la bdd de la especie de tomate: xxxxxx
-Hecho in Argentina.
+Pip-Prom-Tom
+Descripción: Un pipeline que extrae promotores de tomate de la especie 
+            Solanum lycopersicum desde la web Solgenomics
+Autor: Alejandro Damián Pistilli <apistillAAA@unr.edu.ar> (Con el triple 'AAA' eliminado)
+Hecho Zavalla, Argentina
 '''
 
 import urllib.request
@@ -84,7 +85,7 @@ def parametros():
 '''
  __  .__   __.  __    ______  __       ___       __       __   ________      ___      .______
 |  | |  \ |  | |  |  /      ||  |     /   \     |  |     |  | |       /     /   \     |   _  \
-|  | |   \|  | |  | |  ,----'|  |    /  ^  \    |  |     |  | `---/  /     /  ^  \    |  |_)  |
+|  | |   \|  | |  | |   ----'|  |    /  ^  \    |  |     |  | `---/  /     /  ^  \    |  |_)  |
 |  | |  . `  | |  | |  |     |  |   /  /_\  \   |  |     |  |    /  /     /  /_\  \   |      /
 |  | |  |\   | |  | |  `----.|  |  /  _____  \  |  `----.|  |   /  /----./  _____  \  |  |\  \----.
 |__| |__| \__| |__|  \______||__| /__/     \__\ |_______||__|  /________/__/     \__\ | _| `._____|
