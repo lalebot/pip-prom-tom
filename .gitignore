@@ -1,4 +1,4 @@
 .ropeproject
 *_out
 *.sh
-*.sw
+*.swp
