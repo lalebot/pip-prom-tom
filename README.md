@@ -17,11 +17,15 @@ Script para extraer secuencia de promotores de la especie Solanum lycopersicum d
     * ghostscript
     * imagemagick
 
-Instalación
+Instalación en Debian y derivados.
 ```bash
 $ sudo apt-get install python3 sqlite3 wget tar git ghostscript imagemagick
 ```
 
+Instalación en Arch.
+```bash
+$ sudo pacman -S python3 sqlite3 wget tar git ghostscript imagemagick
+```
 
 #### Programas de análisis
 
