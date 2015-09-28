@@ -17,6 +17,8 @@ import os
 import threading
 import re
 import optparse
+from Bio.Seq import Seq
+# from Bio.Alphabet import generic_dna
 
 '''
 .___  ___.  _______ .__   __.  __    __
@@ -226,6 +228,9 @@ def up1_bdd(path_out,up,down,gap):
             if cod != 0:
                 contents = opener.open("http://solgenomics.net/feature/" + cod + "/details").read().decode(encoding='UTF-8')
             if re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents):
+            # Ver el tema de las hebras positivas y negativas para luego hacer el reverso complementario
+            # Solyc01g098790 (+) Solyc04g082720 (-)
+            # print seq.reverse_complement()
                 if (up > 0):
                     opcion = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents)
                     dest_ud = int(opcion.group(3)) + up - 1

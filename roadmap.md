@@ -25,6 +25,7 @@
 - [x] Modificar bp 1000up, ~~por parámetros~~ y por parseo
 - [ ] Testeo de lo anterior!!!
 - [ ] PlantCare, separados, exportandolo a txt
+- [ ] Sentido de la hebra + o negativa, más el complemento inverso.
 - [ ] 
 
 

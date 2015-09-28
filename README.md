@@ -13,6 +13,7 @@ Script para extraer secuencia de promotores de la especie Solanum lycopersicum d
     + wget
     + tar
     + git
+    + biopython
 + MEME
     * ghostscript
     * imagemagick
@@ -21,10 +22,18 @@ Instalación en Debian y derivados.
 ```bash
 $ sudo apt-get install python3 sqlite3 wget tar git ghostscript imagemagick
 ```
+Para instalar Biopython descargar: https://github.com/biopython/biopython/archive/master.zip
 
-Instalación en Arch.
+To build and install Biopython, download and unzip the source code, go to this directory at the command line, and type:
 ```bash
-$ sudo pacman -S python3 sqlite3 wget tar git ghostscript imagemagick
+$ python setup.py build
+$ python setup.py test
+$ sudo python setup.py install
+```
+
+Instalación en ArchLinux.
+```bash
+$ sudo pacman -S python3 python-biopython sqlite3 wget tar git ghostscript imagemagick
 ```
 
 #### Programas de análisis
@@ -45,7 +54,6 @@ $ make install
 
 Then, edit your shell configuration file to add $HOME/meme/bin to your shell path. This can often be done by editing the file named .profile to add the following line: 
 **export PATH=$HOME/meme/bin:$PATH**
-
 
 
 ## Descarga e instalación del script
