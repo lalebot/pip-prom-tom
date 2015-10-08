@@ -434,7 +434,7 @@ if __name__ == '__main__':
 
     parser = optparse.OptionParser()
     parser.add_option('-i', '--in', dest="filein", metavar="FILE",help='Archivo de entrada',default=None)
-    parser.add_option('-o', '--out', dest="dirout", help='Proyecto de salida (default="proy_out")', default="proy_out")
+    parser.add_option('-o', '--out', dest="dirout", help='Proyecto de salida (default="proy")', default="proy")
     parser.add_option('-p', '--pip', dest="pipe",help='Modo pipeline (default=0)', default=0)
     parser.add_option('-u', '--up', dest="up",help='Cantidad bp upstream (default=0)', default=0)
     parser.add_option('-d', '--down', dest="down",help='Cantidad bp downstream (default=0)', default=0)
@@ -443,7 +443,11 @@ if __name__ == '__main__':
 
     # revisar los parse
     if not (((int(options.up) >= 0) and (int(options.down) == 0)) or ((int(options.up) == 0) and (int(options.down) >= 0))) or (int(options.up) == int(options.down) == 0):
-        print("Error: Verificar los parámetrod de upstream y downstream.")
+        print('Error: Verificar los parámetros de upstream "-u" y/o downstream "-o"')
+        exit()
+    print(options.filein)
+    if (options.filein == None):
+        print('Error: Ingrese el nombre del archivo de entrada con el parámetro "-i"')
         exit()
 
     conf = parametros()

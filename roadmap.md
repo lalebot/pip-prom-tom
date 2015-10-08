@@ -26,7 +26,7 @@
 - [ ] Testeo de lo anterior!!!
 - [ ] PlantCare, separados, exportandolo a txt
 - [ ] Sentido de la hebra + o negativa, más el complemento inverso.
-- [ ] 
+- [ ] Verificar que los parámetros obligatorios se pasen, en caso de no hacerlo informar error
 
 
 ## Materiales
