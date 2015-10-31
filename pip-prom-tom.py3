@@ -389,12 +389,12 @@ def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
 |  |      |  | |  |      |  |____ |  `----.|  | |  |\   | |  |____
 | _|      |__| | _|      |_______||_______||__| |__| \__| |_______|
                                                                    '''
-def pipe(path_out,filein,proy_name,conf1,conf2,conf3,conf4,conf5):
+def pipe(path_out,filein,proy_name,conf1,conf2,conf3,conf4,conf5,up,down,gap):
     print("========")
     print("Pipeline")
     print("========")
     inicializar(path_out,filein)
-    up_bdd(conf2,path_out)
+    up_bdd(conf2,path_out,up,down,gap)
     crear_fas(path_out,proy_name)
     meme(conf1,conf3,path_out,conf4,conf5)
     print("\n¡Pipeline completo! Revise los resultados.\n")
@@ -463,7 +463,8 @@ if __name__ == '__main__':
             #elif opcionMenu == "5":
             #    meme(conf[1],conf[3],path_out,conf[4],conf[5])
             elif opcionMenu == "9":
-                pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5])
+                pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5],int(options.up),int(options.down),int(options.gap))
+                exit()
             ###################################################################################################
             #elif opcionMenu == "--":
 
