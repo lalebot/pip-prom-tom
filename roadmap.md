@@ -1,11 +1,14 @@
 # Pipeline Especialización en Bioinformática
 
-## Todo:
 + Recordar que es un pipeline sencillo
+
+## Todo:
+
 - [x] ~~Elegir bdd~~
 - [x] Elegir archivo que contiene la lista de promotores.
 - [x] Quitar la separación por familia
 - [x] Git
+- [x] GitHub
 - [x] Python
 - [x] Threads
 - [x] Config
@@ -23,16 +26,19 @@
 - [x] Chequear parámetros
 - [x] Parametrización Meme y Tomtom
 - [x] Modificar bp 1000up, ~~por parámetros~~ y por parseo
-- [ ] Testeo de lo anterior!!!
 - [ ] PlantCare, separados, exportandolo a txt
-- [ ] Sentido de la hebra + o negativa, más el complemento inverso.
-- [ ] 
+- [ ] ~~Sentido de la hebra + o negativa, más el complemento inverso.~~
+- [ ] Verificacion del archivo con cabeceras del solgenomics
+- [ ] Ver el tema de las licencias GPL software libre
 
+- [ ] Testeo completo
 
 ## Materiales
+
 Hacerlo con threads que esperen http://www.genbetadev.com/python/multiprocesamiento-en-python-threads-a-fondo-introduccion
 
 ## Bitácora
+
 + Datos de inicio Excel a txt
 + utilizacion de sqlite como bdd,
 + Inicializar y crear la Bdd a partir del archivo
@@ -44,12 +50,11 @@ $ .tables
 $ .exit
 ```
 
-+ Multiplies instancias, random, manejo de conexiones argupadas, sleep para esperar - mejora de 15 segundos a 2.5-3 segundos por archivo descargado. O sea de 10,5 horas a 2 horas promedio para a descarga de los 2500 cabeceras
++ Multiplies instancias, random, manejo de conexiones agrupadas, sleep para esperar - mejora de 15 segundos a 2.5-3 segundos por archivo descargado. O sea de 10,5 horas a 2 horas promedio para a descarga de los 2500 cabeceras.
 + Ejecucion local de MEME
 + Análisis TomTom
 + Agrega argumentos
 + se declaran las funciones
-+ se va transformando en un pipeline
 + threading
 + Agregar la carga de la configuracion en un archivo plano .conf con variables editables y que ese archivo se valide al inicio.
 + Elimada la opción de separar por familias
