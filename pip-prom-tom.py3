@@ -443,8 +443,8 @@ if __name__ == '__main__':
         else:
             os.makedirs(path_out)
 
-        if (conf[0] == "true") or (options.pipe == 1):
-            pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5])
+        if (conf[0] == "true") or (int(options.pipe) == 1):
+            pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5],int(options.up),int(options.down),int(options.gap))
             exit()
 
         while True:
