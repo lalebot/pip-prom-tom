@@ -27,14 +27,6 @@ Instalación en Debian y derivados.
 ```bash
 $ sudo apt-get install python3 sqlite3 wget tar git ghostscript imagemagick python2 perl-xml-parse perl-hyml-template tcsh openmip
 ```
-Para instalar Biopython descargar: https://github.com/biopython/biopython/archive/master.zip
-
-To build and install Biopython, download and unzip the source code, go to this directory at the command line, and type:
-```bash
-$ python setup.py build
-$ python setup.py test
-$ sudo python setup.py install
-```
 
 Instalación en ArchLinux.
 ```bash

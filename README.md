@@ -1,12 +1,12 @@
 # Pipeline de Promotores de Tomate
 
-Script para extraer secuencia de promotores de la especie Solanum lycopersicum desde la web Solgenomics, para luego ser analizados con MEME y TOMTOM.
+Script para extraer secuencia de promotores de la especie Solanum lycopersicum from the web Solgenomics, para luego ser analizados con MEME y TOMTOM.
 
 ![Tomate](http://www.ghesaf.ro/wp-content/uploads/2011/09/tomate-heinz-1370.jpg "Tomate")
 
 ## Requisitos
 
-#### Programas base
+#### Software base
 + Linux OS
     + python3
     + sqlite3
@@ -27,14 +27,7 @@ Instalación en Debian y derivados.
 ```bash
 $ sudo apt-get install python3 sqlite3 wget tar git ghostscript imagemagick python2 perl-xml-parse perl-hyml-template tcsh openmip
 ```
-Para instalar Biopython descargar: https://github.com/biopython/biopython/archive/master.zip
 
-To build and install Biopython, download and unzip the source code, go to this directory at the command line, and type:
-```bash
-$ python setup.py build
-$ python setup.py test
-$ sudo python setup.py install
-```
 
 Instalación en ArchLinux.
 ```bash

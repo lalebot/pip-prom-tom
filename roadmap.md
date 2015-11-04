@@ -29,9 +29,10 @@
 - [ ] PlantCare, separados, exportandolo a txt
 - [ ] Sentido de la hebra + o negativa, más el complemento inverso.
 - [ ] ~~Sentido de la hebra + o negativa, más el complemento inverso.~~
-- [ ] - [ ] Verificar que los parámetros obligatorios se pasen, en caso de no hacerlo informar error
+- [ ] Verificar que los parámetros obligatorios se pasen, en caso de no hacerlo informar error
 - [ ] Verificacion del archivo con cabeceras del solgenomics
-- [ ] Ver el tema de las licencias GPL software libre
+- [x] Ver el tema de las licencias GPL software libre
+- [ ] Traducie el archivo Leeme.md 
 
 - [ ] Testeo completo
 
