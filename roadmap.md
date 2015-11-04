@@ -68,4 +68,5 @@ $ .exit
 + Se crea una carpeta con el nombre del proyecto en donde se guarda todo el contenido de la salida
 + Agrega la verificación del archivo conf.ini
 + Pasar por parámetro el upstream y el downstream
-+ Agregar el gap para ampliar la bùsqueda
++ Agregar el gap para ampliar la búsqueda
++ testeo de plantcare, pero no implementación

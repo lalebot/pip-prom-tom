@@ -62,8 +62,14 @@ $ cd pip-prom-tom
 $ python3 pip-prom-tom.py3 -i list_prom.txt -o proyecto1 -u 1000 -g 250
 ```
 
-Donde **list_prom.txt** es el nombre del archivo que contiene la lista de promotores y **proyecto1** es el nombre del proyecto de análisis.
-**-u** es la cantidad de pares de bases *upstream* que queremos descargar y **-g** es el gap.
+Donde:
+    + *-i* *es el archivo de entrada
+    + **list_prom.txt** es el nombre del archivo que contiene la lista de promotores y 
+    + *-o* es la salida
+    + **proyecto1** es el nombre de salida del proyecto.
+    + **-u** es la cantidad de pares de bases *upstream* que queremos descargar.
+    + **-g** es el gap.
+
 Para descargar los pares de base *downstream* usamos el parámetro **-d**.
 
 Obtener *ayuda* de las opciones agregar **-h**
