@@ -18,6 +18,8 @@ import threading
 import re
 import optparse
 
+import logging
+
 '''
 .___  ___.  _______ .__   __.  __    __
 |   \/   | |   ____||  \ |  | |  |  |  |
@@ -57,6 +59,7 @@ def parametros():
         file_param = open('conf.ini', 'r')
     except:
         print("Error al abrir el archivo de configuración")
+        logging.exception("Error al abrir el archivo de configuración")
         exit()
     for linea in file_param.readlines():
         # Averiguo si el script debe ejecutarse en modo pipeline o mostrar menú
@@ -106,6 +109,7 @@ def inicializar(path_out,filein):
     except lite.Error as e:
         print("Error al crear Bdd: ")
         print(e)
+        logging.exception(e)
         exit()
     # Abrir el archivo con lista de los promotores
     try:
@@ -114,6 +118,7 @@ def inicializar(path_out,filein):
         file_list_prom.close()
     except:
         print("Error al abrir el archivo de entrada")
+        logging.exception("Error al abrir el archivo de entrada")
     list_prom = list_prom.split('\n')
     # Cargar la Bdd
     for i in list_prom:
@@ -123,12 +128,14 @@ def inicializar(path_out,filein):
                 conn.execute("INSERT INTO Prom(id,nom) VALUES(null,?)",([i]))
         except lite.Error as e:
             print("Error al cargar la Bdd: ", e.args[0])
+            logging.exception(e)
     # Grabar los cambios en la Bdd
     try:
         con.commit()
         print("\nCódigo de promotores cargados.")
     except lite.Error as e:
         print("Commit error Bdd entrada: ", e.args[0])
+        logging.exception(e)
     # Cerrar la conexion a la Bdd
     if con:
         conn.close()
@@ -197,6 +204,7 @@ def up1_bdd(path_out,up,down,gap):
             break
         except Exception as e:
             print("Error al traer la lista de nom desde la Bdd", e.args[0])
+            logging.exception(e)
             if con:
                 conn.close()
                 con.close()
@@ -217,10 +225,10 @@ def up1_bdd(path_out,up,down,gap):
                 cod = codigo.group(1)
             else:
                 cod = 0
-        except Exception as probl:
+        except Exception as e:
             print ("E1 - Se ha producido un problema al acceder a la web")
             print (i[0])
-            print (probl)
+            print (e)
         # E2
         try:
             if cod != 0:
@@ -240,10 +248,10 @@ def up1_bdd(path_out,up,down,gap):
                     op = str(opcion.group(1)) + ":" + str(dest_ud) + ".." + str(opcion.group(3))
             else:
                 op = 0
-        except Exception as probl:
+        except Exception as e:
             print ("E2 - Se ha producido un problema al acceder a la web")
             print (i[0])
-            print (probl)
+            print (e)
         # E3 FASTA
         try:
             if op != 0:
@@ -251,10 +259,10 @@ def up1_bdd(path_out,up,down,gap):
                 fasta = contents.split('\n',1)
             else:
                 print ("E3 - Error al obtener la opción para descargar el fasta de: ", i[0])
-        except Exception as probl:
+        except Exception as e:
             print ("E3 - Se ha producido un problema al acceder a la web")
             print (i[0])
-            print (probl)
+            print (e)
         # Grabar en la Bdd
         if cod != 0 and op != 0 and len(fasta) != 0:
             while True:
@@ -298,14 +306,16 @@ def crear_fas(path_out, proy_name):
         conn = con.cursor()
         conn.execute("SELECT * FROM Prom WHERE adn not null")
     except Exception as e:
-        print("Error", e.args[0])
+        print("Error al conectarse a la Bdd", e.args[0])
+        logging.exception(e)
     file_fas = open(path_out + proy_name +'.fasta', 'w')
     for i in conn:
         try:
             file_fas.write(i[2]+"\n"+i[3])
-        except Exception as probl:
-            print("Error guardar el fasta")
-            print(probl)
+        except Exception as e:
+            print("Error guardar el archivo FASTA.")
+            print(e)
+            logging.exception(e)
             break
     file_fas.close()
     if con:
@@ -366,7 +376,7 @@ def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
                     bashCom = " tar -xvzf " + path_dbb_out + "motif_databases." + codigo.group(1) + ".tgz" + " -C " + path_out + " > /dev/null 2>&1"
                     os.system(bashCom)
                 except Exception as probl:
-                    print ("TT - Se ha producido un problema al descargar la bdd de promotores")
+                    print ("TT - Se ha producido un problema al descargar la base de datos Jaspar.")
                     print (probl)
             try:
                 bashCom = tomtom_path + " -oc " + path_tomtom_out + " " + tomtomparam + " " + path_meme_file + " " + path_db
@@ -375,6 +385,7 @@ def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
                 print("Error al analizar el TOMTOM")
                 print(i[0])
                 print(e[0])
+                logging.exception(e)
         else:
             print("Error en el análisis TOMTOM: No se encuentra el archivo MEME de entrada.")
 
@@ -432,6 +443,9 @@ def pipe(path_out,filein,proy_name,conf1,conf2,conf3,conf4,conf5,up,down,gap):
                                         '''
 if __name__ == '__main__':
 
+    logging.basicConfig(filename='errors.log', level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
+    logger=logging.getLogger(__name__)
+
     parser = optparse.OptionParser()
     parser.add_option('-i', '--in', dest="filein", metavar="FILE",help='Archivo de entrada',default=None)
     parser.add_option('-o', '--out', dest="dirout", help='Proyecto de salida (default="proy")', default="proy")
@@ -441,60 +455,62 @@ if __name__ == '__main__':
     parser.add_option('-g', '--gap', dest="gap",help='Gap de bp upstream o downstream (default=0)', default=0)
     (options, args) = parser.parse_args()
 
-    # revisar los parse
+    # Revisar los parámetros ingresados por la terminal
     if not (((int(options.up) >= 0) and (int(options.down) == 0)) or ((int(options.up) == 0) and (int(options.down) >= 0))) or (int(options.up) == int(options.down) == 0):
         print('Error: Verificar los parámetros de upstream "-u" y/o downstream "-o"')
+        logging.exception('Error: Verificar los parámetros de upstream "-u" y/o downstream "-o"')
         exit()
-    print(options.filein)
     if (options.filein == None):
         print('Error: Ingrese el nombre del archivo de entrada con el parámetro "-i"')
+        logging.exception('Error: Ingrese el nombre del archivo de entrada con el parámetro "-i"')
+        exit()
+    if not os.path.exists(options.filein):
+        print("No se encuentra el archivo de entrada.")
+        logging.exception("No se encuentra el archivo de entrada.")
         exit()
 
+    # Cargo el archivo conf.ini y lo verifico
     conf = parametros()
 
-    if os.path.exists(options.filein):
-        path_out = os.getcwd()+ "/" + options.dirout + "_out/"
-        proy_name = options.dirout
-        if os.path.exists(path_out):
-            while True:
-                opcionMenu = input("El proyecto ya existe ¿Desea continuar con el mismo? (s/n): ")
-                if opcionMenu == "s":
-                    break
-                elif opcionMenu == "n":
-                    nuevoproy = input("Ingrese el nombre del nuevo proyecto: ")
-                    path_out = os.getcwd()+ "/" + nuevoproy + "_out/"
-                    proy_name = nuevoproy
-                    os.makedirs(path_out)
-                    break
-        else:
-            os.makedirs(path_out)
+    path_out = os.getcwd()+ "/" + options.dirout + "_out/"
+    proy_name = options.dirout
+    if os.path.exists(path_out):
+        while True:
+            opcionMenu = input("El proyecto ya existe ¿Desea continuar con el mismo? (S/N): ")
+            if opcionMenu.upper() == "S":
+                break
+            elif opcionMenu.upper() == "N":
+                nuevoproy = input("Ingrese el nombre del nuevo proyecto: ")
+                path_out = os.getcwd()+ "/" + nuevoproy + "_out/"
+                proy_name = nuevoproy
+                os.makedirs(path_out)
+                break
+    else:
+        os.makedirs(path_out)
 
-        if (conf[0] == "true") or (int(options.pipe) == 1):
+    if (conf[0] == "true") or (int(options.pipe) == 1):
+        pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5],int(options.up),int(options.down),int(options.gap))
+        exit()
+
+    while True:
+        menu(proy_name)
+        opcionMenu = input("Ingrese una opción: ")
+        if opcionMenu == "0":
+            exit()
+        elif opcionMenu == "1":
+            inicializar(path_out,options.filein)
+        elif opcionMenu == "2":
+            up_bdd(conf[2],path_out,int(options.up),int(options.down),int(options.gap))
+        elif opcionMenu == "3":
+            crear_fas(path_out,proy_name)
+        elif opcionMenu == "4":
+            meme(conf[1],conf[3],path_out,conf[4],conf[5])
+        #elif opcionMenu == "5":
+        #    meme(conf[1],conf[3],path_out,conf[4],conf[5])
+        elif opcionMenu == "9":
             pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5],int(options.up),int(options.down),int(options.gap))
             exit()
-
-        while True:
-            menu(proy_name)
-            opcionMenu = input("Ingrese una opción: ")
-            if opcionMenu == "0":
-                exit()
-            elif opcionMenu == "1":
-                inicializar(path_out,options.filein)
-            elif opcionMenu == "2":
-                up_bdd(conf[2],path_out,int(options.up),int(options.down),int(options.gap))
-            elif opcionMenu == "3":
-                crear_fas(path_out,proy_name)
-            elif opcionMenu == "4":
-                meme(conf[1],conf[3],path_out,conf[4],conf[5])
-            #elif opcionMenu == "5":
-            #    meme(conf[1],conf[3],path_out,conf[4],conf[5])
-            elif opcionMenu == "9":
-                pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5],int(options.up),int(options.down),int(options.gap))
-                exit()
-            ###################################################################################################
-            #elif opcionMenu == "--":
-
-            else:
-                print("Opcion incorrecta. Intente de nuevo.")
-    else:
-        print("No se encuentra el archivo de entrada.")
+        ###################################################################################################
+        #elif opcionMenu == "--":
+        else:
+            print("Opcion incorrecta. Intente de nuevo.")
