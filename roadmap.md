@@ -59,6 +59,7 @@ $ .exit
 + Agrega argumentos
 + se declaran las funciones
 + threading
++ Se utiliza la combinación de Bdd (Sqlite3) y Threads para que los hilos trabajen paralelamente y puedan acceder de manera conjunta a la misma base de datos actualizándola hasta estar completa. Además ante cualquier corte del proceso de carga se puede retomar facilmente.
 + Agregar la carga de la configuracion en un archivo plano .conf con variables editables y que ese archivo se valide al inicio.
 + Elimada la opción de separar por familias
 + Agregar archivo de configuracion
