@@ -1,6 +1,6 @@
 # Pipeline Especialización en Bioinformática
 
-+ Recordar que es un pipeline sencillo
++ Pipeline sencillo
 
 ## Todo:
 
@@ -14,9 +14,9 @@
 - [x] Config
 - [x] Meme  
 - [x] TomTom
-- [ ] Log
+- [x] Log
 - [x] Regular expresion
-- [x] Parametrización por linea de comando- https://docs.python.org/3/library/argparse.html - https://github.com/ucdavis-bioinformatics/alignerviz/blob/master/aviz.py
+- [x] Parametrización por linea de comando
 - [x] -i input -o output
 - [ ] ~~Bdd dinámica, crearla~~
 - [ ] ~~Ampliar la busqueda a varias bases de datos~~
@@ -29,16 +29,12 @@
 - [ ] PlantCare, separados, exportandolo a txt
 - [ ] Sentido de la hebra + o negativa, más el complemento inverso.
 - [ ] ~~Sentido de la hebra + o negativa, más el complemento inverso.~~
-- [ ] Verificar que los parámetros obligatorios se pasen, en caso de no hacerlo informar error
+- [x] Verificar que los parámetros obligatorios se pasen, en caso de no hacerlo informar error
 - [ ] Verificacion del archivo con cabeceras del solgenomics
 - [x] Ver el tema de las licencias GPL software libre
-- [ ] Traducie el archivo Leeme.md 
+- [ ] Traducir el archivo Leeme.md 
 
-- [ ] Testeo completo
-
-## Materiales
-
-Hacerlo con threads que esperen http://www.genbetadev.com/python/multiprocesamiento-en-python-threads-a-fondo-introduccion
+- [ ] Testeo beta
 
 ## Bitácora
 
@@ -71,3 +67,4 @@ $ .exit
 + Pasar por parámetro el upstream y el downstream
 + Agregar el gap para ampliar la búsqueda
 + testeo de plantcare, pero no implementación
++ Agrego los logs
