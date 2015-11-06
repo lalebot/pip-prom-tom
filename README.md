@@ -13,7 +13,7 @@ Script para extraer secuencia de promotores de la especie Solanum lycopersicum f
     + wget
     + tar
     + git
-    + biopython
+
 + MEME
     * ghostscript
     * imagemagick
@@ -59,7 +59,7 @@ Then, edit your shell configuration file to add $HOME/meme/bin to your shell pat
 ```bash
 $ git clone http://github.com/lalebot/pip-prom-tom.git
 $ cd pip-prom-tom
-$ python3 pip-prom-tom.py3 -i list_prom.txt -o proyecto1 -u 1000 -g 250
+$ python3 pip_prom_tom.py3 -i list_prom.txt -o proyecto1 -u 1000 -g 250
 ```
 
 Donde:
@@ -74,7 +74,7 @@ Para descargar los pares de base *downstream* usamos el parámetro **-d**.
 
 Obtener *ayuda* de las opciones agregar **-h**
 ```bash
-$ python pip-prom-tom.py3 -h
+$ python3 pip_prom_tom.py -h
 ```
 
 Para ejecutar el script en modo pipeline agregar **-p 1**
@@ -115,7 +115,7 @@ tomtom-param = -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc
 Contiene una lista de códigos de promotores de ejemplo.
 
 
-#### pip-prom-tom.py3
+#### pip_prom_tom.py
 Contiene el código del script.
 
 ---
