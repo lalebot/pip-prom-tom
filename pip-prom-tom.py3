@@ -2,11 +2,18 @@
 # -*- coding: utf-8 -*-
 
 '''
-Pip-Prom-Tom
-Descripción: Un pipeline que extrae promotores de tomate de la especie 
-            Solanum lycopersicum desde la web Solgenomics
-Autor: Alejandro Damián Pistilli <apistillAAA@unr.edu.ar> (Con el triple 'AAA' eliminado)
-Hecho Zavalla, Argentina
+.______    __  .______          .______   .______        ______   .___  ___.        .___________.  ______   .___  ___. 
+|   _  \  |  | |   _  \         |   _  \  |   _  \      /  __  \  |   \/   |        |           | /  __  \  |   \/   | 
+|  |_)  | |  | |  |_)  |  ______|  |_)  | |  |_)  |    |  |  |  | |  \  /  |  ______`---|  |----`|  |  |  | |  \  /  | 
+|   ___/  |  | |   ___/  |______|   ___/  |      /     |  |  |  | |  |\/|  | |______|   |  |     |  |  |  | |  |\/|  | 
+|  |      |  | |  |             |  |      |  |\  \----.|  `--'  | |  |  |  |            |  |     |  `--'  | |  |  |  | 
+| _|      |__| | _|             | _|      | _| `._____| \______/  |__|  |__|            |__|      \______/  |__|  |__| 
+
+Descripción: Un pipeline que extrae promotores de tomate de la especie
+             Solanum lycopersicum desde la web Solgenomics.
+Host del proyecto: https://github.com/lalebot/pip-prom-tom
+Autor: Alejandro Damián Pistilli <apistill [at] unr.edu.ar>
+Hecho en Zavalla, Argentina
 '''
 
 import urllib.request
@@ -17,8 +24,8 @@ import os
 import threading
 import re
 import optparse
-
 import logging
+
 
 '''
 .___  ___.  _______ .__   __.  __    __
@@ -57,12 +64,11 @@ def menu(proy):
 def parametros():
     try:
         file_param = open('conf.ini', 'r')
-    except:
-        print("Error al abrir el archivo de configuración")
-        logging.exception("Error al abrir el archivo de configuración")
+    except Exception as e:
+        print("Error al abrir el archivo de conf.ini: ", e)
+        logging.exception(e)
         exit()
     for linea in file_param.readlines():
-        # Averiguo si el script debe ejecutarse en modo pipeline o mostrar menú
         if 'pipeline =' in linea:
             pip_pip = linea.split('= ')[1].rstrip('\n')
         if 'meme-path =' in linea:
@@ -78,7 +84,7 @@ def parametros():
                 nro_threads = int(linea.split('= ')[1].rstrip('\n'))
             except Exception as e:
                 print("El número de threads es incorrecto, por favor corrija el archivo conf.ini")
-                print(e)
+                logging.exception(e)
                 file_param.close()
                 exit()
     file_param.close()
@@ -107,8 +113,7 @@ def inicializar(path_out,filein):
         # id nom cab_adn adn cod_sg_bus cod_sg_up exp
         con.commit() # Confirmar los cambios
     except lite.Error as e:
-        print("Error al crear Bdd: ")
-        print(e)
+        print("Error al crear Bdd: \n", e)
         logging.exception(e)
         exit()
     # Abrir el archivo con lista de los promotores
@@ -116,9 +121,10 @@ def inicializar(path_out,filein):
         file_list_prom = open(filein, 'r')
         list_prom = file_list_prom.read()
         file_list_prom.close()
-    except:
-        print("Error al abrir el archivo de entrada")
-        logging.exception("Error al abrir el archivo de entrada")
+    except Exception as e:
+        print("Error al abrir el archivo de entrada, revise el log.\n",e)
+        logging.exception(e)
+        exit()
     list_prom = list_prom.split('\n')
     # Cargar la Bdd
     for i in list_prom:
@@ -127,19 +133,21 @@ def inicializar(path_out,filein):
             if ([i] != '\n') or ([i] != '') or ([i] != ' '):
                 conn.execute("INSERT INTO Prom(id,nom) VALUES(null,?)",([i]))
         except lite.Error as e:
-            print("Error al cargar la Bdd: ", e.args[0])
+            print("Error al cargar la Bdd, revise el log: \n", e)
             logging.exception(e)
+            exit()
     # Grabar los cambios en la Bdd
     try:
         con.commit()
         print("\nCódigo de promotores cargados.")
     except lite.Error as e:
-        print("Commit error Bdd entrada: ", e.args[0])
-        logging.exception(e)
+        print("Error al grabar en la Base de datos: \n", e)
+        logging.warning(e)
     # Cerrar la conexion a la Bdd
     if con:
         conn.close()
         con.close()
+
 
 '''
  __    __  .______   .______       _______  .______   .______
@@ -174,7 +182,7 @@ def up_bdd(nro_threads,path_out,up,down,gap):
                 con.close()
                 break
             except Exception as e:
-                print ("Desliz en la carga: ", e.args[0])
+                print ("Desliz en la carga, se reitentará: ", e.args[0])
                 if con:
                     conn.close()
                     con.close()
@@ -203,7 +211,7 @@ def up1_bdd(path_out,up,down,gap):
             con.close()
             break
         except Exception as e:
-            print("Error al traer la lista de nom desde la Bdd", e.args[0])
+            print("Error al traer la lista de nom desde la Bdd. \n", e)
             logging.exception(e)
             if con:
                 conn.close()
@@ -216,7 +224,7 @@ def up1_bdd(path_out,up,down,gap):
         cod = 0 # cod_sg_bus
         opener = urllib.request.FancyURLopener({})
         fasta=[]
-        # E1 buscar el cod
+        # E1
         try:
             # response = urllib.request.urlopen(url, timeout=10).read().decode('utf-8')
             contents = opener.open("http://solgenomics.net/search/quick?term=" + i[0] + "&x=51&y=8").read().decode(encoding='UTF-8')
@@ -226,15 +234,13 @@ def up1_bdd(path_out,up,down,gap):
             else:
                 cod = 0
         except Exception as e:
-            print ("E1 - Se ha producido un problema al acceder a la web")
-            print (i[0])
-            print (e)
+            print ("E1 - Se ha producido un problema al acceder a la web. \n", e)
+            print ("Código de promotor: ", i[0])
         # E2
         try:
             if cod != 0:
                 contents = opener.open("http://solgenomics.net/feature/" + cod + "/details").read().decode(encoding='UTF-8')
             if re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents):
-            # Ver el tema de las hebras positivas y negativas para luego hacer el reverso complementario
             # Solyc01g098790 (+) Solyc04g082720 (-)
             # print seq.reverse_complement()
                 if (up > 0):
@@ -249,9 +255,8 @@ def up1_bdd(path_out,up,down,gap):
             else:
                 op = 0
         except Exception as e:
-            print ("E2 - Se ha producido un problema al acceder a la web")
-            print (i[0])
-            print (e)
+            print ("E2 - Se ha producido un problema al acceder a la web.\n", e)
+            print ("Código de promotor: ", i[0])
         # E3 FASTA
         try:
             if op != 0:
@@ -260,9 +265,8 @@ def up1_bdd(path_out,up,down,gap):
             else:
                 print ("E3 - Error al obtener la opción para descargar el fasta de: ", i[0])
         except Exception as e:
-            print ("E3 - Se ha producido un problema al acceder a la web")
-            print (i[0])
-            print (e)
+            print ("E3 - Se ha producido un problema al acceder a la web.\n", e)
+            print ("Código de promotor: ", i[0])
         # Grabar en la Bdd
         if cod != 0 and op != 0 and len(fasta) != 0:
             while True:
@@ -286,7 +290,7 @@ def up1_bdd(path_out,up,down,gap):
                         conn.close()
                         con.close()
         else:
-            print("Cod, o op o fasta estan vacios")
+            print("Cod, o op o fasta estan vacíos")
 
 
 '''
@@ -306,21 +310,21 @@ def crear_fas(path_out, proy_name):
         conn = con.cursor()
         conn.execute("SELECT * FROM Prom WHERE adn not null")
     except Exception as e:
-        print("Error al conectarse a la Bdd", e.args[0])
+        print("Error al conectarse a la Bdd. \n", e)
         logging.exception(e)
     file_fas = open(path_out + proy_name +'.fasta', 'w')
     for i in conn:
         try:
             file_fas.write(i[2]+"\n"+i[3])
         except Exception as e:
-            print("Error guardar el archivo FASTA.")
-            print(e)
+            print("Error guardar el archivo FASTA.\n", e)
             logging.exception(e)
             break
     file_fas.close()
     if con:
         conn.close()
         con.close()
+
 
 '''
 .___  ___.  _______ .___  ___.  _______
@@ -361,6 +365,7 @@ def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
             if not os.path.exists(path_dbb_out):
                 os.makedirs(path_dbb_out)
             path_db = path_out + "motif_databases/JASPAR/JASPAR_CORE_2014_plants.meme"
+            # Descargo la Base de datos de Jaspar
             if not (os.path.isfile(path_db)):
                 contents = "" 
                 opener = urllib.request.FancyURLopener({})
@@ -375,22 +380,27 @@ def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
                     os.system(bashCom)
                     bashCom = " tar -xvzf " + path_dbb_out + "motif_databases." + codigo.group(1) + ".tgz" + " -C " + path_out + " > /dev/null 2>&1"
                     os.system(bashCom)
-                except Exception as probl:
-                    print ("TT - Se ha producido un problema al descargar la base de datos Jaspar.")
-                    print (probl)
+                except Exception as e:
+                    print ("Se ha producido un problema al descargar la base de datos Jaspar. \n", e)
+            bashCom = tomtom_path + " -oc " + path_tomtom_out + " " + tomtomparam + " " + path_meme_file + " " + path_db
             try:
-                bashCom = tomtom_path + " -oc " + path_tomtom_out + " " + tomtomparam + " " + path_meme_file + " " + path_db
                 os.system(bashCom)
             except Exception as e:
-                print("Error al analizar el TOMTOM")
-                print(i[0])
-                print(e[0])
+                print("Error al analizar el TOMTOM. \n", e)
                 logging.exception(e)
         else:
             print("Error en el análisis TOMTOM: No se encuentra el archivo MEME de entrada.")
 
 
-# PLANT CARE
+'''
+.______    __          ___      .__   __. .___________.     ______     ___      .______       _______ 
+|   _  \  |  |        /   \     |  \ |  | |           |    /      |   /   \     |   _  \     |   ____|
+|  |_)  | |  |       /  ^  \    |   \|  | `---|  |----`   |  ,----'  /  ^  \    |  |_)  |    |  |__   
+|   ___/  |  |      /  /_\  \   |  . `  |     |  |        |  |      /  /_\  \   |      /     |   __|  
+|  |      |  `----./  _____  \  |  |\   |     |  |        |  `----./  _____  \  |  |\  \----.|  |____ 
+| _|      |_______/__/     \__\ |__| \__|     |__|         \______/__/     \__\ | _| `._____||_______|
+                                                                                                      
+'''
 def plantcare(path_out, proy_name):
     print("\n==================")
     print("Análisis PlantCare")
@@ -414,6 +424,7 @@ def plantcare(path_out, proy_name):
         conn.close()
         con.close()
 
+
 '''
 .______    __  .______    _______  __       __  .__   __.  _______
 |   _  \  |  | |   _  \  |   ____||  |     |  | |  \ |  | |   ____|
@@ -430,8 +441,9 @@ def pipe(path_out,filein,proy_name,conf1,conf2,conf3,conf4,conf5,up,down,gap):
     up_bdd(conf2,path_out,up,down,gap)
     crear_fas(path_out,proy_name)
     meme(conf1,conf3,path_out,conf4,conf5)
-    print("\n¡Pipeline completo! Revise los resultados.\n")
+    print("\n¡Pipeline completo! Revise los resultados en la carpeta de salida.\n")
     exit()
+
 
 '''
 .___  ___.      ___       __  .__   __.
@@ -443,7 +455,7 @@ def pipe(path_out,filein,proy_name,conf1,conf2,conf3,conf4,conf5,up,down,gap):
                                         '''
 if __name__ == '__main__':
 
-    logging.basicConfig(filename='errors.log', level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
+    logging.basicConfig(filename='logs.log', level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
     logger=logging.getLogger(__name__)
 
     parser = optparse.OptionParser()
@@ -510,7 +522,5 @@ if __name__ == '__main__':
         elif opcionMenu == "9":
             pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5],int(options.up),int(options.down),int(options.gap))
             exit()
-        ###################################################################################################
-        #elif opcionMenu == "--":
         else:
             print("Opcion incorrecta. Intente de nuevo.")
