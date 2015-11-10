@@ -7,16 +7,16 @@
 - [x] ~~Elegir bdd~~
 - [x] Elegir archivo que contiene la lista de promotores.
 - [x] Quitar la separación por familia
-- [x] Git
+- [x] **Git**
 - [x] GitHub
 - [x] Python
-- [x] Threads
-- [x] Config
+- [x] **Threads**
+- [x] **Config**
 - [x] Meme  
 - [x] TomTom
 - [x] Log
 - [x] Regular expresion
-- [x] Parametrización por linea de comando
+- [x] **Parametrización por linea de comando**
 - [x] -i input -o output
 - [ ] ~~Bdd dinámica, crearla~~
 - [ ] ~~Ampliar la busqueda a varias bases de datos~~
