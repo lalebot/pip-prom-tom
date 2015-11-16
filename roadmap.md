@@ -1,7 +1,5 @@
 # Pipeline Especialización en Bioinformática
 
-+ Pipeline sencillo
-
 ## Todo:
 
 - [x] ~~Elegir bdd~~
@@ -30,7 +28,7 @@
 - [ ] Sentido de la hebra + o negativa, más el complemento inverso.
 - [ ] ~~Sentido de la hebra + o negativa, más el complemento inverso.~~
 - [x] Verificar que los parámetros obligatorios se pasen, en caso de no hacerlo informar error
-- [ ] Verificacion del archivo con cabeceras del solgenomics
+- [x] Verificacion del archivo con cabeceras del solgenomics
 - [x] Ver el tema de las licencias GPL software libre
 - [ ] Traducir el archivo Leeme.md 
 

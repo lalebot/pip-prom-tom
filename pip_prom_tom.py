@@ -119,19 +119,24 @@ def inicializar(path_out,filein):
     # Abrir el archivo con lista de los promotores
     try:
         file_list_prom = open(filein, 'r')
-        list_prom = file_list_prom.read()
+        list_prom = file_list_prom.read().split('\n')
         file_list_prom.close()
     except Exception as e:
         print("Error al abrir el archivo de entrada, revise el log.\n",e)
         logging.exception(e)
         exit()
-    list_prom = list_prom.split('\n')
     # Cargar la Bdd
+    lista_prom = []
     for i in list_prom:
+        i = i.strip()
+        if i not in lista_prom:
+            i = i.strip()
+            lista_prom.append(i)
+    for i in lista_prom:
         try:
-            print(i)
-            if ([i] != '\n') or ([i] != '') or ([i] != ' '):
-                conn.execute("INSERT INTO Prom(id,nom) VALUES(null,?)",([i]))
+            if re.search('\s*Solyc\w*\s*',i):
+                print(i)
+                conn.execute("INSERT INTO Prom(id,nom) VALUES(null,?)",[i])
         except lite.Error as e:
             print("Error al cargar la Bdd, revise el log: \n", e)
             logging.exception(e)
