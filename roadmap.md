@@ -1,7 +1,7 @@
 # Pipeline Especialización en Bioinformática
 
-## Todo:
 
+## Todo:
 - [x] ~~Elegir bdd~~
 - [x] Elegir archivo que contiene la lista de promotores.
 - [x] Quitar la separación por familia
@@ -10,10 +10,10 @@
 - [x] Python
 - [x] **Threads**
 - [x] **Config**
-- [x] Meme  
+- [x] Meme
 - [x] TomTom
 - [x] Log
-- [x] Regular expresion
+- [x] **Regular expresion**
 - [x] **Parametrización por linea de comando**
 - [x] -i input -o output
 - [ ] ~~Bdd dinámica, crearla~~
@@ -25,14 +25,15 @@
 - [x] Parametrización Meme y Tomtom
 - [x] Modificar bp 1000up, ~~por parámetros~~ y por parseo
 - [ ] PlantCare, separados, exportandolo a txt
-- [ ] Sentido de la hebra + o negativa, más el complemento inverso.
 - [ ] ~~Sentido de la hebra + o negativa, más el complemento inverso.~~
 - [x] Verificar que los parámetros obligatorios se pasen, en caso de no hacerlo informar error
 - [x] Verificacion del archivo con cabeceras del solgenomics
 - [x] Ver el tema de las licencias GPL software libre
 - [ ] Traducir el archivo Leeme.md 
+- [ ] Mover los datos temporales al /tmp de Linux
 
 - [ ] Testeo beta
+
 
 ## Bitácora
 
