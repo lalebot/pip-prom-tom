@@ -26,6 +26,9 @@ import re
 import optparse
 import logging
 
+import sys
+import math
+
 
 '''
 .___  ___.  _______ .__   __.  __    __
@@ -50,6 +53,13 @@ def menu(proy):
     print(" 0 - Salir")
     print("=================================================================")
     print()
+
+
+def progresbar(ancho, porc):
+    ancho = math.floor(ancho * (porc / 100.0))
+    espacios = math.floor(ancho - ancho)
+    carga = '[' + ('=' * int(ancho)) + (' ' * int(espacios)) + ']'
+    sys.stdout.write("%s %d%%\r\n" % (carga, porc))
 
 
 '''
@@ -170,10 +180,20 @@ def up_bdd(nro_threads,path_out,up,down,gap):
     print("=========================================")
     print("Cantidad de threads lanzados: ", nro_threads, ", por favor espere.")
 
+    try:
+        con = lite.connect(path_out + 'prom.db')
+        conn = con.cursor()
+        conn.execute("SELECT count(id) FROM Prom WHERE adn is null")
+        tot = conn.fetchone()[0]
+        conn.close()
+        con.close()
+    except Exception as e:
+        logging.exception(e)
+
     for i in range(nro_threads):
-        i = threading.Thread(target=up1_bdd, args=(path_out,up,down,gap))
+        i = threading.Thread(target=up1_bdd, args=(path_out,up,down,gap,tot))
         i.start()
-    b = 1
+    b = tot
     while b > 0:
         time.sleep(1)
         while True:
@@ -192,7 +212,6 @@ def up_bdd(nro_threads,path_out,up,down,gap):
                     conn.close()
                     con.close()
                 time.sleep(0.25)
-        # print("Porcentaje de carga: %3.2f Procesados: %4d Faltantes: %4d" % (round((2497-b[0])*100/2497,2),2497-b[0],b[0]))
     print("La carga de la Base de datos se realizó correctamente. :)")
 
 
@@ -204,14 +223,14 @@ def up_bdd(nro_threads,path_out,up,down,gap):
 |  `--'  | |  |       | |    |  |_)  | |  '--'  ||  '--'  |
  \______/  | _|       |_|    |______/  |_______/ |_______/
 '''
-def up1_bdd(path_out,up,down,gap):
+def up1_bdd(path_out,up,down,gap,tot):
     # Consultar la bdd y traer sólo los datos que tengan el adn vacío
     while True:
         try:
             con = lite.connect(path_out + 'prom.db')
             conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
             conn.execute("SELECT nom FROM Prom WHERE adn is null ORDER BY random() LIMIT 10")
-            i=conn.fetchone()
+            i = conn.fetchone()
             conn.close()
             con.close()
             break
@@ -284,8 +303,9 @@ def up1_bdd(path_out,up,down,gap):
                     i=conn.fetchone()
                     conn.execute("SELECT count(id) FROM Prom WHERE adn is null")
                     b = conn.fetchone()[0]
-                    if (b > 0): 
+                    if (b > 0):
                         print("Promotores que faltan cargar: ",b)
+                        progressbar(50,((tot-b)*100//tot))
                     conn.close()
                     con.close()
                     break
