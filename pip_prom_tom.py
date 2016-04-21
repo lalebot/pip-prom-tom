@@ -2,17 +2,19 @@
 # -*- coding: utf-8 -*-
 
 '''
-.______    __  .______          .______   .______        ______   .___  ___.        .___________.  ______   .___  ___. 
-|   _  \  |  | |   _  \         |   _  \  |   _  \      /  __  \  |   \/   |        |           | /  __  \  |   \/   | 
-|  |_)  | |  | |  |_)  |  ______|  |_)  | |  |_)  |    |  |  |  | |  \  /  |  ______`---|  |----`|  |  |  | |  \  /  | 
-|   ___/  |  | |   ___/  |______|   ___/  |      /     |  |  |  | |  |\/|  | |______|   |  |     |  |  |  | |  |\/|  | 
-|  |      |  | |  |             |  |      |  |\  \----.|  `--'  | |  |  |  |            |  |     |  `--'  | |  |  |  | 
-| _|      |__| | _|             | _|      | _| `._____| \______/  |__|  |__|            |__|      \______/  |__|  |__| 
+.______    __  .______          .______   .______        ______   .___  ___.        .___________.  ______   .___  ___.
+|   _  \  |  | |   _  \         |   _  \  |   _  \      /  __  \  |   \/   |        |           | /  __  \  |   \/   |
+|  |_)  | |  | |  |_)  |  ______|  |_)  | |  |_)  |    |  |  |  | |  \  /  |  ______`---|  |----`|  |  |  | |  \  /  |
+|   ___/  |  | |   ___/  |______|   ___/  |      /     |  |  |  | |  |\/|  | |______|   |  |     |  |  |  | |  |\/|  |
+|  |      |  | |  |             |  |      |  |\  \----.|  `--'  | |  |  |  |            |  |     |  `--'  | |  |  |  |
+| _|      |__| | _|             | _|      | _| `._____| \______/  |__|  |__|            |__|      \______/  |__|  |__|
 
 Descripción: Un pipeline que extrae promotores de tomate de la especie
-             Solanum lycopersicum desde la web Solgenomics.
-Host del proyecto: https://github.com/lalebot/pip-prom-tom
+             Solanum lycopersicum desde la web Solgenomics. Proyecto final
+             en el marco de la Especialización en Bioinformática dictada
+             en la Facultad de Ciencias Agrarias de Rosario.
 Autor: Alejandro Damián Pistilli <apistill [at] unr.edu.ar>
+Sitio del proyecto: https://github.com/lalebot/pip-prom-tom
 Hecho en Zavalla, Argentina
 '''
 
@@ -40,18 +42,18 @@ import math
 '''
 def menu(proy):
     print()
-    print("=================================================================")
+    print("===================================================================")
     print("Bienvenido al Pip-Prom-Tom - Nombre del proyecto: ", proy)
-    print("Un Pipeline para extrae Promotores de genes de Tomate.")
-    print("=================================================================")
-    print("Menu:")
-    print(" 1 - Inicializar Proyecto y cargar la lista de promotores")
-    print(" 2 - Cargar la Bdd desde -SolGenomics-")
-    print(" 3 - Crear archivo FASTA")
+    print("Un Pipeline para extrae Promotores de genes de Solanum Lycopersicum")
+    print("===================================================================")
+    print("Menu")
+    print(" 1 - Inicializar y cargar configuracion y la lista de promotores")
+    print(" 2 - Cargar la base de datos desde la web -SolGenomics-")
+    print(" 3 - Crear archivo FASTA con los resultados de la busqueda")
     print(" 4 - Análisis MEME y TOMTOM")
     print(" 9 - PIPELINE")
     print(" 0 - Salir")
-    print("=================================================================")
+    print("===================================================================")
     print()
 
 
@@ -63,13 +65,13 @@ def progresbar(ancho, porc):
 
 
 '''
-.______      ___      .______          ___      .___  ___. 
-|   _  \    /   \     |   _  \        /   \     |   \/   | 
-|  |_)  |  /  ^  \    |  |_)  |      /  ^  \    |  \  /  | 
-|   ___/  /  /_\  \   |      /      /  /_\  \   |  |\/|  | 
-|  |     /  _____  \  |  |\  \----./  _____  \  |  |  |  | 
-| _|    /__/     \__\ | _| `._____/__/     \__\ |__|  |__| 
-                                                           
+.______      ___      .______          ___      .___  ___.
+|   _  \    /   \     |   _  \        /   \     |   \/   |
+|  |_)  |  /  ^  \    |  |_)  |      /  ^  \    |  \  /  |
+|   ___/  /  /_\  \   |      /      /  /_\  \   |  |\/|  |
+|  |     /  _____  \  |  |\  \----./  _____  \  |  |  |  |
+| _|    /__/     \__\ | _| `._____/__/     \__\ |__|  |__|
+
 '''
 def parametros():
     try:
@@ -115,8 +117,8 @@ def inicializar(path_out,filein):
     print("Inicialización")
     print("==============")
     try:
-        os.system('sqlite3 '+ path_out + 'prom.db &')
-        con = lite.connect(path_out + 'prom.db')
+        os.system('sqlite3 '+ path_out + 'promResult.db &')
+        con = lite.connect(path_out + 'promResult.db')
         conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
         conn.execute("DROP TABLE IF EXISTS Prom") # Elimnar la Bdd
         conn.execute("CREATE TABLE Prom(id INTEGER DEFAULT 1 PRIMARY KEY AUTOINCREMENT UNIQUE, nom TEXT UNIQUE NOT NULL, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT)") # Crear las tablas de la bdd
@@ -181,7 +183,7 @@ def up_bdd(nro_threads,path_out,up,down,gap):
     print("Cantidad de threads lanzados: ", nro_threads, ", por favor espere.")
 
     try:
-        con = lite.connect(path_out + 'prom.db')
+        con = lite.connect(path_out + 'promResult.db')
         conn = con.cursor()
         conn.execute("SELECT count(id) FROM Prom WHERE adn is null")
         tot = conn.fetchone()[0]
@@ -198,7 +200,7 @@ def up_bdd(nro_threads,path_out,up,down,gap):
         time.sleep(1)
         while True:
             try:
-                con = lite.connect(path_out + 'prom.db')
+                con = lite.connect(path_out + 'promResult.db')
                 conn = con.cursor()
                 conn.execute("SELECT count(id) FROM Prom WHERE adn is null")
                 # id nom cab_adn adn cod_sg_bus cod_sg_up exp
@@ -207,12 +209,12 @@ def up_bdd(nro_threads,path_out,up,down,gap):
                 con.close()
                 break
             except Exception as e:
-                print ("Desliz en la carga, se reitentará: ", e.args[0])
+                print (Error en la carga, se reitentará: ", e.args[0])
                 if con:
                     conn.close()
                     con.close()
                 time.sleep(0.25)
-    print("La carga de la Base de datos se realizó correctamente. :)")
+    print("La carga de la base de datos se realizó correctamente. :)")
 
 
 '''
@@ -227,7 +229,7 @@ def up1_bdd(path_out,up,down,gap,tot):
     # Consultar la bdd y traer sólo los datos que tengan el adn vacío
     while True:
         try:
-            con = lite.connect(path_out + 'prom.db')
+            con = lite.connect(path_out + 'promResult.db')
             conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
             conn.execute("SELECT nom FROM Prom WHERE adn is null ORDER BY random() LIMIT 10")
             i = conn.fetchone()
@@ -235,12 +237,12 @@ def up1_bdd(path_out,up,down,gap,tot):
             con.close()
             break
         except Exception as e:
-            print("Error al traer la lista de nom desde la Bdd. \n", e)
+            print("Error al traer la lista de nombres desde la base de datos: \n", e)
             logging.exception(e)
             if con:
                 conn.close()
                 con.close()
-            time.sleep(0.5) # Esperar para volver a intentar acceder a la bdd
+            time.sleep(0.5)
     # Para cada una de las consultas que tengan ADN vacio
     while i != None:
         contents = "" # cab_fasta y fasta
@@ -295,7 +297,7 @@ def up1_bdd(path_out,up,down,gap,tot):
         if cod != 0 and op != 0 and len(fasta) != 0:
             while True:
                 try:
-                    con = lite.connect(path_out + 'prom.db')
+                    con = lite.connect(path_out + 'promResult.db')
                     conn = con.cursor()
                     conn.execute("UPDATE Prom SET cab_adn=?,adn=?,cod_sg_bus=?,cod_sg_up=? WHERE nom = ? ",(fasta[0],fasta[1],cod,op,i[0]))
                     con.commit()
@@ -319,19 +321,19 @@ def up1_bdd(path_out,up,down,gap,tot):
 
 
 '''
- _______    ___           _______.___________.    ___      
-|   ____|  /   \         /       |           |   /   \     
-|  |__    /  ^  \       |   (----`---|  |----`  /  ^  \    
-|   __|  /  /_\  \       \   \       |  |      /  /_\  \   
-|  |    /  _____  \  .----)   |      |  |     /  _____  \  
-|__|   /__/     \__\ |_______/       |__|    /__/     \__\ 
+ _______    ___           _______.___________.    ___
+|   ____|  /   \         /       |           |   /   \
+|  |__    /  ^  \       |   (----`---|  |----`  /  ^  \
+|   __|  /  /_\  \       \   \       |  |      /  /_\  \
+|  |    /  _____  \  .----)   |      |  |     /  _____  \
+|__|   /__/     \__\ |_______/       |__|    /__/     \__\
 '''
 def crear_fas(path_out, proy_name):
     print("\n=====================")
     print("Creando archivo fasta")
     print("=====================")
     try:
-        con = lite.connect(path_out + 'prom.db')
+        con = lite.connect(path_out + 'promResult.db')
         conn = con.cursor()
         conn.execute("SELECT * FROM Prom WHERE adn not null")
     except Exception as e:
@@ -392,7 +394,7 @@ def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
             path_db = path_out + "motif_databases/JASPAR/JASPAR_CORE_2014_plants.meme"
             # Descargo la Base de datos de Jaspar
             if not (os.path.isfile(path_db)):
-                contents = "" 
+                contents = ""
                 opener = urllib.request.FancyURLopener({})
                 try:
                     contents = opener.open("http://meme-suite.org/meme-software/index.html").read().decode(encoding='UTF-8')
@@ -418,20 +420,20 @@ def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
 
 
 '''
-.______    __          ___      .__   __. .___________.     ______     ___      .______       _______ 
+.______    __          ___      .__   __. .___________.     ______     ___      .______       _______
 |   _  \  |  |        /   \     |  \ |  | |           |    /      |   /   \     |   _  \     |   ____|
-|  |_)  | |  |       /  ^  \    |   \|  | `---|  |----`   |  ,----'  /  ^  \    |  |_)  |    |  |__   
-|   ___/  |  |      /  /_\  \   |  . `  |     |  |        |  |      /  /_\  \   |      /     |   __|  
-|  |      |  `----./  _____  \  |  |\   |     |  |        |  `----./  _____  \  |  |\  \----.|  |____ 
+|  |_)  | |  |       /  ^  \    |   \|  | `---|  |----`   |  ,----'  /  ^  \    |  |_)  |    |  |__
+|   ___/  |  |      /  /_\  \   |  . `  |     |  |        |  |      /  /_\  \   |      /     |   __|
+|  |      |  `----./  _____  \  |  |\   |     |  |        |  `----./  _____  \  |  |\  \----.|  |____
 | _|      |_______/__/     \__\ |__| \__|     |__|         \______/__/     \__\ | _| `._____||_______|
-                                                                                                      
+
 '''
 def plantcare(path_out, proy_name):
     print("\n==================")
     print("Análisis PlantCare")
     print("==================")
     try:
-        con = lite.connect(path_out + 'prom.db')
+        con = lite.connect(path_out + 'promResult.db')
         conn = con.cursor()
         conn.execute("SELECT * FROM Prom WHERE adn not null")
     except Exception as e:
@@ -439,7 +441,7 @@ def plantcare(path_out, proy_name):
     for i in conn:
         try:
             # file_fas.write(i[2]+"\n"+i[3])
-            bashCom = "python2 plantcare.py" 
+            bashCom = "python2 plantcare.py"
             os.system(bashCom)
         except Exception as probl:
             print("Error guardar el fasta")
@@ -542,8 +544,6 @@ if __name__ == '__main__':
             crear_fas(path_out,proy_name)
         elif opcionMenu == "4":
             meme(conf[1],conf[3],path_out,conf[4],conf[5])
-        #elif opcionMenu == "5":
-        #    meme(conf[1],conf[3],path_out,conf[4],conf[5])
         elif opcionMenu == "9":
             pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5],int(options.up),int(options.down),int(options.gap))
             exit()
