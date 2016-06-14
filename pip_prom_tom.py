@@ -209,7 +209,7 @@ def up_bdd(nro_threads,path_out,up,down,gap):
                 con.close()
                 break
             except Exception as e:
-                print (Error en la carga, se reitentará: ", e.args[0])
+                print ("Error en la carga, se reitentará: ", e.args[0])
                 if con:
                     conn.close()
                     con.close()
@@ -392,7 +392,7 @@ def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
             if not os.path.exists(path_dbb_out):
                 os.makedirs(path_dbb_out)
             path_db = path_out + "motif_databases/JASPAR/JASPAR_CORE_2014_plants.meme"
-            # Descargo la Base de datos de Jaspar
+            # Descargo la Base de datos Jaspar Plants
             if not (os.path.isfile(path_db)):
                 contents = ""
                 opener = urllib.request.FancyURLopener({})
@@ -417,39 +417,6 @@ def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
                 logging.exception(e)
         else:
             print("Error en el análisis TOMTOM: No se encuentra el archivo MEME de entrada.")
-
-
-'''
-.______    __          ___      .__   __. .___________.     ______     ___      .______       _______
-|   _  \  |  |        /   \     |  \ |  | |           |    /      |   /   \     |   _  \     |   ____|
-|  |_)  | |  |       /  ^  \    |   \|  | `---|  |----`   |  ,----'  /  ^  \    |  |_)  |    |  |__
-|   ___/  |  |      /  /_\  \   |  . `  |     |  |        |  |      /  /_\  \   |      /     |   __|
-|  |      |  `----./  _____  \  |  |\   |     |  |        |  `----./  _____  \  |  |\  \----.|  |____
-| _|      |_______/__/     \__\ |__| \__|     |__|         \______/__/     \__\ | _| `._____||_______|
-
-'''
-def plantcare(path_out, proy_name):
-    print("\n==================")
-    print("Análisis PlantCare")
-    print("==================")
-    try:
-        con = lite.connect(path_out + 'promResult.db')
-        conn = con.cursor()
-        conn.execute("SELECT * FROM Prom WHERE adn not null")
-    except Exception as e:
-        print("Error Bdd", e.args[0])
-    for i in conn:
-        try:
-            # file_fas.write(i[2]+"\n"+i[3])
-            bashCom = "python2 plantcare.py"
-            os.system(bashCom)
-        except Exception as probl:
-            print("Error guardar el fasta")
-            print(probl)
-            break
-    if con:
-        conn.close()
-        con.close()
 
 
 '''

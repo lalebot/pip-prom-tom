@@ -2,7 +2,7 @@
 
 Script para extraer secuencia de promotores de la especie Solanum lycopersicum from the web Solgenomics, para luego ser analizados con MEME y TOMTOM.
 
-![Tomate](http://www.ghesaf.ro/wp-content/uploads/2011/09/tomate-heinz-1370.jpg "Tomate")
+![Tomate](http://www.poesi.as/cuadros/tomate.jpg "Tomate")
 
 # Requisitos
 
@@ -19,7 +19,7 @@ Script para extraer secuencia de promotores de la especie Solanum lycopersicum f
 Instalación en Debian y derivados:
 
 ```bash
-$ sudo apt-get install git python3 sqlite3 wget tar 
+$ sudo apt-get install git python3 sqlite3 wget tar
 ```
 
 Instalación en ArchLinux y derivados:
@@ -54,14 +54,14 @@ sudo apt-get install python2.6 python2.6-dev
 ```
 
 ```bash
-$ sudo apt-get install ghostscript imagemagick openmpi-bin tcsh perl libexpat1-dev zlib1g-dev autoconf automake libtool libxml2  libxml-parser-perl 
+$ sudo apt-get install ghostscript imagemagick openmpi-bin tcsh perl libexpat1-dev zlib1g-dev autoconf automake libtool libxml2  libxml-parser-perl
 ```
 
 
 Instalación en ArchLinux y derivados:
 
 ```bash
-$ yaourt -S python2 perl ghostscript imagemagick python2 perl-xml-parser perl-html-template openmpi tcsh autoconf automake libtool libxml2  libxslt 
+$ yaourt -S python2 perl ghostscript imagemagick python2 perl-xml-parser perl-html-template openmpi tcsh autoconf automake libtool libxml2  libxslt
 ```
 
 
@@ -77,7 +77,7 @@ $ make test
 $ make install
 ```
 
-Then, edit your shell configuration file to add $HOME/meme/bin to your shell path. This can often be done by editing the file named *.profile* to add the following line: 
+Then, edit your shell configuration file to add $HOME/meme/bin to your shell path. This can often be done by editing the file named *.profile* to add the following line:
 
 **export PATH=$HOME/meme/bin:$PATH**
 
