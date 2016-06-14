@@ -139,6 +139,8 @@ meme-param = -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc
 tomtom-path = /usr/bin/meme-tomtom
 # Parámetros de TOMTOM. Default = -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc
 tomtom-param = -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc
+# Base para el TOMTOM
+tomtom-bd = motif_databases/JASPAR/JASPAR_CORE_2016_plants.meme
 ```
 
 

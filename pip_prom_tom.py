@@ -13,7 +13,7 @@ Descripción: Un pipeline que extrae promotores de tomate de la especie
              Solanum lycopersicum desde la web Solgenomics. Proyecto final
              en el marco de la Especialización en Bioinformática dictada
              en la Facultad de Ciencias Agrarias de Rosario.
-Autor: Alejandro Damián Pistilli <apistill [at] unr.edu.ar>
+Autor: Alejandro Damián Pistilli <apistill [arroba] unr.edu.ar>
 Sitio del proyecto: https://github.com/lalebot/pip-prom-tom
 Hecho en Zavalla, Argentina
 '''
@@ -57,13 +57,6 @@ def menu(proy):
     print()
 
 
-def progresbar(ancho, porc):
-    ancho = math.floor(ancho * (porc / 100.0))
-    espacios = math.floor(ancho - ancho)
-    carga = '[' + ('=' * int(ancho)) + (' ' * int(espacios)) + ']'
-    sys.stdout.write("%s %d%%\r\n" % (carga, porc))
-
-
 '''
 .______      ___      .______          ___      .___  ___.
 |   _  \    /   \     |   _  \        /   \     |   \/   |
@@ -91,6 +84,8 @@ def parametros():
             tomtompath = linea.split('= ')[1].rstrip('\n')
         if 'tomtom-param =' in linea:
             tomtomparam = linea.split('= ')[1].rstrip('\n')
+        if 'tomtom-bd =' in linea:
+            tomtombd = linea.split('= ')[1].rstrip('\n')
         if 'threads =' in linea:
             try:
                 nro_threads = int(linea.split('= ')[1].rstrip('\n'))
@@ -100,7 +95,7 @@ def parametros():
                 file_param.close()
                 exit()
     file_param.close()
-    return(pip_pip,memepath,nro_threads,tomtompath,memeparam,tomtomparam)
+    return(pip_pip,memepath,nro_threads,tomtompath,memeparam,tomtomparam,tomtombd)
 
 
 '''
@@ -361,7 +356,7 @@ def crear_fas(path_out, proy_name):
 |  |  |  | |  |____ |  |  |  | |  |____
 |__|  |__| |_______||__|  |__| |_______|
                                         '''
-def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
+def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam, tomtombd):
     print("\n=================")
     print("Análisis con MEME")
     print("=================")
@@ -391,7 +386,7 @@ def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
             path_dbb_out = path_out + 'tmp/'
             if not os.path.exists(path_dbb_out):
                 os.makedirs(path_dbb_out)
-            path_db = path_out + "motif_databases/JASPAR/JASPAR_CORE_2014_plants.meme"
+            path_db = path_out + tomtombd
             # Descargo la Base de datos Jaspar Plants
             if not (os.path.isfile(path_db)):
                 contents = ""
@@ -427,14 +422,14 @@ def meme(meme_path, tomtom_path, path_out, memeparam, tomtomparam):
 |  |      |  | |  |      |  |____ |  `----.|  | |  |\   | |  |____
 | _|      |__| | _|      |_______||_______||__| |__| \__| |_______|
                                                                    '''
-def pipe(path_out,filein,proy_name,conf1,conf2,conf3,conf4,conf5,up,down,gap):
+def pipe(path_out,filein,proy_name,conf1,conf2,conf3,conf4,conf5,conf6,up,down,gap):
     print("========")
     print("Pipeline")
     print("========")
     inicializar(path_out,filein)
     up_bdd(conf2,path_out,up,down,gap)
     crear_fas(path_out,proy_name)
-    meme(conf1,conf3,path_out,conf4,conf5)
+    meme(conf1,conf3,path_out,conf4,conf5,conf6)
     print("\n¡Pipeline completo! Revise los resultados en la carpeta de salida.\n")
     exit()
 
@@ -495,7 +490,7 @@ if __name__ == '__main__':
         os.makedirs(path_out)
 
     if (conf[0] == "true") or (int(options.pipe) == 1):
-        pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5],int(options.up),int(options.down),int(options.gap))
+        pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5],conf[6],int(options.up),int(options.down),int(options.gap))
         exit()
 
     while True:
@@ -510,9 +505,9 @@ if __name__ == '__main__':
         elif opcionMenu == "3":
             crear_fas(path_out,proy_name)
         elif opcionMenu == "4":
-            meme(conf[1],conf[3],path_out,conf[4],conf[5])
+            meme(conf[1],conf[3],path_out,conf[4],conf[5],conf[6])
         elif opcionMenu == "9":
-            pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5],int(options.up),int(options.down),int(options.gap))
+            pipe(path_out,options.filein,proy_name,conf[1],conf[2],conf[3],conf[4],conf[5],conf[6],int(options.up),int(options.down),int(options.gap))
             exit()
         else:
             print("Opcion incorrecta. Intente de nuevo.")
