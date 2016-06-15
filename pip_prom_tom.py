@@ -11,8 +11,8 @@
 
 Descripción: Un pipeline que extrae promotores de tomate de la especie
              Solanum lycopersicum desde la web Solgenomics. Proyecto final
-             en el marco de la Especialización en Bioinformática dictada
-             en la Facultad de Ciencias Agrarias de Rosario.
+             en el marco de la Especialización en Bioinformática de la
+             Universidad Nacional de Rosario.
 Autor: Alejandro Damián Pistilli <apistill [arroba] unr.edu.ar>
 Sitio del proyecto: https://github.com/lalebot/pip-prom-tom
 Hecho en Zavalla, Argentina
@@ -44,7 +44,7 @@ def menu(proy):
     print()
     print("===================================================================")
     print("Bienvenido al Pip-Prom-Tom - Nombre del proyecto: ", proy)
-    print("Un Pipeline para extrae Promotores de genes de Solanum Lycopersicum")
+    print("Un Pipeline para extrae Promotores de Solanum Lycopersicum")
     print("===================================================================")
     print("Menu")
     print(" 1 - Inicializar y cargar configuracion y la lista de promotores")
@@ -116,7 +116,7 @@ def inicializar(path_out,filein):
         con = lite.connect(path_out + 'promResult.db')
         conn = con.cursor() # Objeto cursor para hacer cambios en la Bdd
         conn.execute("DROP TABLE IF EXISTS Prom") # Elimnar la Bdd
-        conn.execute("CREATE TABLE Prom(id INTEGER DEFAULT 1 PRIMARY KEY AUTOINCREMENT UNIQUE, nom TEXT UNIQUE NOT NULL, cab_adn TEXT, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT)") # Crear las tablas de la bdd
+        conn.execute("CREATE TABLE Prom(id INTEGER DEFAULT 1 PRIMARY KEY AUTOINCREMENT UNIQUE, nom TEXT UNIQUE NOT NULL, cab_adn TEXT UNIQUE, adn TEXT, cod_sg_bus TEXT, cod_sg_up TEXT)") # Crear las tablas de la bdd
         # id nom cab_adn adn cod_sg_bus cod_sg_up exp
         con.commit() # Confirmar los cambios
     except lite.Error as e:
@@ -302,7 +302,6 @@ def up1_bdd(path_out,up,down,gap,tot):
                     b = conn.fetchone()[0]
                     if (b > 0):
                         print("Promotores que faltan cargar: ",b)
-                        progressbar(50,((tot-b)*100//tot))
                     conn.close()
                     con.close()
                     break

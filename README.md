@@ -1,10 +1,10 @@
-# Pipeline de Promotores de Tomate
+# Arquitectura en Pipeline para la extracción de promotores de Solanum lycopersicum
 
 Script para extraer secuencia de promotores de la especie Solanum lycopersicum from the web Solgenomics, para luego ser analizados con MEME y TOMTOM.
 
 ![Tomate](http://www.poesi.as/cuadros/tomate.jpg "Tomate")
 
-# Requisitos
+## Requisitos
 
 #### Software base para la ejecución del script
 
@@ -16,7 +16,7 @@ Script para extraer secuencia de promotores de la especie Solanum lycopersicum f
     + git
 
 
-Instalación en Debian y derivados:
+Instalación en Debian, Ubuntu y derivados:
 
 ```bash
 $ sudo apt-get install git python3 sqlite3 wget tar
@@ -27,7 +27,6 @@ Instalación en ArchLinux y derivados:
 ```bash
 $ yaourt -S git python3 sqlite3 wget
 ```
-
 
 #### Programas de análisis
 
@@ -45,7 +44,7 @@ Requisitos **MEME & TOMTOM**
 Documentación: http://meme-suite.org/doc/install.html
 
 
-Instalación en Debian y derivados:
+Instalación en Debian, Ubuntu y derivados:
 
 ```bash
 sudo add-apt-repository ppa:fkrull/deadsnakes
@@ -65,7 +64,7 @@ $ yaourt -S python2 perl ghostscript imagemagick python2 perl-xml-parser perl-ht
 ```
 
 
-Descargar: http://meme-suite.org/doc/download.html?man_type=web
+Descargar: http://meme-suite.org/doc/download.html
 
 Instalación:
 ```bash
@@ -124,7 +123,7 @@ Contiene el archivo de configuración parametrizable.
 ```bash
 # Archivo de configuración inicial
 
-# Pipeline on/off por defecto
+# Pipeline true/false por defecto
 pipeline = false
 
 # Número de threads que se lanzan
