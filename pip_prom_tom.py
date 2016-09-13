@@ -44,7 +44,7 @@ def menu(proy):
     print()
     print("===================================================================")
     print("Bienvenido al Pip-Prom-Tom - Nombre del proyecto: ", proy)
-    print("Un Pipeline para extrae Promotores de Solanum Lycopersicum")
+    print("Pipeline para extraer promotores de Solanum Lycopersicum")
     print("===================================================================")
     print("Menu")
     print(" 1 - Inicializar y cargar configuracion y la lista de promotores")
