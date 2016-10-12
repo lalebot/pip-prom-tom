@@ -263,16 +263,21 @@ def up1_bdd(path_out,up,down,gap,tot):
                 contents = opener.open("http://solgenomics.net/feature/" + cod + "/details").read().decode(encoding='UTF-8')
             if re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents):
             # Solyc01g098790 (+) Solyc04g082720 (-)
-            # print seq.reverse_complement()
+                opcion = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents)
+                if (int(opcion.group(2)) > int(opcion.group(3))):
+                    strand = 1 # strand +
+                else:
+                    strand = -1 # strand -
                 if (up > 0):
                     opcion = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp upstream',contents)
-                    dest_ud = int(opcion.group(3)) + up - 1
-                    dest_gap = int(opcion.group(3)) - gap
+                    dest_ud = int(opcion.group(3)) + (up - 1) * strand
+                    dest_gap = int(opcion.group(3)) - gap * strand
                     op = str(opcion.group(1)) + ":" + str(dest_ud) + ".." + str(dest_gap)
                 elif (down > 0):
                     opcion = re.search('([0-9]+):([0-9]+)..([0-9]+)">1000 bp downstream',contents)
-                    dest_ud = int(opcion.group(3)) + down - 1 + gap
-                    op = str(opcion.group(1)) + ":" + str(dest_ud) + ".." + str(opcion.group(3))
+                    dest_ud = int(opcion.group(2)) - (down - 1 ) * strand
+                    dest_gap = int(opcion.group(2)) + gap * strand
+                    op = str(opcion.group(1)) + ":" + str(dest_gap) + ".." + str(dest_ud)
             else:
                 op = 0
         except Exception as e:
