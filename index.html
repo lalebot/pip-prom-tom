@@ -66,12 +66,6 @@ a:hover {
 </section>
 
 <section style="padding:5em 9em;">
-  <p class="tit">Objetivo
-  <p>Desarrollar una <span class="res">arquitectura en pipeline</span> para la descarga y análisis de <span class="res">promotores</span> de genes de <i>Solanum lycopersicum</i> cv Heinz 1706, desde la web <span class="res">Sol Genomics Network</span>. 
-     <br>Los promotores descargados serán organizados en un único archivo <span class="res">FASTA</span> para su posterior análisis con los programas <span class="res">MEME</span> y <span class="res">TOMTOM</span>.
-</section>
-
-<section style="padding:5em 9em;">
   <p class="tit">Los comienzos
   <p>El TF nace como respuesta a un problema <span class="res">real</span>, el análisis de regiones promotoras de genomas de solanáceas.
   <p>El primer script
@@ -79,12 +73,30 @@ a:hover {
 </section>
 
 <section style="padding:5em 9em;">
+  <p class="tit">Objetivo
+  <p>Desarrollar una <span class="res">arquitectura en pipeline</span> para la descarga y análisis de <span class="res">promotores</span> de genes de <i>Solanum lycopersicum</i> cv Heinz 1706, desde la web <span class="res">Sol Genomics Network</span>. 
+     <br>Los promotores descargados serán organizados en un único archivo <span class="res">FASTA</span> para su posterior análisis con los programas <span class="res">MEME</span> y <span class="res">TOMTOM</span>.
+</section>
+
+<section style="padding:5em 9em;">
 <p class="tit">Problemas
-  <p>Minimizar el tiempo de descarga de 2500 promotores (12 hs.)
+  <p>Automatizar la descarga de 2500 promotores (semanas)
 </section>
 
 <section style="padding:5em 9em;">
 <p class="tit">Solución
+  <p>Codificación de un script
+</section>
+
+<section style="padding:5em 9em;">
+<p class="tit">Problemas
+  <p class="grey">Automatizar la descarga de 2500 promotores
+  <p>Minimizar el tiempo de descarga de 2500 promotores (12 hs.)
+</section>
+
+<section style="padding:5em 9em;">
+<p class="tit">Soluciones
+  <p>Codificacir de un script
   <p>Correr varias instancias simultáneamente.
 </section>
 
@@ -104,24 +116,25 @@ a:hover {
 
 <section style="padding:5em 9em;">
 <p class="tit">Soluciones
-  <p class="grey">Correr varias instancias simultáneamente
   <p>Utilizar una <span class="res">base de datos</span>
-  <p>Aplicando <span class="res">threads</span>: reducción del tiempo de descarga de los 2500 promotores a 2 horas
+  <p>Aplicando <span class="res">threads</span>: reducción del tiempo de descarga de los 2500 promotores de 12 hs. a 2 hs.
 </section>
 
 <section style="padding:5em 9em;">
 <p class="tit">Problemas
+  <p class="grey">Automatizar la descarga de 2500 promotores
   <p class="grey">Minimizar el tiempo de descarga de 2500 promotores (12 hs.)
   <p class="grey">Cortes de luz e internet y el acceso simultáneo de varias instancias a un mismo archivo de resultados
-  <p>Parametrizar threads, longitudes del promotor río arriba/abajo, MEME y TOMTOM
+  <p>Parametrizar threads, longitudes del promotor río arriba/abajo del SIT, MEME y TOMTOM
 </section>
 
 <section style="padding:5em 9em;">
 <p class="tit">Soluciones
-  <p class="grey">Correr varias instancias simultáneamente
+  <p>Codificacir de un <span class="res">script</span>
   <p>Utilizar una <span class="res">base de datos</span>
-  <p>Aplicando <span class="res">threads</span>: reducción del tiempo de descarga de los 2500 promotores a 2 horas
+  <p>Aplicando <span class="res">threads</span>: reducción del tiempo de descarga de los 2500 promotores de 12 hs. a 2 hs.
   <p>Archivo de <span class="res">configuración</span> y <span class="res">parametrización</span> por terminal.
+    <p> MEME y TOMTOM ¿?
 </section>
 
 <section style="text-align:center;padding:1em 1em;background-color:white;">
@@ -158,7 +171,7 @@ $ python3 pip_prom_tom.py
   <p class="tit">Ventajas
   <p><span class="res">Git</span>: Explora todo el desarrollo del proyecto
      <br><span class="res">GitHub.com</span>: Online y disponible
-     <br><span class="res">Escabilidad</span>: Flexibilidad y adaptación
+     <br><span class="res">Escalabilidad</span>: Flexibilidad y adaptación
      <br><span class="res">Costo</span> nulo de software
     <br><span class="res">Licencia GNU GPL</span>
     <br><span class="res">Threads</span>
@@ -169,7 +182,7 @@ $ python3 pip_prom_tom.py
   <p class="tit">Importancia
   <p><font color="grey">Aplicar a otras variantes anotadas</font>
   <br>Herramienta bioinformática Facilita el estudio
-  <p><font color="grey">Labor interdiciplinar</font>
+  <p><font color="grey">Labor interdisciplinar</font>
   <br>El TF incluye un DVD para compartir con el código, video explicativo y manuales
   <br><font color="grey">Amplia las funcionalidades ofrecidas por la SGN</font>
  </section>
