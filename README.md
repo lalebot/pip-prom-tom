@@ -86,7 +86,7 @@ Then, edit your shell configuration file to add $HOME/meme/bin to your shell pat
 ```bash
 $ git clone http://github.com/lalebot/pip-prom-tom.git
 $ cd pip-prom-tom
-$ python3 pip_prom_tom.py -i list_prom.txt -o proyecto1 -u 1000 -g 250
+$ python3 pip_prom_tom.py -i exa_prom.txt -o proyecto1 -u 1000 -g 250
 ```
 
 Donde:
