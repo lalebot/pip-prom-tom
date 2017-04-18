@@ -151,4 +151,3 @@ Contiene una lista de códigos de promotores de ejemplo.
 Contiene el código del script.
 
 ---
-<img src="https://theapproachdotorg.files.wordpress.com/2012/05/killer-tomato.jpg" align="left" width="200">
