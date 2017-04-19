@@ -61,8 +61,8 @@ a:hover {
 <section style="padding:5em 9em;">
   <p class="tit">Introducción
   <p>Nuevas tecnologías de secuenciación: <span class="res">Big Data</span>
-  <p>Estado de madurez del fruto de tomate: <span class="res">motivos de ADN, promotores génicos</span>
   <p><span class="res">Sol Genomics Network</span>: Heinz 1706 de <i>Solanum Lycopersicum</i>
+  <p>Estado de madurez del fruto de tomate: <span class="res">motivos de ADN, promotores génicos</span>
 </section>
 
 <section style="padding:5em 9em;">
@@ -89,7 +89,7 @@ a:hover {
 </section>
 
 <section style="padding:5em 9em;">
-<p class="tit">Problemas
+<p class="tit">Problema
   <p>Minimizar el tiempo de descarga de 2500 promotores (12 hs.)
 </section>
 
@@ -107,7 +107,7 @@ a:hover {
 </section>
 
 <section style="padding:5em 9em;">
-<p class="tit">Problemas
+<p class="tit">Problema
   <p>Cortes de luz e internet y el acceso simultáneo de varias instancias a un mismo archivo de resultados
 </section>
 
@@ -127,8 +127,8 @@ a:hover {
 <section style="padding:5em 9em;">
 <p class="tit">Soluciones
   <p>Codificación de un <span class="res">script</span>
-  <p>Utilizar una <span class="res">base de datos</span> para el acceso simultáneo y recuperación en caso de cortes
-  <p>Aplicar <span class="res">threads</span> para reduccir el tiempo de descarga de los 2500 promotores de 12 hs. a 2 hs.
+  <p>Utilizar una <span class="res">base de datos</span>
+  <p>Aplicar <span class="res">threads</span>
   <p>Archivo de <span class="res">configuración</span> y <span class="res">parametrización</span> por terminal
   <p>Arquitectura en pipeline
 </section>
@@ -151,12 +151,12 @@ $ python3 pip_prom_tom.py
 
 <section id="lorenz" style="padding-top:0;">
   <canvas></canvas>
-  <p style="position:absolute;z-index:1;padding:3em 3em;left:0;width:100%;font-size:200%;text-shadow:0 1px 0 #000;">Veámoslo <p><A HREF="https://github.com/lalebot/pip-prom-tom#descarga-y-ejecuci%C3%B3n-del-script" TARGET="_new">Corriendo...</A>
+  <p style="position:absolute;z-index:1;padding:3em 3em;left:0;width:100%;font-size:200%;text-shadow:0 1px 0 #000;">Veámoslo <br><A HREF="https://github.com/lalebot/pip-prom-tom#descarga-y-ejecuci%C3%B3n-del-script" TARGET="_new">Corriendo...</A>
 </section>
 
 <section style="padding:5em 9em;">
   <p class="tit">Simulación
-    <p>Busquemos <i>Solyc01g079560</i>
+    <p>Busquemos <i>Solyc01g079560</i> en
       <br><A HREF="https://solgenomics.net/" TARGET="_new">Sol Genomics Network</A>
 </section>
 
@@ -184,37 +184,14 @@ $ python3 pip_prom_tom.py
   <p class="tit">Importancia
   <p><font color="grey">Aplicar a otras variantes anotadas</font>
   <br>Herramienta bioinformática Facilita el estudio
-  <p><font color="grey">Labor interdisciplinar</font>
+  <br><font color="grey">Labor interdisciplinar</font>
   <br>El TF incluye un DVD para compartir con el código, video explicativo y manuales
   <br><font color="grey">Amplia las funcionalidades ofrecidas por la SGN</font>
  </section>
 
-<!--github
-    manual
-    configuracion y adaptacion
-    replicado, Plantea ampliar la metodología hacia otros genomas.
-    El desarrollo de la metodología del presente TF permite mejorar aspectos
-relacionados con el estudio de regiones del genoma de S. lycopersicum cv Heinz
-1706 que aún no se hallan anotadas. Asimismo, la creación del proyecto en una
-plataforma de versionado de software Git permitirá ampliar los alcances de este
-TF a otros genomas de solanáceas que están anotados a la Sol genomics network.
-    
-    Un objetivo que se cumplimentó fue el de hacer más eficiente el uso del tiempo
-y los recursos informáticos, a fin de obtener regiones genómicas adaptadas a la
-necesidad del biólogo Ej. obtener de una manera flexible, la cantidad que el
-usuario estime necesaria, en el número de pares de bases upstream al sitio de
-inicio de la transcripción de un gen en la especie S. lycopersicum.
-    
-    También se automatizó la descarga en bloque (varios genes por vez) de
-regiones genómicas, una ventaja que no se ofrecía en la plataforma web SGN.
-A su vez esta herramienta podrá ser adaptada hacia otras especies de
-solanáceas quese hallan anotadas y alojadas en la SGN.
--->
-
-
 <section style="padding:5em 9em;">
   <p class="tit">Conclusiones
-  <p><font color="grey">Desarrolló y automatizón una arquitectura en pipeline</font>
+  <p><font color="grey">Desarrolló y automatizó una arquitectura en pipeline</font>
   <br>Creó todo el proyecto en una plataforma de versionado de software 
   <br><font color="grey">Implementó conjuntamente threads en Python, expresiones regulares y base de datos SQLite</font>
   <br>Presentó una metodología que es aplicable a otras áreas biológicas
