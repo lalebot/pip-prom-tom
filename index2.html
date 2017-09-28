@@ -1,3 +1,451 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<style>
+
+@import url(http://fonts.googleapis.com/css?family=PT+Serif|PT+Serif:b|PT+Serif:i);
+
+section {
+  background: #000;
+  color: #fff;
+  padding: 2em;
+  font-family: "PT Serif", Baskerville, Georgia;
+}
+
+#follow {
+  background: none;
+}
+
+.tit {
+  font-size:150%;
+}
+
+.cue {
+  color: #777;
+  font-size:70%;
+}
+
+.grey {
+  color: #777;
+  font-size:70%;
+}
+
+.res {
+  color: orange;
+}
+
+.invertir-color {
+-webkit-filter: invert(100%);
+filter: invert(100%);
+}
+  
+a:link,
+a:visited {
+  color: orange;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+</style>
+
+<section style="text-align:center;padding-top:1em;">
+  <p><img src="logo_unr.png" width="10%" class="invertir-color" /> 
+  <p class="tit">Especialización en Bioinformática
+  <p class="res">Diseño de una arquitectura en pipeline para la descarga 
+    <br>y análisis de secuencias de promotores 
+    <br>en <i>Solanum Lycopersicum</i>
+  <p>Ing. Alejandro Damián Pistilli Neri
+  <p class="grey">FCByF & FCAGR
+    <br>Tutora: Dra. Débora Arce
+    <br>Abril 2017
+</section>
+
+<section style="padding:4em 9em;">
+<body>
+<i class="fa fa-flag"></i> We use an icon once in the DOM so the CSS for fontAwesome is loaded.</h2>
+<div id="mynetwork"></div>
+<script type="text/javascript">
+    var nodes = [
+        {id: 0, label: "0", group: 'source'},
+        {id: 1, label: "1", group: 'icons'},
+        {id: 2, label: "2", group: 'icons'},
+        {id: 3, label: "3", group: 'icons'},
+        {id: 4, label: "4", group: 'icons'},
+        {id: 5, label: "5", group: 'icons'},
+        {id: 6, label: "6", group: 'icons'},
+        {id: 7, label: "7", group: 'icons'},
+        {id: 8, label: "8", group: 'icons'},
+        {id: 9, label: "9", group: 'icons'},
+        {id: 10, label: "10", group: 'mints'},
+        {id: 11, label: "11", group: 'mints'},
+        {id: 12, label: "12", group: 'mints'},
+        {id: 13, label: "13", group: 'mints'},
+        {id: 14, label: "14", group: 'mints'},
+        {id: 15, group: 'dotsWithLabel'},
+        {id: 16, group: 'dotsWithLabel'},
+        {id: 17, group: 'dotsWithLabel'},
+        {id: 18, group: 'dotsWithLabel'},
+        {id: 19, group: 'dotsWithLabel'},
+        {id: 20, label: "diamonds", group: 'diamonds'},
+        {id: 21, label: "diamonds", group: 'diamonds'},
+        {id: 22, label: "diamonds", group: 'diamonds'},
+        {id: 23, label: "diamonds", group: 'diamonds'},
+    ];
+    var edges = [
+        {from: 1, to: 0},
+        {from: 2, to: 0},
+        {from: 4, to: 3},
+        {from: 5, to: 4},
+        {from: 4, to: 0},
+        {from: 7, to: 6},
+        {from: 8, to: 7},
+        {from: 7, to: 0},
+        {from: 10, to: 9},
+        {from: 11, to: 10},
+        {from: 10, to: 4},
+        {from: 13, to: 12},
+        {from: 14, to: 13},
+        {from: 13, to: 0},
+        {from: 16, to: 15},
+        {from: 17, to: 15},
+        {from: 15, to: 10},
+        {from: 19, to: 18},
+        {from: 20, to: 19},
+        {from: 19, to: 4},
+        {from: 22, to: 21},
+        {from: 23, to: 22},
+        {from: 23, to: 0},
+    ]
+
+    // create a network
+    var container = document.getElementById('mynetwork');
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+    var options = {
+        nodes: {
+            shape: 'dot',
+            size: 20,
+            font: {
+                size: 15,
+                color: '#ffffff'
+            },
+            borderWidth: 2
+        },
+        edges: {
+            width: 2
+        },
+        groups: {
+            diamonds: {
+                color: {background:'red',border:'white'},
+                shape: 'diamond'
+            },
+            dotsWithLabel: {
+                label: "I'm a dot!",
+                shape: 'dot',
+                color: 'cyan'
+            },
+            mints: {color:'rgb(0,255,140)'},
+            icons: {
+                shape: 'icon',
+                icon: {
+                    face: 'FontAwesome',
+                    code: '\uf0c0',
+                    size: 50,
+                    color: 'orange'
+                }
+            },
+            source: {
+                color:{border:'white'}
+            }
+        }
+    };
+    var network = new vis.Network(container, data, options);
+
+</script>
+</section>
+
+<section style="padding:4em 9em;">
+  <p class="tit">Introducción
+  <p>Nuevas tecnologías de secuenciación: <span class="res">Big Data</span>
+  <p><span class="res">Sol Genomics Network</span>: Heinz 1706 de <i>Solanum Lycopersicum</i>, <i>S. pennelli</i>, <i>S. pimpinellifollium</i>
+  <p>Los genomas secuenciados como <span class="res">referencia</span>
+  <p>Conversión del estado de madurez del fruto de tomate: Regulación de la expresión de genes, <span class="res">motivos de ADN en los promotores génicos</span>
+  <!-- <br><img src="gene.gif" width="100%" class="invertir-color"/>  -->
+</section>
+
+<section style="padding:5em 9em;">
+  <p>El TF nace como respuesta a un problema <span class="res">real</span>: el análisis de regiones promotoras de genomas de solanáceas
+  <p class="tit">Objetivo
+  <p>Desarrollar una <span class="res">arquitectura en pipeline</span> para la descarga y análisis de <span class="res">promotores</span> de genes de <i>Solanum lycopersicum</i> cv Heinz 1706, desde la web <span class="res">Sol Genomics Network</span>
+</section>
+
+<section style="padding:5em 9em;">
+<p class="tit">Problemas
+  <p>Automatizar la descarga de 2500 promotores (semanas)
+</section>
+
+<section style="padding:5em 9em;">
+<p class="tit">Solución
+  <p>Codificación de un <span class="res">script</span>
+</section>
+
+<section style="padding:5em 9em;">
+<p class="tit">Problema
+  <p>Minimizar el tiempo de descarga de 2500 promotores (12 hs.)
+</section>
+
+<section style="padding:5em 9em;">
+<p class="tit">Solución
+  <p>Correr varias instancias simultáneamente
+</section>
+
+<section style="text-align:center;padding:1em 1em;">
+  <p><img src="graf2.png" width="80%" height="80%" /> 
+</section>
+
+<section style="text-align:center;padding:5em 13em;">
+  <p><img src="graf1.png" width="100%" height="100%" /> 
+</section>
+
+<section style="padding:5em 9em;">
+<p class="tit">Problema
+  <p>Cortes de luz e internet y el acceso simultáneo de varias instancias a un mismo archivo de resultados
+</section>
+
+<section style="padding:5em 9em;">
+<p class="tit">Soluciones
+  <p>Codificación de un <span class="res">script</span>
+  <p>Utilizar una <span class="res">base de datos</span> para el acceso simultáneo y recuperación en caso de cortes
+  <p>Aplicar <span class="res">threads</span> para reduccir el tiempo de descarga de los 2500 promotores de 12 hs. a 2 hs.
+</section>
+
+<section style="padding:5em 9em;">
+<p class="tit">Problemas
+  <p>Establecer número de threads
+  <br>Personalizar la cantidad de pb río arriba/abajo a partir del SIT
+  <br>Descargar un "gap" a partir del SIT
+  <p>Analizar los resultados con MEME y TOMTOM
+</section>
+
+<section style="padding:5em 9em;">
+<p><img src="gap.png" width="100%" class="invertir-color"/>
+</section>
+
+<section style="padding:4em 9em;">
+<p class="tit">Soluciones
+  <p>Codificación de un <span class="res">script</span>
+  <p>Utilizar una <span class="res">base de datos</span>
+  <p>Aplicar <span class="res">threads</span>
+  <p>Archivo de <span class="res">configuración</span> y <span class="res">parametrización</span> por terminal
+  <p>Arquitectura en <span class="res">pipeline</span>
+</section>
+
+<section style="text-align:center;padding:1em 1em;background-color:black;">
+  <p><img src="pipeline.png" width="47%" height="47%" class="invertir-color" /> 
+</section>
+
+<section style="padding:5em 12em;">
+<p class="tit">Ejecución
+<pre class="prettyprint">
+$ python3 pip_prom_tom.py 
+-i lista_promotores.txt 
+-o nombre_del_proyecto
+-u 1000 -d 1000
+-g 250 
+-p 1
+</pre>
+</section>
+
+<section style="padding:4em 5em;font-size:80%">
+<p class="tit">Ayuda
+<pre class="prettyprint">
+$ python3 pip_prom_tom.py -h
+</pre>
+La salida es:
+<pre class="prettyprint">
+Usage: pip_prom_tom.py [options]
+Options:
+-h, --help show this help message and exit
+-i FILE, --in=FILE Archivo de entrada
+-o DIROUT, --out=DIROUT Proyecto de salida (default="proy")
+-p PIPE, --pip=PIPE Modo pipeline (default=0)
+-u UP, --up=UP Cantidad bp upstream (default=0)
+-d DOWN, --down=DOWN Cantidad bp downstream (default=0)
+-g GAP, --gap=GAP Gap de bp upstream o downstream (default=0)
+</pre>
+</section>
+
+<section id="lorenz" style="padding-top:0;">
+  <canvas></canvas>
+  <p style="position:absolute;z-index:1;padding:3em 3em;left:0;width:100%;font-size:170%;text-shadow:0 1px 0 #000;">Veámoslo <br><A HREF="https://github.com/lalebot/pip-prom-tom#descarga-y-ejecuci%C3%B3n-del-script" TARGET="_new">Corriendo...</A>
+</section>
+
+<section style="padding:5em 9em;">
+  <p class="tit">Simulación
+    <p>Busquemos el promotor <i>Solyc01g079560</i> en
+      <br><A HREF="https://solgenomics.net/" TARGET="_new">Sol Genomics Network</A>
+</section>
+
+<section style="padding:5em 9em;">
+  <p class="tit">Características
+  <p>Desarrollo con herramientas de código abierto:
+     <p><span class="res">GNU/Linux OS</span>: Sistema operativo
+     <br><span class="res">Python</span>: Lenguaje de scriping
+     <br><span class="res">Git</span>: Sistema de versionado
+     <br><span class="res">SQLite</span>: Base de datos
+</section>
+
+<section style="padding:5em 9em;">
+  <p class="tit">Ventajas
+  <p><span class="res">Git</span>: Explora todo el desarrollo del proyecto
+     <br><span class="res">GitHub.com</span>: Online y disponible
+     <br><span class="res">Escalabilidad</span>: Flexibilidad y adaptación
+     <br><span class="res">Costo</span> nulo de software
+    <br><span class="res">Licencia GNU GPL</span>
+    <br><span class="res">Threads</span>
+    <br><span class="res">Expresiones Regulares</span>: Análisis de HTML
+</section>
+
+<section style="padding:5em 9em;">
+  <p class="tit">Importancia
+  <p><font color="grey">Se puede aplicar a otras variantes anotadas</font>
+  <br>Como herramienta bioinformática, facilita el estudio biológico
+  <br><font color="grey">Se desarrolló con una labor interdisciplinar</font>
+  <br>El TF incluye un DVD para compartir con el código, video explicativo y manuales
+  <br><font color="grey">Amplia las funcionalidades de la SGN</font>
+ </section>
+
+<section style="padding:5em 9em;">
+  <p class="tit">Conclusiones
+  <p><font color="grey">Desarrolló y automatizó una arquitectura en pipeline</font>
+  <br>Creó todo el proyecto en una plataforma de versionado de software 
+  <br><font color="grey">Implementó conjuntamente threads en Python, expresiones regulares y base de datos SQLite</font>
+  <br>Presentó una metodología que es aplicable a otras áreas biológicas
+</section>
+
+<section style="text-align:center;padding:.35em;font-size:1000%;">
+  ¿?
+</section>
+
+<section style="padding:5em 9em;">
+  <p class="tit">Agradecimientos
+    <p> A la Dra. Débora Arce
+      <br>Al Dr. Guillermo Pratta
+       <br>A la Dra. Telma Scarpeci y a la Ing. Laura Angelone
+      <br>A Luciana, Silvina, Araceli y Evelina
+      <br>A la cátedra de genética y al grupo de tomate
+      <br>A Silvana, Rubén, Pablo y Aye
+      <br>A Celi
+      <br>Al Dios de Jesucristo
+</section>
+
+
+<script type="text/javascript" src="vis.js"></script>
+<script src="d3.v3.min.js"></script>
+<script src="stack.v1.min.js"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=bsh&amp;skin=desert"></script>
+
+<script>
+
+var mystack = stack()
+    .on("activate", activate)
+    .on("deactivate", deactivate);
+
+var section = d3.selectAll("section"),
+    follow = d3.select("#follow"),
+    followAnchor = d3.select("#follow-anchor"),
+    lorenz = d3.select("#lorenz"),
+    followIndex = section[0].indexOf(follow.node()),
+    lorenzIndex = section[0].indexOf(lorenz.node());
+
+function refollow() {
+  followAnchor.style("top", (followIndex + (1 - mystack.scrollRatio()) / 2 - d3.event.offset) * 100 + "%");
+}
+
+function activate(d, i) {
+  if (i === followIndex) mystack.on("scroll.follow", refollow);
+  if (i === lorenzIndex) startLorenz();
+}
+
+function deactivate(d, i) {
+  if (i === followIndex) mystack.on("scroll.follow", null);
+  if (i === lorenzIndex) stopLorenz();
+}
+
+var lorenzInterval;
+
+function startLorenz() {
+  var δτ = 0.003,
+      ρ = 28,
+      σ = 10,
+      β = 8 / 3,
+      x = .5,
+      y = .5,
+      z = 10,
+      n = 30;
+
+  var width = 1280,
+      height = 720;
+
+  var canvas = d3.select("canvas")
+      .style("position", "absolute")
+      .style("top", 0)
+      .style("left", 0)
+      .style("width", "100%")
+      .style("height", "100%")
+      .attr("width", width)
+      .attr("height", height);
+
+  var color = d3.scale.linear()
+      .domain([0, 20, 30, 50])
+      .range(["yellow", "orange", "brown", "purple"])
+      .interpolate(d3.interpolateHcl);
+
+  var context = canvas.node().getContext("2d");
+
+  context.lineWidth = .2;
+  context.fillStyle = "rgba(0,0,0,.03)";
+
+  d3.timer(function() {
+    context.save();
+    context.globalCompositeOperation = "lighter";
+    context.translate(width / 2, height / 2);
+    context.scale(12, 14);
+    context.rotate(30);
+    for (var i = 0; i < n; ++i) {
+      context.strokeStyle = color(z);
+      context.beginPath();
+      context.moveTo(x, y);
+      x += δτ * σ * (y - x);
+      y += δτ * (x * (ρ - z) - y);
+      z += δτ * (x * y - β * z);
+      context.lineTo(x, y);
+      context.stroke();
+    }
+    context.restore();
+    return !lorenzInterval;
+  });
+
+  lorenzInterval = setInterval(function() {
+    context.fillRect(0, 0, width, height);
+  }, 100);
+}
+
+function stopLorenz() {
+  lorenzInterval = clearInterval(lorenzInterval);
+}
+
+</script>
+
+
+
+
+<!-- 
 
 <!doctype html>
 <html>
@@ -131,3 +579,5 @@
 </script>
 </body>
 </html>
+
+-->
