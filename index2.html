@@ -107,39 +107,7 @@ a:hover {
   var options = {
   autoResize: true,
   height: '100%',
-  width: '100%',
-   nodes: {
-     shape: 'image',
-     size:  25,
-            font: {
-             size: 16,
-            color: 'darkbrown'
-            },
-     borderWidth: 0,
-           shadow: true
-            },
-   edges: {
-      smooth: {
-      forceDirection: "none"
-            }
-            },
-   physics: {
-     forceAtlas2Based: {
-        springLength: 80,
-            springConstant: 0.27
-          },
-        minVelocity: 0.75,
-           solver: "forceAtlas2Based",
-           timestep: 0.34
-       },
-    layout: {
-       randomSeed: undefined
-      },
-    interaction: {
-     hover: true
-     }
-      }
-    
+  width: '100%',  
   };
   var network = new vis.Network(container, data, options);
   network.fit();
