@@ -76,9 +76,14 @@ a:hover {
 
 
 <section>
-3
-  
-  <script type="text/javascript">
+
+<p>
+  Create a simple network with some nodes and edges.
+</p>
+
+<div id="mynetwork"></div>
+
+<script type="text/javascript">
   // create an array with nodes
   var nodes = new vis.DataSet([
     {id: 1, label: 'Node 1'},
@@ -105,7 +110,7 @@ a:hover {
   };
   var options = {};
   var network = new vis.Network(container, data, options);
-  </script>
+</script>
   
 </section>
 
