@@ -108,6 +108,7 @@ a:hover {
   };
   var options = {};
   var network = new vis.Network(container, data, options);
+  window.onresize = function() {network.fit();}
 </script>
   
 </section>
