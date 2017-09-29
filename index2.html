@@ -106,9 +106,13 @@ a:hover {
     nodes: nodes,
     edges: edges
   };
-  var options = {};
+  var options = {
+  autoResize: true,
+  height: '100%',
+  width: '100%',
+  };
   var network = new vis.Network(container, data, options);
-  window.onresize = function() {network.fit();}
+ 
 </script>
   
 </section>
