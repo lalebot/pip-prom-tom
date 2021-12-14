@@ -1,12 +1,12 @@
-# Arquitectura en Pipeline para la extracción de promotores de Solanum lycopersicum
+# Pipeline architecture for the extraction of Solanum lycopersicum promoters
 
-Script para extraer secuencia de promotores de la especie Solanum lycopersicum from the web Solgenomics, para luego ser analizados con MEME y TOMTOM.
+Script to extract the sequence of promoters of the species Solanum lycopersicum from the web Solgenomics, to later be analyzed with MEME and TOMTOM. 
 
 ![Tomate](http://www.poesi.as/cuadros/tomate.jpg "Tomate")
 
-## Requisitos
+## Requirements 
 
-#### Software base para la ejecución del script
+#### Base software for script execution
 
 + Linux OS
     + python3
@@ -16,21 +16,21 @@ Script para extraer secuencia de promotores de la especie Solanum lycopersicum f
     + git
 
 
-Instalación en Debian, Ubuntu y derivados:
+Installation on Debian, Ubuntu and derivatives:
 
 ```bash
 $ sudo apt-get install git python3 sqlite3 wget tar
 ```
 
-Instalación en ArchLinux y derivados:
+Installation on ArchLinux and derivatives:
 
 ```bash
 $ yaourt -S git python3 sqlite3 wget
 ```
 
-#### Programas de análisis
+#### Analysis programs
 
-Requisitos **MEME & TOMTOM**
+*MEME & TOMTOM**
 
 + MEME
     * ghostscript
@@ -41,10 +41,10 @@ Requisitos **MEME & TOMTOM**
     * openmpi
 
 
-Documentación: http://meme-suite.org/doc/install.html
+Documentation: http://meme-suite.org/doc/install.html
 
 
-Instalación en Debian, Ubuntu y derivados:
+Installation on Debian, Ubuntu and derivatives:
 
 ```bash
 sudo add-apt-repository ppa:fkrull/deadsnakes
@@ -57,16 +57,16 @@ $ sudo apt-get install ghostscript imagemagick openmpi-bin tcsh perl libexpat1-d
 ```
 
 
-Instalación en ArchLinux y derivados:
+Installation on ArchLinux and derivatives:
 
 ```bash
 $ yaourt -S python2 perl ghostscript imagemagick python2 perl-xml-parser perl-html-template openmpi tcsh autoconf automake libtool libxml2  libxslt
 ```
 
 
-Descargar: http://meme-suite.org/doc/download.html
+Download: http://meme-suite.org/doc/download.html
 
-Instalación:
+Installation:
 ```bash
 $ tar zxf meme_4.10.2.tar.gz
 $ cd meme_4.10.2
@@ -81,7 +81,7 @@ Then, edit your shell configuration file to add $HOME/meme/bin to your shell pat
 **export PATH=$HOME/meme/bin:$PATH**
 
 
-# Descarga y ejecución del script
+# Download and run the script
 
 ```bash
 $ git clone http://github.com/lalebot/pip-prom-tom.git
@@ -89,65 +89,40 @@ $ cd pip-prom-tom
 $ python3 pip_prom_tom.py -i exa_prom.txt -o proyecto1 -u 1000 -g 250
 ```
 
-Donde:
-+ **-i** es el archivo de entrada.
-+ *list_prom.txt* es el nombre del archivo que contiene la lista de promotores y se encuentra en el mismo directorio que el script.
-+ **-o** es la salida.
-+ *proyecto1* es el nombre de salida del proyecto.
-+ **-u** es la cantidad de pares de bases *upstream* que queremos descargar.
-+ **-g** es el gap.
+Help:
++ ** - i ** is the input file.
++ * list_prom.txt * is the name of the file that contains the list of promoters and is located in the same directory as the script.
++ ** - or ** is the output.
++ * projecto1 * is the output name of the project.
++ ** - u ** is the number of base pairs * upstream * we want to download.
++ ** - g ** is the gap.
 
-Para descargar los pares de base *downstream* usamos el parámetro **-d**.
+To download the base pairs * downstream * we use the parameter ** - d **.
 
-Obtener *ayuda* de los parámetros admitidos por líneas de comando ejecutar:
+Get * help * of the parameters supported by command lines run: 
 ```bash
 $ python3 pip_prom_tom.py -h
 ```
 
-Para ejecutar el script en modo pipeline agregar **-p 1**
+To run the script in pipeline mode add **-p 1**
 ```bash
 $ python3 pip_prom_tom.py -i list_prom.txt -o proyecto1 -u 1000 -g 250 -p 1
 ```
 
-Los resultados se almacena en una sub-carpeta que tiene el *nombre-del-proyecto_out*.
+The results are stored in a sub-folder that has the  *nombre-del-proyecto_out*.
 
 
-# Contenido de los archivos
-
-### README.md
-Es este archivo.
+# File content
 
 ### conf.ini
-Contiene el archivo de configuración parametrizable.
 
-```bash
-# Archivo de configuración inicial
-
-# Pipeline true/false por defecto
-pipeline = false
-
-# Número de threads que se lanzan
-threads = 20
-
-# Path del MEME
-meme-path = /usr/bin/meme-meme
-# Parámetros de MEME. Default = -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc
-meme-param = -dna -mod oops -w 8 -minw 8 -maxw 12 -maxsize 1000000000 -oc
-
-# Path del TOMTOM
-tomtom-path = /usr/bin/meme-tomtom
-# Parámetros de TOMTOM. Default = -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc
-tomtom-param = -min-overlap 5 -dist pearson -evalue -thresh 10 -no-ssc
-# Base para el TOMTOM
-tomtom-bd = motif_databases/JASPAR/JASPAR_CORE_2016_plants.meme
-```
-
+Contains the parameterizable configuration file.
 
 ### exa_prom.txt
 Contiene una lista de códigos de promotores de ejemplo.
 
 
 ### pip_prom_tom.py
-Contiene el código del script.
+The code
 
 ---
